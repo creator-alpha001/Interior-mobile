@@ -8,6 +8,9 @@ library;
 
 import 'package:aangan_app/router.dart';
 import 'package:aangan_core_auth/aangan_core_auth.dart';
+import 'package:aangan_core_upload/aangan_core_upload.dart';
+import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,13 +27,18 @@ Future<(AuthController, StubApi)> _pump(
   stub?.call(api);
 
   final session = InMemoryAuthSession(token);
-  final auth = AuthController(api: apiWith(api, session), session: session);
+  final client = apiWith(api, session);
+  final auth = AuthController(api: client, session: session);
   final gate = BiometricGate(biometrics: _NoBiometrics(), preferences: null);
+  final queue = UploadQueue(api: client);
 
   await tester.pumpWidget(
-    MaterialApp.router(
-      theme: AanganTheme.light,
-      routerConfig: buildRouter(auth: auth, gate: gate),
+    ProviderScope(
+      overrides: [apiProvider.overrideWithValue(client)],
+      child: MaterialApp.router(
+        theme: AanganTheme.light,
+        routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue),
+      ),
     ),
   );
 
@@ -59,13 +67,18 @@ void main() {
     // signed in, for the length of one request, is the common version of this.
     final api = StubApi();
     final session = InMemoryAuthSession('token');
-    final auth = AuthController(api: apiWith(api, session), session: session);
+    final client = apiWith(api, session);
+    final auth = AuthController(api: client, session: session);
     final gate = BiometricGate(biometrics: _NoBiometrics(), preferences: null);
+    final queue = UploadQueue(api: client);
 
     await tester.pumpWidget(
-      MaterialApp.router(
-        theme: AanganTheme.light,
-        routerConfig: buildRouter(auth: auth, gate: gate),
+      ProviderScope(
+        overrides: [apiProvider.overrideWithValue(client)],
+        child: MaterialApp.router(
+          theme: AanganTheme.light,
+          routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue),
+        ),
       ),
     );
     await tester.pump();
@@ -101,16 +114,34 @@ void main() {
     // The most important redirect in the app. An unsigned professional is in no
     // lead pool however verified they are, so a dashboard reading "0 leads" is
     // true and tells them nothing about why. Whether they have signed is a
-    // separate call, so the gate decides — assuming "signed" here would show
+    // separate call, so the *gate* decides — assuming "signed" here would show
     // the dashboard to somebody in no pool.
     await _pump(
       tester,
       token: 'sess-vendor',
-      stub: (api) => api.on('GET', '/me', sessionUser(role: 'professional')),
+      stub: (api) => api
+        ..on('GET', '/me', sessionUser(role: 'professional'))
+        ..on('GET', '/vendor/onboarding', onboarding(canReceiveLeads: false)),
     );
 
-    expect(find.text('Onboarding gate'), findsWidgets);
-    expect(find.text('Vendor shell'), findsNothing);
+    expect(find.text('Before you receive work'), findsOneWidget);
+    expect(find.textContaining('not in any lead pool'), findsOneWidget);
+    // Emphatically not the dashboard.
+    expect(find.text('DASHBOARD'), findsNothing);
+  });
+
+  testWidgets('a signed vendor goes straight to the shell', (tester) async {
+    await _pump(
+      tester,
+      token: 'sess-vendor',
+      stub: (api) => api
+        ..on('GET', '/me', sessionUser(role: 'professional'))
+        ..on('GET', '/vendor/onboarding', onboarding(canReceiveLeads: true))
+        ..on('GET', '/vendor/dashboard', dashboard()),
+    );
+
+    expect(find.text('DASHBOARD'), findsOneWidget);
+    expect(find.text('Before you receive work'), findsNothing);
   });
 
   testWidgets('staff are refused, and told where to go', (tester) async {

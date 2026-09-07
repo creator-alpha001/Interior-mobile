@@ -20,8 +20,8 @@ abstract class VendorRow with _$VendorRow {
     required List<String> serviceCities,
     required num liveJobs,
     required num pendingDomainRequests,
-    required num totalRevenue,
-    required num outstandingCommission,
+    required int totalRevenue,
+    required int outstandingCommission,
     required bool hasSignedPartnerAgreement,
   }) = _VendorRow;
   

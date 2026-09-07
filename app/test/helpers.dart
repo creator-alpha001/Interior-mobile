@@ -101,3 +101,75 @@ Map<String, Object?> authSession({required String role, String? token}) {
       },
   };
 }
+
+/// A `VendorOnboarding` body.
+///
+/// `canReceiveLeads` is the whole decision: false shows the gate, true shows
+/// the shell. It is server-computed, so the app never infers it.
+Map<String, Object?> onboarding({required bool canReceiveLeads}) {
+  Map<String, Object?> step(String key, String label, bool done) => {
+        'key': key,
+        'label': label,
+        'description': 'Needed before leads reach you.',
+        'done': done,
+        'blocking': true,
+        'hint': null,
+      };
+
+  return {
+    'professionalId': 'p1',
+    'steps': [
+      step('profile', 'Your profile', true),
+      step('identity', 'Identity', true),
+      step('trades', 'Trades', canReceiveLeads),
+      step('agreement', 'Partner agreement', canReceiveLeads),
+    ],
+    'completedCount': canReceiveLeads ? 4 : 2,
+    'totalCount': 4,
+    'canReceiveLeads': canReceiveLeads,
+    'blockedReason': canReceiveLeads
+        ? null
+        : 'The partner agreement is not signed yet.',
+    'agreement': null,
+    'terms': {
+      'version': '1.0',
+      'effectiveFrom': '2026-01-01',
+      'title': 'Aangan partner terms',
+      'summary': 'How work reaches you, and what commission is charged.',
+      'sections': <Object>[],
+      'acknowledgements': <Object>[],
+    },
+  };
+}
+
+/// A `VendorDashboard` body.
+Map<String, Object?> dashboard() => {
+      'professional': {
+        'createdAt': '2026-01-01T00:00:00.000Z',
+        'updatedAt': '2026-01-01T00:00:00.000Z',
+        'deletedAt': null,
+        'id': 'p1',
+        'userId': 'u2',
+        'companyName': 'Meher Interiors',
+        'gstNumber': null,
+        'experienceYears': 9,
+        'bio': '',
+        'avgRating': 4.6,
+        'ratingCount': 22,
+        'completedProjects': 31,
+        'languages': <String>[],
+        'verificationStatus': 'verified',
+        'avgResponseHours': 3,
+      },
+      'displayName': 'Aarohi Verma',
+      'domains': <Object>[],
+      'newLeads': 0,
+      'awaitingQuote': 0,
+      'quotesOut': 0,
+      'wonThisPeriod': 0,
+      'liveProjects': 0,
+      'visitsToday': 0,
+      'commissionDue': 0,
+      'commissionOverdue': 0,
+      'unreadMessages': 0,
+    };

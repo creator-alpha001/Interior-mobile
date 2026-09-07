@@ -20,7 +20,7 @@ abstract class Agreement with _$Agreement {
     required String leadId,
     required String clientId,
     required String professionalId,
-    required num totalValue,
+    required int totalValue,
     required String paymentTerms,
     required AgreementStatus status,
     required String? documentUrl,

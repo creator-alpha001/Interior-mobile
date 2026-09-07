@@ -22,8 +22,8 @@ abstract class VendorDashboard with _$VendorDashboard {
     required num wonThisPeriod,
     required num liveProjects,
     required num visitsToday,
-    required num commissionDue,
-    required num commissionOverdue,
+    required int commissionDue,
+    required int commissionOverdue,
     required num unreadMessages,
   }) = _VendorDashboard;
   

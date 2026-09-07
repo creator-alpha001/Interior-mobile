@@ -14,8 +14,8 @@ abstract class QuoteLineItem with _$QuoteLineItem {
     required String description,
     required num quantity,
     required String unit,
-    required num rate,
-    required num amount,
+    required int rate,
+    required int amount,
   }) = _QuoteLineItem;
   
   factory QuoteLineItem.fromJson(Map<String, Object?> json) => _$QuoteLineItemFromJson(json);

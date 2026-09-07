@@ -14,7 +14,7 @@ abstract class CommissionFocusRow with _$CommissionFocusRow {
     required String reference,
     required String professionalId,
     required String professionalName,
-    required num amount,
+    required int amount,
     required String dueDate,
     required String status,
     required num daysOverdue,

@@ -14,10 +14,10 @@ abstract class AdminTotals with _$AdminTotals {
     required num activeLeads,
     required num vendors,
     required num pendingVerification,
-    required num revenue,
-    required num commissionBilled,
-    required num commissionPending,
-    required num commissionOverdue,
+    required int revenue,
+    required int commissionBilled,
+    required int commissionPending,
+    required int commissionOverdue,
     required num openTickets,
   }) = _AdminTotals;
   

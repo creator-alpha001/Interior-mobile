@@ -16,9 +16,9 @@ abstract class DomainSlice with _$DomainSlice {
     required num leads,
     required num quoted,
     required num won,
-    required num revenue,
-    required num commission,
-    required num avgTicket,
+    required int revenue,
+    required int commission,
+    required int avgTicket,
     required num conversionPercent,
     required num vendors,
   }) = _DomainSlice;

@@ -79,7 +79,7 @@ void main() {
     /// The generator decides this from `{"type": "integer"}` versus
     /// `{"type": "number"}` in the schema, so it is a property of the contract
     /// rather than of the Dart, and worth pinning here.
-    test('a quote total is an int', () {
+    test('a quote line is statically an int, not merely an int at runtime', () {
       final quote = QuoteLineItem.fromJson(const {
         'id': 'line-1',
         'description': 'Wardrobe shutters',
@@ -89,9 +89,37 @@ void main() {
         'amount': 50000,
       });
 
-      expect(quote.rate, isA<int>());
-      expect(quote.amount, isA<int>());
-      expect(quote.amount, 50000);
+      /// The assignment *is* the assertion.
+      ///
+      /// The first version of this test wrote `expect(quote.rate, isA<int>())`
+      /// and passed while every amount in the generated client was typed
+      /// `num` — because `isA` inspects the runtime value, and `12500` decoded
+      /// from JSON is an `int` whatever the declaration says. It proved nothing,
+      /// and the gap only surfaced when a screen tried to build a `Rupees` out
+      /// of one.
+      ///
+      /// These two lines do not compile unless the fields are declared `int`,
+      /// which holds only because `openapi.json` says `"type": "integer"`,
+      /// which holds only because `rupeesSchema` is `z.number().int()`.
+      final int rate = quote.rate;
+      final int amount = quote.amount;
+
+      expect(rate, 12500);
+      expect(amount, 50000);
+    });
+
+    test('commission on the dashboard is an int', () {
+      // The figure that matters most: money the vendor owes, computed
+      // server-side and frozen at signing.
+      final due = _dashboard.commissionDue;
+      final overdue = _dashboard.commissionOverdue;
+
+      // Same mechanism — these fail to compile if the fields become `num`.
+      final int dueRupees = due;
+      final int overdueRupees = overdue;
+
+      expect(dueRupees, 45000);
+      expect(overdueRupees, 0);
     });
   });
 
@@ -200,3 +228,35 @@ void main() {
     });
   });
 }
+
+/// A dashboard payload, as the API sends it.
+final _dashboard = VendorDashboard.fromJson(const {
+  'professional': {
+    'createdAt': '2026-01-01T00:00:00.000Z',
+    'updatedAt': '2026-01-01T00:00:00.000Z',
+    'deletedAt': null,
+    'id': 'p1',
+    'userId': 'u2',
+    'companyName': 'Meher Interiors',
+    'gstNumber': null,
+    'experienceYears': 9,
+    'bio': '',
+    'avgRating': 4.6,
+    'ratingCount': 22,
+    'completedProjects': 31,
+    'languages': <String>[],
+    'verificationStatus': 'verified',
+    'avgResponseHours': 3,
+  },
+  'displayName': 'Aarohi Verma',
+  'domains': <Object>[],
+  'newLeads': 2,
+  'awaitingQuote': 1,
+  'quotesOut': 3,
+  'wonThisPeriod': 1,
+  'liveProjects': 2,
+  'visitsToday': 0,
+  'commissionDue': 45000,
+  'commissionOverdue': 0,
+  'unreadMessages': 4,
+});

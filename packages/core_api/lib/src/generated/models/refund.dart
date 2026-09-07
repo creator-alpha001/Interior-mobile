@@ -18,7 +18,7 @@ abstract class Refund with _$Refund {
     required String id,
     required String projectId,
     required String clientId,
-    required num amount,
+    required int amount,
     required String reason,
     required RefundStatus status,
     required String? processedAt,

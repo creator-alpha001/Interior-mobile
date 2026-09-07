@@ -1,0 +1,50 @@
+name: aangan_feature_vendor
+description: The professional's shell — leads, quotes, visits, projects and commission.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  aangan_core_api:
+    path: ../core_api
+  aangan_core_auth:
+    path: ../core_auth
+  aangan_design:
+    path: ../design
+  aangan_core_upload:
+    path: ../core_upload
+
+  # MOBILE.md 4.2. Nearly every screen here is one or two remote reads, which is
+  # exactly what an async provider is; and provider invalidation is how a
+  # mutation refreshes the lists behind it — submit a quote, and the lead card
+  # and the dashboard counters both have to change.
+  flutter_riverpod: ^2.6.1
+
+  intl: ^0.20.2
+
+  # Stage proof is the vendor's core action, and it is a camera task.
+  image_picker: ^1.1.2
+
+  # Maps only. There is deliberately no dialer and no SMS launcher in this
+  # package — see visits_screen.dart and test/boundaries_test.dart.
+  url_launcher: ^6.3.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  # The test fixtures build an API against a bare Dio.
+  dio: ^5.7.0
+  flutter_lints: ^6.0.0
+
+# feature_customer is deliberately NOT a dependency, and never will be.
+# MOBILE.md 2: the two shells stay separate packages so splitting into two
+# binaries later is a build flavour and an entrypoint, not a rewrite. A test
+# asserts this.
+
+flutter:
+  uses-material-design: true

@@ -15,7 +15,7 @@ abstract class VendorPerformance with _$VendorPerformance {
   const factory VendorPerformance({
     required List<DomainPerformance> byDomain,
     required num avgResponseHours,
-    required num totalRevenue,
+    required int totalRevenue,
     required List<VendorReview> reviews,
   }) = _VendorPerformance;
   

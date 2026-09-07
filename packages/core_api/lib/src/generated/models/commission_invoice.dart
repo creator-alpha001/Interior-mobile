@@ -19,7 +19,7 @@ abstract class CommissionInvoice with _$CommissionInvoice {
     required String reference,
     required String professionalId,
     required String agreementId,
-    required num amount,
+    required int amount,
     required InvoiceStatus status,
     required String dueDate,
     required String? paidDate,

@@ -16,7 +16,7 @@ abstract class ProductCityPrice with _$ProductCityPrice {
     required String id,
     required String productId,
     required String cityId,
-    required num price,
+    required int price,
   }) = _ProductCityPrice;
   
   factory ProductCityPrice.fromJson(Map<String, Object?> json) => _$ProductCityPriceFromJson(json);

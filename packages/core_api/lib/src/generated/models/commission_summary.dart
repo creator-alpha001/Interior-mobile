@@ -12,8 +12,8 @@ part 'commission_summary.g.dart';
 @Freezed()
 abstract class CommissionSummary with _$CommissionSummary {
   const factory CommissionSummary({
-    required num pending,
-    required num overdue,
+    required int pending,
+    required int overdue,
     required num overdueCount,
     required num dueSoonCount,
     required List<CommissionFocusRow> rows,

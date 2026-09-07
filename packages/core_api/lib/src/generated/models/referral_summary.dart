@@ -17,7 +17,7 @@ abstract class ReferralSummary with _$ReferralSummary {
     required num invited,
     required num earned,
     required num pending,
-    required num rewardPerReferral,
+    required int rewardPerReferral,
     required List<ReferralEntry> referrals,
   }) = _ReferralSummary;
   

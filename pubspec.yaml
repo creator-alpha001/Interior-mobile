@@ -16,6 +16,8 @@ workspace:
   - packages/design
   - packages/core_api
   - packages/core_auth
+  - packages/core_upload
+  - packages/feature_vendor
 
 dev_dependencies:
   melos: ^7.1.0

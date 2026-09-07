@@ -12,7 +12,7 @@ abstract class ProductOptionValue with _$ProductOptionValue {
   const factory ProductOptionValue({
     required String id,
     required String label,
-    required num priceDelta,
+    required int priceDelta,
   }) = _ProductOptionValue;
   
   factory ProductOptionValue.fromJson(Map<String, Object?> json) => _$ProductOptionValueFromJson(json);

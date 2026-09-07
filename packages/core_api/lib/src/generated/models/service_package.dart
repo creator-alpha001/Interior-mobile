@@ -22,7 +22,7 @@ abstract class ServicePackage with _$ServicePackage {
     required String shortDescription,
     required String description,
     required List<MediaAsset> media,
-    required num price,
+    required int price,
     required String priceBasis,
     required num durationDays,
     required List<String> inclusions,

@@ -30,7 +30,7 @@ abstract class VendorLeadCard with _$VendorLeadCard {
     required List<LeadDomainItem> items,
     required String? brief,
     required List<String> siteNotes,
-    required num? budgetMax,
+    required int? budgetMax,
     required Quote? myQuote,
     required List<Meeting> visits,
     required num unreadMessages,

@@ -25,7 +25,7 @@ abstract class Product with _$Product {
     required String shortDescription,
     required String description,
     required List<MediaAsset> media,
-    required num basePrice,
+    required int basePrice,
     required PriceUnit priceUnit,
     required num leadTimeDays,
     required bool isCustomisable,

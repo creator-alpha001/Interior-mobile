@@ -1,0 +1,28 @@
+name: aangan_core_upload
+description: Ticket, compress, PUT, and a queue that survives the app closing.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  aangan_core_api:
+    path: ../core_api
+
+  # A modern phone camera produces 4-8MB per frame. Stage proof is eight photos
+  # from a basement on mobile data.
+  flutter_image_compress: ^2.3.0
+
+  # The queue has to survive the app closing, so it is written to disk.
+  path_provider: ^2.1.5
+
+  dio: ^5.7.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

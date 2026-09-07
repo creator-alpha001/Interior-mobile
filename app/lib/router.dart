@@ -11,6 +11,8 @@
 library;
 
 import 'package:aangan_core_auth/aangan_core_auth.dart';
+import 'package:aangan_core_upload/aangan_core_upload.dart';
+import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +32,11 @@ abstract final class Routes {
   static const gallery = '/_gallery';
 }
 
-GoRouter buildRouter({required AuthController auth, required BiometricGate gate}) {
+GoRouter buildRouter({
+  required AuthController auth,
+  required BiometricGate gate,
+  required UploadQueue Function(String milestoneId) queueFor,
+}) {
   return GoRouter(
     initialLocation: Routes.splash,
     refreshListenable: Listenable.merge([auth, gate]),
@@ -102,14 +108,21 @@ GoRouter buildRouter({required AuthController auth, required BiometricGate gate}
         path: Routes.customerHome,
         builder: (context, state) => _Placeholder('Customer shell', 'M11', auth: auth),
       ),
+      /// Both vendor states land on the same widget.
+      ///
+      /// `VendorHome` reads `GET /vendor/onboarding` and decides between the
+      /// gate and the shell itself — that is a vendor question rather than an
+      /// auth one, and the router has already done its job by choosing the
+      /// vendor side at all.
       GoRoute(
         path: Routes.vendorOnboarding,
         builder: (context, state) =>
-            _Placeholder('Onboarding gate', 'M10', auth: auth),
+            VendorHome(queueFor: queueFor, onSignOut: auth.signOut),
       ),
       GoRoute(
         path: Routes.vendorDashboard,
-        builder: (context, state) => _Placeholder('Vendor shell', 'M10', auth: auth),
+        builder: (context, state) =>
+            VendorHome(queueFor: queueFor, onSignOut: auth.signOut),
       ),
       GoRoute(path: Routes.gallery, builder: (context, state) => const GalleryScreen()),
     ],

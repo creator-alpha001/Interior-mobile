@@ -17,7 +17,7 @@ abstract class AgreementLeadDomain with _$AgreementLeadDomain {
     required String agreementId,
     required String leadDomainId,
     required String quoteId,
-    required num value,
+    required int value,
   }) = _AgreementLeadDomain;
   
   factory AgreementLeadDomain.fromJson(Map<String, Object?> json) => _$AgreementLeadDomainFromJson(json);

@@ -20,7 +20,7 @@ abstract class LeadDomainItem with _$LeadDomainItem {
     required String itemName,
     required num quantity,
     required Map<String, String> selectedOptions,
-    required num? indicativePrice,
+    required int? indicativePrice,
     required String? customerNotes,
   }) = _LeadDomainItem;
   
