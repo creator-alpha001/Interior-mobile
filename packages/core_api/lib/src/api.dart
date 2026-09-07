@@ -11,7 +11,10 @@ import 'package:dio/dio.dart';
 import 'generated/clients/client_client.dart';
 import 'generated/clients/professional_client.dart';
 import 'generated/clients/public_client.dart';
+import 'dart:io';
+
 import 'interceptors.dart';
+import 'offline_cache.dart';
 import 'session.dart';
 
 /// Where this build points, and how patiently it waits.
@@ -53,7 +56,15 @@ class AanganApi {
   /// binary at all.
   static const staff = null;
 
-  factory AanganApi(ApiConfig config, {SessionStore session = const NoSession()}) {
+  /// The read cache, when one was supplied. Null means online-only.
+  OfflineCacheInterceptor? get cache => _cache;
+  OfflineCacheInterceptor? _cache;
+
+  factory AanganApi(
+    ApiConfig config, {
+    SessionStore session = const NoSession(),
+    Directory? cacheDirectory,
+  }) {
     final dio = Dio(
       BaseOptions(
         baseUrl: config.baseUrl,
@@ -75,19 +86,29 @@ class AanganApi {
     // decides using a typed ApiException, which is what ErrorInterceptor
     // produces. Registered the other way round, retry sees a raw DioException,
     // never matches, and silently does nothing.
+    final cache =
+        cacheDirectory == null ? null : OfflineCacheInterceptor(cacheDirectory);
+
+    // Order, again. The cache sits *before* ErrorInterceptor so that a
+    // connection failure with a cached body resolves as a success and never
+    // becomes an ApiException — a screen showing yesterday's catalogue with an
+    // "as of" line is not in an error state.
     dio.interceptors.addAll([
       AuthInterceptor(session),
       RequestIdInterceptor(),
+      if (cache != null) cache,
       ErrorInterceptor(session),
       RetryInterceptor(dio),
     ]);
 
-    return AanganApi._(
+    final api = AanganApi._(
       dio,
       PublicClient(dio),
       ClientClient(dio),
       ProfessionalClient(dio),
     );
+    api._cache = cache;
+    return api;
   }
 
   /// For tests: build against a dio that already has an adapter installed.

@@ -11,6 +11,21 @@ import 'dart:io';
 import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:test/test.dart';
 
+/// Source with comment lines stripped.
+///
+/// Without this, prose *explaining* a rule trips the check for that rule — the
+/// comment in `offline_cache.dart` saying why `ChangeNotifier` is unavailable
+/// mentions `package:flutter/foundation.dart`, and failed the very test it was
+/// describing.
+String _code(File file) => file
+    .readAsStringSync()
+    .split('\n')
+    .where((line) {
+      final trimmed = line.trimLeft();
+      return !trimmed.startsWith('//') && !trimmed.startsWith('///');
+    })
+    .join('\n');
+
 void main() {
   group('masking survives code generation', () {
     /// The platform's central promise, checked on this side of the wire too.
@@ -188,8 +203,7 @@ void main() {
 
       for (final entity in Directory('lib').listSync(recursive: true)) {
         if (entity is! File || !entity.path.endsWith('.dart')) continue;
-        final source = entity.readAsStringSync();
-        if (source.contains('package:flutter/')) offenders.add(entity.path);
+        if (_code(entity).contains('package:flutter/')) offenders.add(entity.path);
       }
 
       expect(offenders, isEmpty, reason: 'core_api must not depend on Flutter');
@@ -219,8 +233,8 @@ void main() {
       final offenders = <String>[];
       for (final entity in Directory('lib').listSync(recursive: true)) {
         if (entity is! File || !entity.path.endsWith('.dart')) continue;
-        final source = entity.readAsStringSync();
-        if (source.contains('tel:') || source.contains('url_launcher')) {
+        final code = _code(entity);
+        if (code.contains('tel:') || code.contains('url_launcher')) {
           offenders.add(entity.path);
         }
       }

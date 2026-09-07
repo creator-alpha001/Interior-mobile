@@ -16,8 +16,11 @@ dependencies:
     path: ../packages/core_api
   aangan_core_auth:
     path: ../packages/core_auth
+  aangan_core_push:
+    path: ../packages/core_push
   aangan_core_upload:
     path: ../packages/core_upload
+  path_provider: ^2.1.5
   aangan_feature_customer:
     path: ../packages/feature_customer
   aangan_feature_vendor:

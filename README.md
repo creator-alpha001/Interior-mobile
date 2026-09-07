@@ -10,20 +10,47 @@ web frontends, cannot import their TypeScript, and has its own release cadence.
 
 ## Where this is
 
-**M8 through M11 complete.** What exists:
+**M8 through M12 complete.** What exists:
 
 | | |
 | --- | --- |
 | `packages/design` | Tokens, theme, shared widgets, the OTP field |
 | `packages/core_api` | 194 generated models, three typed clients, the dio interceptors |
 | `packages/core_auth` | Bearer session in Keychain, OTP sign-in, role resolution, biometric resume |
+| `packages/core_push` | Device registration behind a driver, and the notification deep-link table |
 | `packages/core_upload` | Compress, ticket, PUT, and a queue that survives the app closing |
 | `packages/feature_vendor` | Onboarding gate, dashboard, leads, quote builder, visits, stage proof |
 | `packages/feature_customer` | Requirement flow, quote comparison, agreements and signing, progress |
 | `app` | Flavours, the router and its gates, sign-in, the component gallery |
 
-M12 is next: push end to end, deep links, an offline read cache, the
-accessibility pass, and `textScale` 1.3 goldens.
+M13 is next, and most of it is account-level rather than code: store listings,
+screenshots, review demo accounts, privacy manifests, forced upgrade and a
+staged rollout.
+
+### What M12 left short, deliberately
+
+**Deep links reach the right tab, not the right record.** The shells are
+`IndexedStack`s with their own `Navigator`, not nested `go_router` routes, so a
+"new lead" push opens the vendor's Leads tab rather than lead `ld-42`. That is
+short of MOBILE.md §9's bar — *"Every push in 7.2 lands on the right screen"* —
+and closing it means moving both shells onto nested routes so every record has a
+URL. Recorded here rather than half-done: a deep link that silently drops its id
+is worse than one that admits it only reaches the list.
+
+**Push has no Firebase project, so `NoPushTokens` is the default.** Everything
+downstream of the token is built and tested; the Firebase implementation is one
+class conforming to `PushTokenSource`. Adding `firebase_messaging` now would
+mean the app could not build until a project existed. Nothing is lost meanwhile:
+the notification row is still written inside the transaction that caused it and
+still goes out by SMS. Push only adds the buzz.
+
+**No golden tests.** Still blocked on the fonts, below. What a golden would have
+caught about layout at `textScale` 1.3 is asserted without pixels in
+`packages/design/test/accessibility_test.dart`.
+
+**The Hindi decision is unmade.** MOBILE.md open question 1, and it is the
+client's: bundling Devanagari fallbacks now, or shipping English-only at v1 and
+recording that as a decision rather than discovering it in a translation sprint.
 
 ### Two things deliberately not built
 

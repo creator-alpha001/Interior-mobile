@@ -105,14 +105,30 @@ class SignInState {
 }
 
 class AuthController extends ChangeNotifier {
-  AuthController({required AanganApi api, required AuthSessionStore session})
-      : _api = api,
+  AuthController({
+    required AanganApi api,
+    required AuthSessionStore session,
+    this.onSignedIn,
+    this.onSigningOut,
+  })  : _api = api,
         _session = session {
     _session.onLost = _handleSessionLost;
   }
 
   final AanganApi _api;
   final AuthSessionStore _session;
+
+  /// Called once a session exists. Where device registration happens.
+  final Future<void> Function()? onSignedIn;
+
+  /// Called *before* the session is cleared, and awaited.
+  ///
+  /// The order is the point: deregistering this handset for push is an
+  /// authenticated call, so a token cleared first leaves the row behind and
+  /// the phone keeps receiving somebody else's job alerts. Same for the read
+  /// cache — a vendor's dashboard is their pipeline, and it must not survive
+  /// into the next person's session on the same device.
+  final Future<void> Function()? onSigningOut;
 
   Shell _shell = Shell.resolving;
   Shell get shell => _shell;
@@ -259,8 +275,11 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> signOut() async {
+    // Before anything is revoked, while the session is still usable.
+    await onSigningOut?.call();
+
     try {
-      // Revoke the row server-side first. A token cleared only on the handset
+      // Revoke the row server-side next. A token cleared only on the handset
       // is still a live session everywhere else.
       await _api.public.logout().orThrow();
     } on ApiException {
@@ -283,6 +302,9 @@ class AuthController extends ChangeNotifier {
   void _adopt(SessionUser me) {
     _user = me;
     _set(_shellFor(me.actor));
+    // Registration is fire-and-forget: push is an enhancement, and nothing
+    // about the shell should wait on it.
+    onSignedIn?.call();
   }
 
   /// The role decides the shell. One place, resolved once.

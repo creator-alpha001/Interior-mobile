@@ -5,13 +5,17 @@
 /// customer's requirement flow, quote comparison and signing.
 library;
 
+import 'dart:io';
+
 import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:aangan_core_auth/aangan_core_auth.dart';
+import 'package:aangan_core_push/aangan_core_push.dart';
 import 'package:aangan_core_upload/aangan_core_upload.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'env.dart';
 import 'router.dart';
@@ -20,10 +24,37 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final session = SecureSessionStore();
-  final api = AanganApi(ApiConfig(baseUrl: Env.baseUrl), session: session);
-  final auth = AuthController(api: api, session: session);
-  final gate = BiometricGate();
 
+  // The read cache lives beside the upload queue, in support rather than
+  // documents: it is derived data, and the OS may reclaim it.
+  final support = await getApplicationSupportDirectory();
+  final api = AanganApi(
+    ApiConfig(baseUrl: Env.baseUrl),
+    session: session,
+    cacheDirectory: Directory('${support.path}/read-cache'),
+  );
+
+  /// Push, behind a driver.
+  ///
+  /// `NoPushTokens` until a Firebase project exists — the same shape the API
+  /// uses with `PUSH_DRIVER=log`. Nothing is lost meanwhile: the notification
+  /// row is still written inside the transaction that caused it and still goes
+  /// out by SMS. Push only adds the buzz.
+  final devices = DeviceRegistrar(api: api, tokens: const NoPushTokens());
+
+  final auth = AuthController(
+    api: api,
+    session: session,
+    onSignedIn: devices.register,
+    onSigningOut: () async {
+      // Order matters and is asserted in core_auth: deregistering is an
+      // authenticated call, and the cache holds one person's figures.
+      await devices.forget();
+      api.cache?.clear();
+    },
+  );
+
+  final gate = BiometricGate();
   await gate.load();
 
   runApp(
@@ -142,6 +173,21 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
       darkTheme: AanganTheme.light,
 
       routerConfig: _router,
+
+      /// The stale banner wraps every screen.
+      ///
+      /// Staleness is a property of the connection rather than of any one list,
+      /// so it is drawn once here instead of being reimplemented per screen.
+      builder: (context, child) => Column(
+        children: [
+          StreamBuilder<DateTime?>(
+            stream: widget.api.cache?.status.changes,
+            initialData: widget.api.cache?.status.servingSince,
+            builder: (context, snapshot) => StaleBanner(since: snapshot.data),
+          ),
+          Expanded(child: child ?? const SizedBox.shrink()),
+        ],
+      ),
     );
   }
 }

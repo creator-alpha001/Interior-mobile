@@ -11,6 +11,7 @@ library;
 export 'src/api.dart';
 export 'src/api_exception.dart';
 export 'src/interceptors.dart';
+export 'src/offline_cache.dart';
 export 'src/session.dart';
 
 /// Every model, and the three clients the mobile app is allowed to call.

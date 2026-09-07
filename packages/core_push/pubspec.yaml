@@ -1,0 +1,30 @@
+name: aangan_core_push
+description: Device registration, and where a notification tap should land.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  aangan_core_api:
+    path: ../core_api
+  meta: ^1.16.0
+
+# firebase_messaging is deliberately NOT a dependency yet.
+#
+# It cannot initialise without a google-services.json / GoogleService-Info.plist,
+# and adding it now would mean the app could not build until a Firebase project
+# exists. The API solved the same problem with drivers — `PUSH_DRIVER=log` until
+# a project lands — and this package does the same: `PushTokenSource` is an
+# interface, `NoPushTokens` is the default, and the Firebase implementation is
+# one class added later. Everything downstream of the token is built and tested.
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  dio: ^5.7.0
