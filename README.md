@@ -10,15 +10,16 @@ web frontends, cannot import their TypeScript, and has its own release cadence.
 
 ## Where this is
 
-**M8 — Foundation, in progress.** What exists:
+**M8 — Foundation. Complete.** What exists:
 
 | | |
 | --- | --- |
 | `packages/design` | Tokens, theme and the shared widgets. Complete for the components drawn so far |
-| `app` | Runs the component gallery. No router, no networking, no screens yet |
+| `packages/core_api` | 194 generated models, three typed clients, and the dio interceptors |
+| `app` | Flavours, the router and its gates, and the component gallery |
 
-What M8 still needs, in order: the generated `core_api`, dio and its
-interceptors, a `go_router` skeleton, and CI.
+M9 is next: the bearer session, the OTP screens, secure storage, and replacing
+the hand-set `SessionState` in `main.dart` with a real `GET /me`.
 
 ```bash
 dart pub global activate melos    # once
@@ -26,10 +27,17 @@ melos bootstrap
 melos run check                   # analyze + test, every package
 ```
 
-To look at the gallery:
+To look at the gallery: `cd app && flutter run`, or navigate to `/_gallery` in
+any non-production build.
+
+### Flavours
+
+Nothing defaults to production. A build that forgets to say where it is going
+talks to localhost and fails loudly on a device, which is the failure you want.
 
 ```bash
-cd app && flutter run
+flutter run --dart-define=AANGAN_ENV=staging
+flutter run --dart-define=AANGAN_API_URL=http://192.168.1.20:4000   # a laptop on the same wifi
 ```
 
 ## The design system is the deliverable of this phase
@@ -85,23 +93,58 @@ widget tree. **Neither feature package may import the other.**
 ## The contract
 
 `core_api` is generated, never hand-written. The web repository emits
-`openapi.json` from its route manifest, and the Dart models come from that:
+`openapi.json` from its route manifest; `contract/openapi.json` here is this
+app's pinned copy of it, and the Dart comes from that.
 
 ```bash
-# in D:\Interior
-npm run openapi          # regenerate
-npm run openapi:check    # CI: fails if the committed document is stale
+# 1. in D:\Interior — regenerate the document from the manifest
+npm run openapi
+
+# 2. here — pull it in, then regenerate the client
+dart run tool/sync_contract.dart
+melos run contract
 ```
 
-Two things the generator will not give you and that must be added by hand:
+`melos run contract` runs three steps and the order matters:
 
-- **`MaskedClientSummary` must have no phone or email field.** It does not today,
-  and the web repository has a contract test that fails if a schema grows one —
-  following `$ref`s through every `/vendor` response. Do not weaken it here.
+```
+swagger_parser  ->  tool/fix_generated.dart  ->  build_runner
+```
+
+The middle step is not optional and is not a patch — it is re-run from scratch
+every time. It exists because swagger_parser emits freezed-2 syntax (freezed 3
+needs `abstract class`, and freezed 2 is unavailable: retrofit_generator 10
+requires freezed 3), because our discriminated unions are necessarily modelled
+twice in OpenAPI, and because the **staff client is deleted**. That last one is
+deliberate: `openapi.json` documents the whole API including `/ops/*`, but admin
+is web-only, and those responses carry commission figures and unmasked customer
+phone numbers. With no generated client, a screen in this binary cannot call
+them — there is no method to call.
+
+The generated sources are committed, and CI regenerates and fails on a diff. A
+generator nobody runs is worse than no generator: the stale output still looks
+authoritative. The `.g.dart` and `.freezed.dart` derivatives are *not* committed
+— build_runner recreates them deterministically, and they would triple the size
+of every contract diff.
+
+### Guarantees that survive code generation
+
+Asserted in `packages/core_api/test/contract_guarantees_test.dart`, because the
+generator will not give you any of them:
+
+- **`MaskedClientSummary` has no phone or email field.** The web repository
+  checks this three ways already — the schema has no such key, a contract test
+  follows every `$ref` through every `/vendor` response, and an integration test
+  greps real responses for seed numbers. This is the fourth place it could
+  break, and the one closest to a vendor's handset.
 - **`Rupees` is an `int`.** Never a `double`. Money in a floating-point type is
-  how ₹1 goes missing. `packages/design/lib/src/money.dart` is an extension type
-  over `int` for that reason, and a test asserts it.
-
-There is also **no dialer or SMS launcher anywhere in `feature_vendor`**, ever.
-Not for the customer, not "just for the coordinator". Add a grep test for `tel:`
-and `url_launcher` inside that package when it exists.
+  how ₹1 goes missing.
+- **The actor union is exhaustive.** `switch` over `Actor` has no default
+  branch, so a fifth role added to the contract stops the build. This only works
+  because the document describes it as `oneOf` + `discriminator`; a bare `anyOf`
+  generated `ActorUnion.variant1`, which is a union you cannot read.
+- **No Flutter import in `core_api`**, so the contract layer stays testable
+  without a widget tree.
+- **No dialer or SMS launcher.** Not for the customer, not "just for the
+  coordinator". The check covers `core_api` today; extend it to
+  `feature_vendor` when that package exists.

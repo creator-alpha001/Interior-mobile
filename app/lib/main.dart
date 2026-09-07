@@ -1,27 +1,66 @@
 /// The entrypoint.
 ///
-/// At M8 this runs the component gallery and nothing else. The role shell —
-/// `GET /me`, `client` to the customer tabs and `professional` to the vendor
-/// tabs — arrives in M9 with the bearer session, and the router that owns that
-/// decision does not exist yet. A gallery is what M8 is *for*: the design
-/// system is the deliverable of this phase, and this is the screen the golden
-/// tests photograph.
+/// M8 wires the pieces together and stops there: the design system, the API
+/// client, the router and its gates all exist, and the screens behind them do
+/// not. `SessionState` is still set by hand rather than by `GET /me` — that,
+/// and the OTP flow that produces a token, are M9.
+///
+/// The gallery is reachable at `/_gallery` in non-production builds, which is
+/// what M8's "done when" asks for: the component gallery renders every state.
 library;
 
+import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 
-import 'gallery.dart';
+import 'env.dart';
+import 'router.dart';
 
-void main() => runApp(const AanganApp());
+void main() {
+  final api = AanganApi(ApiConfig(baseUrl: Env.baseUrl));
+  runApp(AanganApp(api: api));
+}
 
-class AanganApp extends StatelessWidget {
-  const AanganApp({super.key});
+class AanganApp extends StatefulWidget {
+  const AanganApp({super.key, required this.api});
+
+  final AanganApi api;
+
+  @override
+  State<AanganApp> createState() => _AanganAppState();
+}
+
+class _AanganAppState extends State<AanganApp> {
+  final _session = SessionState();
+  late final _router = buildRouter(_session);
+
+  @override
+  void initState() {
+    super.initState();
+
+    /// Stands in for `GET /me`.
+    ///
+    /// M9 replaces this with the real resolution: read the bearer token from
+    /// secure storage, call `/me`, and map the actor's role onto a shell —
+    /// `client` to the customer tabs, `professional` to the vendor tabs (via
+    /// the onboarding gate), and staff to a refusal. Until then the app opens
+    /// on the gallery, which is the only thing M8 has to show.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _session.shell = Shell.signedOut;
+      if (Env.showsGallery) _router.go(Routes.gallery);
+    });
+  }
+
+  @override
+  void dispose() {
+    _session.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Aangan',
+    return MaterialApp.router(
+      title: Env.flavour.appName,
       debugShowCheckedModeBanner: false,
       theme: AanganTheme.light,
 
@@ -33,7 +72,7 @@ class AanganApp extends StatelessWidget {
       themeMode: ThemeMode.light,
       darkTheme: AanganTheme.light,
 
-      home: const GalleryScreen(),
+      routerConfig: _router,
     );
   }
 }

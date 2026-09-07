@@ -1,0 +1,55 @@
+// coverage:ignore-file
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, unused_import, invalid_annotation_target, unnecessary_import, unnecessary_cast
+
+import 'package:freezed_annotation/freezed_annotation.dart';
+
+@JsonEnum()
+enum TimelineKind {
+  @JsonValue('created')
+  created('created'),
+  @JsonValue('call')
+  call('call'),
+  @JsonValue('assigned')
+  assigned('assigned'),
+  @JsonValue('quote')
+  quote('quote'),
+  @JsonValue('meeting')
+  meeting('meeting'),
+  @JsonValue('message')
+  message('message'),
+  @JsonValue('selected')
+  selected('selected'),
+  @JsonValue('agreement')
+  agreement('agreement'),
+  @JsonValue('project')
+  project('project'),
+  @JsonValue('stage')
+  stage('stage'),
+  @JsonValue('review')
+  review('review'),
+  /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
+  $unknown(null);
+
+  const TimelineKind(this.json);
+
+  factory TimelineKind.fromJson(String json) => values.firstWhere(
+        (e) => e.json == json,
+        orElse: () => $unknown,
+      );
+
+  final String? json;
+  String toJson() {
+    final value = json;
+    if (value == null) {
+      throw StateError('Cannot convert enum value with null JSON representation to String. '
+          'This usually happens for \$unknown or @JsonValue(null) entries.');
+    }
+    return value as String;
+  }
+
+  @override
+  String toString() => json?.toString() ?? super.toString();
+  /// Returns all defined enum values excluding the $unknown value.
+  static List<TimelineKind> get $valuesDefined => values.where((value) => value != $unknown).toList();
+}

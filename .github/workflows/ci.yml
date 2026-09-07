@@ -1,0 +1,89 @@
+name: CI
+
+# The design system is as much the deliverable as the features at this stage,
+# so analysis and tests run on every package, not only the app.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  FLUTTER_VERSION: "3.41.8"
+
+jobs:
+  analyze:
+    name: Analyze and test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: dart pub global activate melos
+      - run: melos bootstrap
+
+      # The generated client is committed, so this proves the committed code is
+      # what the committed contract produces. A generator nobody runs is worse
+      # than no generator: the stale output still looks authoritative.
+      - name: Regenerating the client changes nothing
+        run: |
+          melos run contract
+          if ! git diff --quiet -- packages/core_api/lib/src/generated; then
+            echo "::error::The generated client is stale. Run 'melos run contract' and commit."
+            git --no-pager diff --stat -- packages/core_api/lib/src/generated
+            exit 1
+          fi
+
+      - run: melos run analyze
+      - run: melos run test
+      - run: melos run test:api
+
+  build:
+    name: Build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: android
+            os: ubuntu-latest
+          - target: ios
+            os: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        if: matrix.target == 'android'
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+          cache: true
+
+      - run: dart pub global activate melos
+      - run: melos bootstrap
+
+      # Debug, and --no-codesign on iOS: this proves the app compiles for both
+      # platforms, which is M8's bar. Signed release builds belong with the
+      # store work in M13, and need secrets this workflow deliberately has not.
+      - name: Build Android
+        if: matrix.target == 'android'
+        working-directory: app
+        run: flutter build apk --debug
+
+      - name: Build iOS
+        if: matrix.target == 'ios'
+        working-directory: app
+        run: flutter build ios --debug --no-codesign

@@ -1,7 +1,6 @@
 .dart_tool/
 .packages
 build/
-pubspec.lock
 *.iml
 .idea/
 .vscode/
@@ -10,3 +9,14 @@ pubspec.lock
 **/ios/Pods/
 **/android/.gradle/
 **/android/local.properties
+
+# Lockfiles are not committed for application packages in a workspace; melos
+# resolves them together.
+pubspec.lock
+
+# The *source* generated files ARE committed — see the CI job that regenerates
+# them and fails on a diff. These are the mechanical derivatives of those, which
+# build_runner recreates deterministically and which would otherwise triple the
+# size of every contract diff.
+*.freezed.dart
+*.g.dart

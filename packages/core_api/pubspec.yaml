@@ -1,0 +1,32 @@
+name: aangan_core_api
+description: Generated models and the typed HTTP client for the Aangan API.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+
+# Deliberately no Flutter dependency.
+#
+# MOBILE.md §4.1: core_api depends on neither Flutter nor design, which is what
+# makes it generatable and testable without a widget tree. If a Flutter import
+# ever appears here, the contract layer has started to know about the UI.
+dependencies:
+  dio: ^5.7.0
+  freezed_annotation: ^3.0.0
+  json_annotation: ^4.12.0
+  meta: ^1.16.0
+  # Retrofit is a dio wrapper, not an alternative to it. MOBILE.md 4.2 picks dio
+  # because interceptors are where session, request id, retry and 401 handling
+  # live once; this adds a typed surface over the same client, so a path or a
+  # method cannot drift from the manifest either.
+  retrofit: ^4.4.2
+
+dev_dependencies:
+  build_runner: ^2.4.13
+  freezed: ^3.0.0
+  json_serializable: ^6.9.0
+  retrofit_generator: ^10.2.9
+  lints: ^6.0.0
+  swagger_parser: ^1.27.0
+  test: ^1.25.0
