@@ -18,6 +18,8 @@ dependencies:
     path: ../packages/core_auth
   aangan_core_upload:
     path: ../packages/core_upload
+  aangan_feature_customer:
+    path: ../packages/feature_customer
   aangan_feature_vendor:
     path: ../packages/feature_vendor
   flutter_riverpod: ^2.6.1

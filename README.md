@@ -10,18 +10,35 @@ web frontends, cannot import their TypeScript, and has its own release cadence.
 
 ## Where this is
 
-**M8 and M9 complete.** What exists:
+**M8 through M11 complete.** What exists:
 
 | | |
 | --- | --- |
-| `packages/design` | Tokens, theme, the shared widgets and the OTP field |
+| `packages/design` | Tokens, theme, shared widgets, the OTP field |
 | `packages/core_api` | 194 generated models, three typed clients, the dio interceptors |
 | `packages/core_auth` | Bearer session in Keychain, OTP sign-in, role resolution, biometric resume |
-| `app` | Flavours, the router and its gates, sign-in, and the component gallery |
+| `packages/core_upload` | Compress, ticket, PUT, and a queue that survives the app closing |
+| `packages/feature_vendor` | Onboarding gate, dashboard, leads, quote builder, visits, stage proof |
+| `packages/feature_customer` | Requirement flow, quote comparison, agreements and signing, progress |
+| `app` | Flavours, the router and its gates, sign-in, the component gallery |
 
-M10 is next, and it is the big one: the vendor shell — the onboarding gate and
-partner agreement, dashboard, leads, the quote builder, relay messages, visits
-with address release, and stage proof with the upload queue.
+M12 is next: push end to end, deep links, an offline read cache, the
+accessibility pass, and `textScale` 1.3 goldens.
+
+### Two things deliberately not built
+
+**The blog and the estimator.** MOBILE.md open question 3 asks whether the
+customer app needs them at all — *"the two largest pieces of M11 with the least
+in-app value; a native blog exists mainly for deep links from search."* That is
+a question for the client, and building them speculatively would be the
+expensive way to find out the answer was no.
+
+**Anything that implies a payment.** Payments are off-platform: terms are
+recorded, not enforced. This matters more than it sounds, because the prototype
+the whole design language came from was built around an escrow service — a
+vault, tranches released by the client, a mediator on call. None of it was
+drawn, and `feature_customer/test/boundaries_test.dart` fails the build if words
+like "escrow" or "release funds" appear anywhere in the shell.
 
 ```bash
 dart pub global activate melos    # once

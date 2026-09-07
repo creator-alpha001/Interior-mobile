@@ -1,9 +1,8 @@
 /// The entrypoint.
 ///
-/// Assembles the pieces and starts resolving who is signed in. The customer
-/// shell is still a placeholder — that is M11 — but the vendor side is real as
-/// of M10: the onboarding gate, leads, the quote builder, visits with address
-/// release, and stage proof with a queue that survives the app closing.
+/// Assembles the pieces and starts resolving who is signed in. Both shells are
+/// real as of M11 — the vendor's leads, quotes, visits and stage proof, and the
+/// customer's requirement flow, quote comparison and signing.
 library;
 
 import 'package:aangan_core_api/aangan_core_api.dart';
@@ -63,10 +62,18 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
   /// it is the failure that loses vendor trust fastest."*
   final _queues = <String, UploadQueue>{};
 
+  /// One queue for requirement photographs, shared across the flow.
+  ///
+  /// Separate from the per-stage queues: a customer attaches photographs once,
+  /// before they even have an account.
+  late final UploadQueue _requirementQueue = UploadQueue(api: widget.api)
+    ..restore();
+
   late final _router = buildRouter(
     auth: widget.auth,
     gate: widget.gate,
     queueFor: _queueFor,
+    requirementQueue: _requirementQueue,
   );
 
   UploadQueue _queueFor(String milestoneId) {
@@ -94,6 +101,7 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
     for (final queue in _queues.values) {
       queue.dispose();
     }
+    _requirementQueue.dispose();
     super.dispose();
   }
 

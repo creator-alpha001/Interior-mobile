@@ -1,0 +1,38 @@
+name: aangan_feature_customer
+description: The customer's shell — requirements, quotes, agreements and projects.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  aangan_core_api:
+    path: ../core_api
+  aangan_core_upload:
+    path: ../core_upload
+  aangan_design:
+    path: ../design
+
+  flutter_riverpod: ^2.6.1
+
+  # The requirement flow attaches photographs before the person has an account.
+  image_picker: ^1.1.2
+
+  # The draft survives the app closing. See requirement_flow.dart.
+  shared_preferences: ^2.3.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  dio: ^5.7.0
+
+flutter:
+  uses-material-design: true
+
+# feature_vendor is deliberately NOT a dependency, and never will be.
+# test/boundaries_test.dart asserts it.

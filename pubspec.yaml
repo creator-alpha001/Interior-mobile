@@ -17,6 +17,7 @@ workspace:
   - packages/core_api
   - packages/core_auth
   - packages/core_upload
+  - packages/feature_customer
   - packages/feature_vendor
 
 dev_dependencies:

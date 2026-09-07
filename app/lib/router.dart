@@ -12,6 +12,8 @@ library;
 
 import 'package:aangan_core_auth/aangan_core_auth.dart';
 import 'package:aangan_core_upload/aangan_core_upload.dart';
+import 'package:aangan_feature_customer/aangan_feature_customer.dart'
+    hide apiProvider;
 import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
@@ -36,6 +38,7 @@ GoRouter buildRouter({
   required AuthController auth,
   required BiometricGate gate,
   required UploadQueue Function(String milestoneId) queueFor,
+  required UploadQueue requirementQueue,
 }) {
   return GoRouter(
     initialLocation: Routes.splash,
@@ -106,7 +109,14 @@ GoRouter buildRouter({
       ),
       GoRoute(
         path: Routes.customerHome,
-        builder: (context, state) => _Placeholder('Customer shell', 'M11', auth: auth),
+        builder: (context, state) => CustomerShell(
+          queue: requirementQueue,
+          isSignedIn: () => auth.shell == Shell.customer,
+          // The requirement flow can reach step 6 with no session at all —
+          // that is the point of it. Verification happens here, and only then.
+          verify: (context) async => auth.shell == Shell.customer,
+          onSignOut: auth.signOut,
+        ),
       ),
       /// Both vendor states land on the same widget.
       ///
@@ -220,53 +230,6 @@ class _StaffRefused extends StatelessWidget {
               TextButton(onPressed: auth.signOut, child: const Text('Sign out')),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-/// A shell that a later milestone fills in.
-class _Placeholder extends StatelessWidget {
-  const _Placeholder(this.title, this.milestone, {required this.auth});
-
-  final String title;
-  final String milestone;
-  final AuthController auth;
-
-  @override
-  Widget build(BuildContext context) {
-    final user = auth.user;
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-        actions: [
-          TextButton(onPressed: auth.signOut, child: const Text('Sign out')),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(Space.gutter),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            StatusPill(milestone, tone: StatusTone.waiting),
-            const SizedBox(height: Space.md),
-            if (user != null) ...[
-              Text('Signed in as ${user.name}', style: context.text.headlineSmall),
-              // Their own number, which is the only one this app ever shows.
-              // Anybody else's is a MaskedClientSummary, which has no field
-              // capable of carrying one.
-              Text(
-                user.mobile,
-                style: context.text.bodyMedium?.copyWith(
-                  color: context.colors.onSurfaceVariant,
-                ),
-              ),
-              const SizedBox(height: Space.md),
-            ],
-            Text('$title arrives in $milestone.', style: context.text.bodyLarge),
-          ],
         ),
       ),
     );

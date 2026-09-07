@@ -37,7 +37,7 @@ Future<(AuthController, StubApi)> _pump(
       overrides: [apiProvider.overrideWithValue(client)],
       child: MaterialApp.router(
         theme: AanganTheme.light,
-        routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue),
+        routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
       ),
     ),
   );
@@ -77,7 +77,7 @@ void main() {
         overrides: [apiProvider.overrideWithValue(client)],
         child: MaterialApp.router(
           theme: AanganTheme.light,
-          routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue),
+          routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
         ),
       ),
     );
@@ -102,11 +102,16 @@ void main() {
     await _pump(
       tester,
       token: 'sess-customer',
-      stub: (api) => api.on('GET', '/me', sessionUser(role: 'client')),
+      stub: (api) => api
+        ..on('GET', '/me', sessionUser(role: 'client'))
+        ..on('GET', '/domains', <Object>[])
+        ..on('GET', '/me/requirements', <Object>[]),
     );
 
-    expect(find.text('Customer shell'), findsWidgets);
-    expect(find.text('Signed in as Priya Sharma'), findsOneWidget);
+    // The five customer tabs, not the vendor's.
+    expect(find.text('HOME'), findsOneWidget);
+    expect(find.text('JOBS'), findsOneWidget);
+    expect(find.text('DASHBOARD'), findsNothing);
   });
 
   testWidgets('a professional lands on the onboarding gate, not a dashboard',
@@ -172,9 +177,12 @@ void main() {
     final (auth, api) = await _pump(
       tester,
       token: 'sess-customer',
-      stub: (api) => api.on('GET', '/me', sessionUser(role: 'client')),
+      stub: (api) => api
+        ..on('GET', '/me', sessionUser(role: 'client'))
+        ..on('GET', '/domains', <Object>[])
+        ..on('GET', '/me/requirements', <Object>[]),
     );
-    expect(find.text('Customer shell'), findsWidgets);
+    expect(find.text('HOME'), findsOneWidget);
 
     // The next request 401s, as it would for a suspended vendor.
     api.on('GET', '/me', {'code': 'not_authenticated', 'message': 'no'}, status: 401);
@@ -199,6 +207,6 @@ void main() {
     );
 
     expect(find.text('Send code'), findsOneWidget);
-    expect(find.text('Customer shell'), findsNothing);
+    expect(find.text('HOME'), findsNothing);
   });
 }
