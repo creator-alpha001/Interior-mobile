@@ -13,14 +13,14 @@ part 'domain_slice.g.dart';
 abstract class DomainSlice with _$DomainSlice {
   const factory DomainSlice({
     required Domain domain,
-    required num leads,
-    required num quoted,
-    required num won,
+    required int leads,
+    required int quoted,
+    required int won,
     required int revenue,
     required int commission,
     required int avgTicket,
     required num conversionPercent,
-    required num vendors,
+    required int vendors,
   }) = _DomainSlice;
   
   factory DomainSlice.fromJson(Map<String, Object?> json) => _$DomainSliceFromJson(json);

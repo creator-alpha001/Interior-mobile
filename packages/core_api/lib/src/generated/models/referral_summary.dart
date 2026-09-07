@@ -14,9 +14,9 @@ abstract class ReferralSummary with _$ReferralSummary {
   const factory ReferralSummary({
     required String code,
     required String shareUrl,
-    required num invited,
-    required num earned,
-    required num pending,
+    required int invited,
+    required int earned,
+    required int pending,
     required int rewardPerReferral,
     required List<ReferralEntry> referrals,
   }) = _ReferralSummary;

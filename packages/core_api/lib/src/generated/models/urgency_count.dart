@@ -13,7 +13,7 @@ part 'urgency_count.g.dart';
 abstract class UrgencyCount with _$UrgencyCount {
   const factory UrgencyCount({
     required Urgency urgency,
-    required num count,
+    required int count,
   }) = _UrgencyCount;
   
   factory UrgencyCount.fromJson(Map<String, Object?> json) => _$UrgencyCountFromJson(json);

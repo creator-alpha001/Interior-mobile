@@ -18,7 +18,7 @@ abstract class InvoiceRow with _$InvoiceRow {
     required String agreementReference,
     required List<String> domains,
     required bool isCombined,
-    required num daysOverdue,
+    required int daysOverdue,
   }) = _InvoiceRow;
   
   factory InvoiceRow.fromJson(Map<String, Object?> json) => _$InvoiceRowFromJson(json);

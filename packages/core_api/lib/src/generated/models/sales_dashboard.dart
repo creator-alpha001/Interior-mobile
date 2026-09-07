@@ -14,12 +14,12 @@ part 'sales_dashboard.g.dart';
 abstract class SalesDashboard with _$SalesDashboard {
   const factory SalesDashboard({
     required String agentName,
-    required num target,
-    required num newLeads,
-    required num needsAssignment,
-    required num awaitingReply,
-    required num followUpsDue,
-    required num visitsToday,
+    required int target,
+    required int newLeads,
+    required int needsAssignment,
+    required int awaitingReply,
+    required int followUpsDue,
+    required int visitsToday,
     required List<UrgencyCount> byUrgency,
     required List<DomainCount> byDomain,
   }) = _SalesDashboard;

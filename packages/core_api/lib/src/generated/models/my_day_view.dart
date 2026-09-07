@@ -14,15 +14,15 @@ part 'my_day_view.g.dart';
 abstract class MyDayView with _$MyDayView {
   const factory MyDayView({
     required String agentName,
-    required num target,
+    required int target,
     required List<OpsLeadRow> live,
     required List<OpsLeadRow> awaitingReply,
     required List<OpsLeadRow> needsAssignment,
     required List<OpsLeadRow> followUpsDue,
     required List<OpsLeadRow> neverCalled,
     required List<OpsLeadRow> stalled,
-    required num visitsToday,
-    required num visitsNeedingOutcome,
+    required int visitsToday,
+    required int visitsNeedingOutcome,
     required CommissionSummary commission,
   }) = _MyDayView;
   

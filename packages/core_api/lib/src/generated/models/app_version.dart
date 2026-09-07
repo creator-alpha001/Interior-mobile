@@ -10,7 +10,7 @@ part 'app_version.g.dart';
 @Freezed()
 abstract class AppVersion with _$AppVersion {
   const factory AppVersion({
-    required num minBuild,
+    required int minBuild,
     required String message,
   }) = _AppVersion;
   

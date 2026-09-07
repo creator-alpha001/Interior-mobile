@@ -25,7 +25,7 @@ abstract class LeadDomainView with _$LeadDomainView {
     required List<MeetingView> meetings,
     required List<LeadDomainItem> items,
     required ProfessionalSummary? selectedProfessional,
-    required num unreadMessages,
+    required int unreadMessages,
   }) = _LeadDomainView;
   
   factory LeadDomainView.fromJson(Map<String, Object?> json) => _$LeadDomainViewFromJson(json);

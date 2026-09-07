@@ -33,8 +33,8 @@ abstract class VendorLeadCard with _$VendorLeadCard {
     required int? budgetMax,
     required Quote? myQuote,
     required List<Meeting> visits,
-    required num unreadMessages,
-    required num competingQuotes,
+    required int unreadMessages,
+    required int competingQuotes,
     required bool won,
     required bool lost,
   }) = _VendorLeadCard;

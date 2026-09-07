@@ -11,8 +11,8 @@ part 'catalogue_count.g.dart';
 abstract class CatalogueCount with _$CatalogueCount {
   const factory CatalogueCount({
     required String domainId,
-    required num products,
-    required num packages,
+    required int products,
+    required int packages,
   }) = _CatalogueCount;
   
   factory CatalogueCount.fromJson(Map<String, Object?> json) => _$CatalogueCountFromJson(json);

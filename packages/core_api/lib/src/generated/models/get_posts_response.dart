@@ -14,7 +14,7 @@ abstract class GetPostsResponse with _$GetPostsResponse {
   const factory GetPostsResponse({
     required List<BlogPostView> items,
     required String? nextCursor,
-    required num total,
+    required int total,
   }) = _GetPostsResponse;
   
   factory GetPostsResponse.fromJson(Map<String, Object?> json) => _$GetPostsResponseFromJson(json);

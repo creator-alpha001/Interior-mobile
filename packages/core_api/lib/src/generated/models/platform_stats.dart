@@ -10,9 +10,9 @@ part 'platform_stats.g.dart';
 @Freezed()
 abstract class PlatformStats with _$PlatformStats {
   const factory PlatformStats({
-    required num professionals,
-    required num projects,
-    required num cities,
+    required int professionals,
+    required int projects,
+    required int cities,
     required num avgRating,
   }) = _PlatformStats;
   

@@ -14,10 +14,10 @@ abstract class DomainPerformance with _$DomainPerformance {
   const factory DomainPerformance({
     required Domain domain,
     required num rating,
-    required num ratingCount,
-    required num completed,
-    required num won,
-    required num lost,
+    required int ratingCount,
+    required int completed,
+    required int won,
+    required int lost,
     required num winRatePercent,
     required num commissionPercent,
   }) = _DomainPerformance;

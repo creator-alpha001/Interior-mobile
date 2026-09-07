@@ -22,7 +22,7 @@ abstract class Banner with _$Banner {
     required String? domainId,
     required List<String> cityIds,
     required bool isActive,
-    required num sortOrder,
+    required int sortOrder,
   }) = _Banner;
   
   factory Banner.fromJson(Map<String, Object?> json) => _$BannerFromJson(json);

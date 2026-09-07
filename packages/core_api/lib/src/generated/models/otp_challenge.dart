@@ -11,7 +11,7 @@ part 'otp_challenge.g.dart';
 abstract class OtpChallenge with _$OtpChallenge {
   const factory OtpChallenge({
     required String challengeId,
-    required num expiresInSeconds,
+    required int expiresInSeconds,
     String? devCode,
   }) = _OtpChallenge;
   

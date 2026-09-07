@@ -10,6 +10,7 @@
 /// one that mattered.
 library;
 
+import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:aangan_core_auth/aangan_core_auth.dart';
 import 'package:aangan_core_upload/aangan_core_upload.dart';
 import 'package:aangan_feature_customer/aangan_feature_customer.dart'
@@ -21,6 +22,7 @@ import 'package:go_router/go_router.dart';
 
 import 'env.dart';
 import 'gallery.dart';
+import 'screens/delete_account.dart';
 import 'screens/sign_in.dart';
 
 abstract final class Routes {
@@ -32,9 +34,13 @@ abstract final class Routes {
   static const vendorDashboard = '/vendor';
   static const vendorOnboarding = '/vendor/onboarding';
   static const gallery = '/_gallery';
+
+  /// Both stores require account deletion to be reachable from inside the app.
+  static const deleteAccount = '/account/close';
 }
 
 GoRouter buildRouter({
+  required AanganApi api,
   required AuthController auth,
   required BiometricGate gate,
   required UploadQueue Function(String milestoneId) queueFor,
@@ -52,6 +58,12 @@ GoRouter buildRouter({
       // it renders components, not anybody's data.
       if (location == Routes.gallery) {
         return Env.showsGallery ? null : Routes.splash;
+      }
+
+      // Reachable from either shell while signed in. Bouncing somebody back to
+      // a tab here would make the screen the stores require unreachable.
+      if (location == Routes.deleteAccount) {
+        return auth.shell == Shell.signedOut ? Routes.signIn : null;
       }
 
       /// The biometric lock sits above everything, including the shells.
@@ -133,6 +145,13 @@ GoRouter buildRouter({
         path: Routes.vendorDashboard,
         builder: (context, state) =>
             VendorHome(queueFor: queueFor, onSignOut: auth.signOut),
+      ),
+      GoRoute(
+        path: Routes.deleteAccount,
+        builder: (context, state) => DeleteAccountScreen(
+          api: api,
+          onClosed: auth.signOut,
+        ),
       ),
       GoRoute(path: Routes.gallery, builder: (context, state) => const GalleryScreen()),
     ],

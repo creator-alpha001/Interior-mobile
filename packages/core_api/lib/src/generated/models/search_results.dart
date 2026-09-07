@@ -16,7 +16,7 @@ part 'search_results.g.dart';
 abstract class SearchResults with _$SearchResults {
   const factory SearchResults({
     required String query,
-    required num total,
+    required int total,
     required List<ProductView> products,
     required List<PackageView> packages,
     required List<ProfessionalSummary> professionals,

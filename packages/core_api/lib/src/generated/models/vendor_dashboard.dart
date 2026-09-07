@@ -16,15 +16,15 @@ abstract class VendorDashboard with _$VendorDashboard {
     required Professional professional,
     required String displayName,
     required List<ProfessionalDomainLink> domains,
-    required num newLeads,
-    required num awaitingQuote,
-    required num quotesOut,
-    required num wonThisPeriod,
-    required num liveProjects,
-    required num visitsToday,
+    required int newLeads,
+    required int awaitingQuote,
+    required int quotesOut,
+    required int wonThisPeriod,
+    required int liveProjects,
+    required int visitsToday,
     required int commissionDue,
     required int commissionOverdue,
-    required num unreadMessages,
+    required int unreadMessages,
   }) = _VendorDashboard;
   
   factory VendorDashboard.fromJson(Map<String, Object?> json) => _$VendorDashboardFromJson(json);

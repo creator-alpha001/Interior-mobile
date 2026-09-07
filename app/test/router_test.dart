@@ -37,7 +37,7 @@ Future<(AuthController, StubApi)> _pump(
       overrides: [apiProvider.overrideWithValue(client)],
       child: MaterialApp.router(
         theme: AanganTheme.light,
-        routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
+        routerConfig: buildRouter(api: client, auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
       ),
     ),
   );
@@ -77,7 +77,7 @@ void main() {
         overrides: [apiProvider.overrideWithValue(client)],
         child: MaterialApp.router(
           theme: AanganTheme.light,
-          routerConfig: buildRouter(auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
+          routerConfig: buildRouter(api: client, auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
         ),
       ),
     );

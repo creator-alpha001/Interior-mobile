@@ -14,7 +14,7 @@ abstract class GetProfessionalsResponse with _$GetProfessionalsResponse {
   const factory GetProfessionalsResponse({
     required List<ProfessionalSummary> items,
     required String? nextCursor,
-    required num total,
+    required int total,
   }) = _GetProfessionalsResponse;
   
   factory GetProfessionalsResponse.fromJson(Map<String, Object?> json) => _$GetProfessionalsResponseFromJson(json);

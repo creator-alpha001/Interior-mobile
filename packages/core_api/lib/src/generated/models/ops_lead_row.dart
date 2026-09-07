@@ -17,9 +17,9 @@ abstract class OpsLeadRow with _$OpsLeadRow {
     required String? agentName,
     required LeadSalesActivity? lastActivity,
     required String? followUpDate,
-    required num unassignedDomains,
-    required num awaitingReply,
-    required num ageDays,
+    required int unassignedDomains,
+    required int awaitingReply,
+    required int ageDays,
   }) = _OpsLeadRow;
   
   factory OpsLeadRow.fromJson(Map<String, Object?> json) => _$OpsLeadRowFromJson(json);

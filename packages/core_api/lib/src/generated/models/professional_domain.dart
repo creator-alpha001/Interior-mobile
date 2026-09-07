@@ -21,8 +21,8 @@ abstract class ProfessionalDomain with _$ProfessionalDomain {
     required DomainApprovalStatus verificationStatus,
     required num? commissionPercentOverride,
     required num avgRating,
-    required num ratingCount,
-    required num completedProjects,
+    required int ratingCount,
+    required int completedProjects,
   }) = _ProfessionalDomain;
   
   factory ProfessionalDomain.fromJson(Map<String, Object?> json) => _$ProfessionalDomainFromJson(json);

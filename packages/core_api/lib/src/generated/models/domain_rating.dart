@@ -12,7 +12,7 @@ abstract class DomainRating with _$DomainRating {
   const factory DomainRating({
     required String domainId,
     required num avgRating,
-    required num ratingCount,
+    required int ratingCount,
   }) = _DomainRating;
   
   factory DomainRating.fromJson(Map<String, Object?> json) => _$DomainRatingFromJson(json);

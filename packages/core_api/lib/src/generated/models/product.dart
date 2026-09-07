@@ -27,7 +27,7 @@ abstract class Product with _$Product {
     required List<MediaAsset> media,
     required int basePrice,
     required PriceUnit priceUnit,
-    required num leadTimeDays,
+    required int leadTimeDays,
     required bool isCustomisable,
     required Map<String, String> specs,
     required List<ProductOption> options,
@@ -35,7 +35,7 @@ abstract class Product with _$Product {
     required bool isFeatured,
     required bool isActive,
     required num rating,
-    required num ratingCount,
+    required int ratingCount,
   }) = _Product;
   
   factory Product.fromJson(Map<String, Object?> json) => _$ProductFromJson(json);

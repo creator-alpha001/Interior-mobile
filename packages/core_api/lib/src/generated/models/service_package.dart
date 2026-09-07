@@ -24,7 +24,7 @@ abstract class ServicePackage with _$ServicePackage {
     required List<MediaAsset> media,
     required int price,
     required String priceBasis,
-    required num durationDays,
+    required int durationDays,
     required List<String> inclusions,
     required List<String> exclusions,
     required bool isFeatured,

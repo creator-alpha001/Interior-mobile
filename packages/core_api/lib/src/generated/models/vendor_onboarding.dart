@@ -16,8 +16,8 @@ abstract class VendorOnboarding with _$VendorOnboarding {
   const factory VendorOnboarding({
     required String professionalId,
     required List<OnboardingStep> steps,
-    required num completedCount,
-    required num totalCount,
+    required int completedCount,
+    required int totalCount,
     required bool canReceiveLeads,
     required String? blockedReason,
     required PartnerAgreement? agreement,

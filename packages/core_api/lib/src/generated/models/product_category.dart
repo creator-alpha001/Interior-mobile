@@ -20,7 +20,7 @@ abstract class ProductCategory with _$ProductCategory {
     required String slug,
     required String description,
     required String? imageUrl,
-    required num sortOrder,
+    required int sortOrder,
     required bool isActive,
   }) = _ProductCategory;
   

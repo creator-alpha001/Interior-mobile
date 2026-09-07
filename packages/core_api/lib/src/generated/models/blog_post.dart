@@ -28,7 +28,7 @@ abstract class BlogPost with _$BlogPost {
     required String? domainId,
     required BlogPostStatus status,
     required String? publishedAt,
-    required num readingMinutes,
+    required int readingMinutes,
     required String seoTitle,
     required String seoDescription,
     required String? ogImageUrl,

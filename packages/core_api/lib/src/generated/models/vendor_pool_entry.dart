@@ -15,7 +15,7 @@ abstract class VendorPoolEntry with _$VendorPoolEntry {
     required ProfessionalSummary professional,
     required bool isAssigned,
     required bool isPreferred,
-    required num activeLoad,
+    required int activeLoad,
   }) = _VendorPoolEntry;
   
   factory VendorPoolEntry.fromJson(Map<String, Object?> json) => _$VendorPoolEntryFromJson(json);

@@ -5,6 +5,7 @@
 /// customer's requirement flow, quote comparison and signing.
 library;
 
+import 'dart:async';
 import 'dart:io';
 
 import 'package:aangan_core_api/aangan_core_api.dart';
@@ -19,6 +20,7 @@ import 'package:path_provider/path_provider.dart';
 
 import 'env.dart';
 import 'router.dart';
+import 'version_gate.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -57,12 +59,21 @@ Future<void> main() async {
   final gate = BiometricGate();
   await gate.load();
 
+  /// The forced upgrade, checked before anything else is drawn.
+  ///
+  /// Deliberately not awaited into a blocking splash: `check()` fails silently
+  /// if the server cannot be reached, so the app opens either way. An upgrade
+  /// gate that locks people out because the *server* is down is a worse outage
+  /// than the bug it guards against.
+  final version = VersionGate(api: api);
+  unawaited(version.check());
+
   runApp(
     ProviderScope(
       // The feature packages read the client from here rather than being handed
       // it down a widget tree, which is what lets a test swap the transport.
       overrides: [apiProvider.overrideWithValue(api)],
-      child: AanganApp(api: api, auth: auth, gate: gate),
+      child: AanganApp(api: api, auth: auth, gate: gate, version: version),
     ),
   );
 }
@@ -73,11 +84,13 @@ class AanganApp extends StatefulWidget {
     required this.api,
     required this.auth,
     required this.gate,
+    required this.version,
   });
 
   final AanganApi api;
   final AuthController auth;
   final BiometricGate gate;
+  final VersionGate version;
 
   @override
   State<AanganApp> createState() => _AanganAppState();
@@ -101,6 +114,7 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
     ..restore();
 
   late final _router = buildRouter(
+    api: widget.api,
     auth: widget.auth,
     gate: widget.gate,
     queueFor: _queueFor,
@@ -178,15 +192,27 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
       ///
       /// Staleness is a property of the connection rather than of any one list,
       /// so it is drawn once here instead of being reimplemented per screen.
-      builder: (context, child) => Column(
-        children: [
-          StreamBuilder<DateTime?>(
-            stream: widget.api.cache?.status.changes,
-            initialData: widget.api.cache?.status.servingSince,
-            builder: (context, snapshot) => StaleBanner(since: snapshot.data),
-          ),
-          Expanded(child: child ?? const SizedBox.shrink()),
-        ],
+      builder: (context, child) => AnimatedBuilder(
+        animation: widget.version,
+        builder: (context, _) {
+          /// A blocked build shows one screen and nothing else — not even
+          /// sign-in. There is no dismiss and no "later": a build below the
+          /// floor is one the platform has decided must not talk to the API.
+          if (widget.version.isBlocked) {
+            return UpgradeRequiredScreen(message: widget.version.message);
+          }
+
+          return Column(
+            children: [
+              StreamBuilder<DateTime?>(
+                stream: widget.api.cache?.status.changes,
+                initialData: widget.api.cache?.status.servingSince,
+                builder: (context, snapshot) => StaleBanner(since: snapshot.data),
+              ),
+              Expanded(child: child ?? const SizedBox.shrink()),
+            ],
+          );
+        },
       ),
     );
   }

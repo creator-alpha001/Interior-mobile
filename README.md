@@ -10,7 +10,7 @@ web frontends, cannot import their TypeScript, and has its own release cadence.
 
 ## Where this is
 
-**M8 through M12 complete.** What exists:
+**M8 through M13 complete.** What exists:
 
 | | |
 | --- | --- |
@@ -23,9 +23,15 @@ web frontends, cannot import their TypeScript, and has its own release cadence.
 | `packages/feature_customer` | Requirement flow, quote comparison, agreements and signing, progress |
 | `app` | Flavours, the router and its gates, sign-in, the component gallery |
 
-M13 is next, and most of it is account-level rather than code: store listings,
-screenshots, review demo accounts, privacy manifests, forced upgrade and a
-staged rollout.
+The code is done. **`RELEASE.md` is what remains**, and almost none of it is
+code: developer accounts, DLT registration, an R2 bucket, a Firebase project,
+screenshots, and the store forms.
+
+**Bundle the fonts first.** Newsreader and Manrope are named throughout
+`typography.dart` but the files are not in the repository, so every screen
+renders in Roboto and the app does not look like the design at all. Screenshots
+and the golden baselines are both blocked behind them, and they are an
+afternoon's work.
 
 ### What M12 left short, deliberately
 

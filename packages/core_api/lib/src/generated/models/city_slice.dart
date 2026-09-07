@@ -11,7 +11,7 @@ part 'city_slice.g.dart';
 abstract class CitySlice with _$CitySlice {
   const factory CitySlice({
     required String cityName,
-    required num leads,
+    required int leads,
     required int revenue,
   }) = _CitySlice;
   

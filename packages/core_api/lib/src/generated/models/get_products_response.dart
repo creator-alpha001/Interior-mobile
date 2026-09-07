@@ -14,7 +14,7 @@ abstract class GetProductsResponse with _$GetProductsResponse {
   const factory GetProductsResponse({
     required List<ProductView> items,
     required String? nextCursor,
-    required num total,
+    required int total,
   }) = _GetProductsResponse;
   
   factory GetProductsResponse.fromJson(Map<String, Object?> json) => _$GetProductsResponseFromJson(json);

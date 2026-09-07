@@ -14,8 +14,8 @@ abstract class CommissionSummary with _$CommissionSummary {
   const factory CommissionSummary({
     required int pending,
     required int overdue,
-    required num overdueCount,
-    required num dueSoonCount,
+    required int overdueCount,
+    required int dueSoonCount,
     required List<CommissionFocusRow> rows,
   }) = _CommissionSummary;
   

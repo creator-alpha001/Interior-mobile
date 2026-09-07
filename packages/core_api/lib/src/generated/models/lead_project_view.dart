@@ -20,9 +20,9 @@ abstract class LeadProjectView with _$LeadProjectView {
     required String professionalId,
     required String status,
     required num completionPercent,
-    required num approvedStages,
-    required num totalStages,
-    required num awaitingReview,
+    required int approvedStages,
+    required int totalStages,
+    required int awaitingReview,
     required String? currentStage,
     required List<ProjectMilestone> milestones,
   }) = _LeadProjectView;

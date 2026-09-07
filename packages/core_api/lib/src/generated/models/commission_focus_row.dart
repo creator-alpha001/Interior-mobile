@@ -17,7 +17,7 @@ abstract class CommissionFocusRow with _$CommissionFocusRow {
     required int amount,
     required String dueDate,
     required String status,
-    required num daysOverdue,
+    required int daysOverdue,
     required List<String> domains,
   }) = _CommissionFocusRow;
   

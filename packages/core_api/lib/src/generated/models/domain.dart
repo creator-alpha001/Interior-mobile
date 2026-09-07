@@ -24,7 +24,7 @@ abstract class Domain with _$Domain {
     required String? bannerUrl,
     required num defaultCommissionPercent,
     required bool isActive,
-    required num sortOrder,
+    required int sortOrder,
     required DomainLabels labels,
   }) = _Domain;
   

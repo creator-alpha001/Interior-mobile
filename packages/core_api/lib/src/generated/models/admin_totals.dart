@@ -10,15 +10,15 @@ part 'admin_totals.g.dart';
 @Freezed()
 abstract class AdminTotals with _$AdminTotals {
   const factory AdminTotals({
-    required num leads,
-    required num activeLeads,
-    required num vendors,
-    required num pendingVerification,
+    required int leads,
+    required int activeLeads,
+    required int vendors,
+    required int pendingVerification,
     required int revenue,
     required int commissionBilled,
     required int commissionPending,
     required int commissionOverdue,
-    required num openTickets,
+    required int openTickets,
   }) = _AdminTotals;
   
   factory AdminTotals.fromJson(Map<String, Object?> json) => _$AdminTotalsFromJson(json);
