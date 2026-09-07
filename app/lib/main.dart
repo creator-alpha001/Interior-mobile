@@ -1,60 +1,75 @@
 /// The entrypoint.
 ///
-/// M8 wires the pieces together and stops there: the design system, the API
-/// client, the router and its gates all exist, and the screens behind them do
-/// not. `SessionState` is still set by hand rather than by `GET /me` — that,
-/// and the OTP flow that produces a token, are M9.
-///
-/// The gallery is reachable at `/_gallery` in non-production builds, which is
-/// what M8's "done when" asks for: the component gallery renders every state.
+/// Assembles the four pieces and starts resolving who is signed in. The shells
+/// behind the router are still placeholders — M10 and M11 fill them — but
+/// everything in front of them is real: a bearer session in Keychain, the OTP
+/// flow, the role gates, and a biometric lock on resume.
 library;
 
 import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:aangan_core_auth/aangan_core_auth.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 
 import 'env.dart';
 import 'router.dart';
 
-void main() {
-  final api = AanganApi(ApiConfig(baseUrl: Env.baseUrl));
-  runApp(AanganApp(api: api));
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final session = SecureSessionStore();
+  final api = AanganApi(ApiConfig(baseUrl: Env.baseUrl), session: session);
+  final auth = AuthController(api: api, session: session);
+  final gate = BiometricGate();
+
+  await gate.load();
+
+  runApp(AanganApp(auth: auth, gate: gate));
 }
 
 class AanganApp extends StatefulWidget {
-  const AanganApp({super.key, required this.api});
+  const AanganApp({super.key, required this.auth, required this.gate});
 
-  final AanganApi api;
+  final AuthController auth;
+  final BiometricGate gate;
 
   @override
   State<AanganApp> createState() => _AanganAppState();
 }
 
-class _AanganAppState extends State<AanganApp> {
-  final _session = SessionState();
-  late final _router = buildRouter(_session);
+class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
+  late final _router = buildRouter(auth: widget.auth, gate: widget.gate);
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
 
-    /// Stands in for `GET /me`.
-    ///
-    /// M9 replaces this with the real resolution: read the bearer token from
-    /// secure storage, call `/me`, and map the actor's role onto a shell —
-    /// `client` to the customer tabs, `professional` to the vendor tabs (via
-    /// the onboarding gate), and staff to a refusal. Until then the app opens
-    /// on the gallery, which is the only thing M8 has to show.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _session.shell = Shell.signedOut;
-      if (Env.showsGallery) _router.go(Routes.gallery);
-    });
+    // Ask `GET /me` immediately. Until it answers the router holds the splash,
+    // rather than flashing sign-in at somebody who is already signed in.
+    widget.auth.resolve();
   }
 
   @override
   void dispose() {
-    _session.dispose();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // The lock is on *resume*, not on the session. `paused` covers both
+    // backgrounding and the app switcher, which is where a shoulder-surfer
+    // sees a vendor's pipeline.
+    switch (state) {
+      case AppLifecycleState.paused:
+      case AppLifecycleState.hidden:
+        widget.gate.onPaused();
+      case AppLifecycleState.resumed:
+      case AppLifecycleState.inactive:
+      case AppLifecycleState.detached:
+        break;
+    }
   }
 
   @override

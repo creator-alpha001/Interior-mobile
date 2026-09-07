@@ -14,11 +14,16 @@ dependencies:
     path: ../packages/design
   aangan_core_api:
     path: ../packages/core_api
+  aangan_core_auth:
+    path: ../packages/core_auth
   go_router: ^14.6.2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # Used by the test stub adapter only. core_api re-exports the models but not
+  # dio itself, and a test that installs an HttpClientAdapter needs the type.
+  dio: ^5.7.0
   flutter_lints: ^6.0.0
 
 flutter:

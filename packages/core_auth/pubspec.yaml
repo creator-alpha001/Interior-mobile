@@ -1,0 +1,30 @@
+name: aangan_core_auth
+description: Session, OTP sign-in, secure storage and role resolution.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  aangan_core_api:
+    path: ../core_api
+
+  # Keychain on iOS, Keystore on Android. Never shared_preferences: a session
+  # token in plain preferences is readable by anything with filesystem access
+  # on a rooted or jailbroken device.
+  flutter_secure_storage: ^9.2.4
+
+  # Preferences that are not secrets — whether biometric resume is on.
+  shared_preferences: ^2.3.5
+
+  # Gates the UI on resume, never the session itself. See BiometricGate.
+  local_auth: ^2.3.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0

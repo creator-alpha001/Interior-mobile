@@ -10,16 +10,18 @@ web frontends, cannot import their TypeScript, and has its own release cadence.
 
 ## Where this is
 
-**M8 — Foundation. Complete.** What exists:
+**M8 and M9 complete.** What exists:
 
 | | |
 | --- | --- |
-| `packages/design` | Tokens, theme and the shared widgets. Complete for the components drawn so far |
-| `packages/core_api` | 194 generated models, three typed clients, and the dio interceptors |
-| `app` | Flavours, the router and its gates, and the component gallery |
+| `packages/design` | Tokens, theme, the shared widgets and the OTP field |
+| `packages/core_api` | 194 generated models, three typed clients, the dio interceptors |
+| `packages/core_auth` | Bearer session in Keychain, OTP sign-in, role resolution, biometric resume |
+| `app` | Flavours, the router and its gates, sign-in, and the component gallery |
 
-M9 is next: the bearer session, the OTP screens, secure storage, and replacing
-the hand-set `SessionState` in `main.dart` with a real `GET /me`.
+M10 is next, and it is the big one: the vendor shell — the onboarding gate and
+partner agreement, dashboard, leads, the quote builder, relay messages, visits
+with address release, and stage proof with the upload queue.
 
 ```bash
 dart pub global activate melos    # once
@@ -29,6 +31,24 @@ melos run check                   # analyze + test, every package
 
 To look at the gallery: `cd app && flutter run`, or navigate to `/_gallery` in
 any non-production build.
+
+### Signing in
+
+There is no "Sign up" button anywhere, and that is deliberate: an unrecognised
+number creates a customer account, so signing up and signing in are one action.
+Nothing asks for a name until a code has verified for a number the server has
+not seen.
+
+The six-digit field is **one `TextField` with six boxes drawn over it**, never
+six fields. SMS autofill and a clipboard paste both deliver all six digits to
+whichever field has focus, so six one-character fields keep the first and
+silently drop five — no error, and no way for the person to tell what happened.
+The web shipped that version. `packages/design/lib/src/otp_field.dart` is the
+fix, and four tests hold it in place.
+
+Staff are refused on this path, told why, and pointed at the web panel. Ops and
+admin have no mobile surface, and a valid password that appears to do nothing is
+how a support ticket starts.
 
 ### Flavours
 

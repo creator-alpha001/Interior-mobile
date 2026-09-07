@@ -1,84 +1,68 @@
 /// The router, and the one `redirect` that owns the gates.
 ///
-/// A skeleton at M8. The shells are placeholders and there is no session yet —
-/// `core_auth` and the real sign-in arrive in M9. What is here already is the
-/// *shape* MOBILE.md §5.2 and §6.2 describe, because the shape is the part that
-/// is expensive to change later:
+/// The shells behind these routes are still placeholders — the customer tabs
+/// are M11 and the vendor tabs are M10 — but the gates in front of them are
+/// real as of M9, driven by `AuthController` and a live `GET /me`.
 ///
-///   - one `redirect` owns both gates, rather than each screen checking
-///   - the role decides the shell, resolved once at launch from `GET /me`
-///   - staff are refused on this path entirely, with a reason and a URL
-///   - an unsigned professional sees the onboarding gate, never an empty
-///     dashboard
-///
-/// The last one is not a detail. An unsigned vendor is in no lead pool however
-/// verified they are, so a dashboard reading "0 leads" is both true and the
-/// worst first impression this app can make. They must see what is missing.
+/// Everything the app gates on lives in this one `redirect`, rather than each
+/// screen checking for itself. A screen that decides its own visibility is a
+/// screen somebody will forget to write, and the one they forget is always the
+/// one that mattered.
 library;
 
+import 'package:aangan_core_auth/aangan_core_auth.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import 'env.dart';
 import 'gallery.dart';
-
-/// What the app knows about who is using it.
-///
-/// Replaced in M9 by the real session, resolved from `GET /me` against a bearer
-/// token in secure storage. Kept deliberately small: the router needs the role
-/// and the onboarding state, and nothing else.
-enum Shell { unknown, signedOut, customer, vendor, vendorOnboarding, staffRefused }
-
-/// Notifies the router when the shell changes, so `redirect` re-runs.
-class SessionState extends ChangeNotifier {
-  Shell _shell = Shell.unknown;
-  Shell get shell => _shell;
-
-  set shell(Shell value) {
-    if (_shell == value) return;
-    _shell = value;
-    notifyListeners();
-  }
-}
+import 'screens/sign_in.dart';
 
 abstract final class Routes {
   static const splash = '/';
   static const signIn = '/sign-in';
   static const staffRefused = '/staff';
+  static const locked = '/locked';
   static const customerHome = '/home';
   static const vendorDashboard = '/vendor';
   static const vendorOnboarding = '/vendor/onboarding';
   static const gallery = '/_gallery';
 }
 
-GoRouter buildRouter(SessionState session) {
+GoRouter buildRouter({required AuthController auth, required BiometricGate gate}) {
   return GoRouter(
     initialLocation: Routes.splash,
-    refreshListenable: session,
+    refreshListenable: Listenable.merge([auth, gate]),
     debugLogDiagnostics: !Env.isProduction,
 
-    /// One redirect, not a check per screen.
-    ///
-    /// Every gate in the app lives here. A screen that decides for itself
-    /// whether the user may see it is a screen somebody will forget to write,
-    /// and the one they forget is always the one that mattered.
     redirect: (context, state) {
       final location = state.matchedLocation;
 
-      // The gallery is a development surface and deliberately outside the
-      // gates — it renders components, not anybody's data.
+      // The gallery is a development surface, deliberately outside the gates —
+      // it renders components, not anybody's data.
       if (location == Routes.gallery) {
         return Env.showsGallery ? null : Routes.splash;
       }
 
-      return switch (session.shell) {
-        // Still asking `GET /me`. Hold on the splash rather than flashing the
-        // sign-in screen at somebody who is already signed in.
-        Shell.unknown => location == Routes.splash ? null : Routes.splash,
+      /// The biometric lock sits above everything, including the shells.
+      ///
+      /// It gates the *UI on resume*, not the session: the token is still in
+      /// Keychain and still valid, and failing the prompt leaves the app locked
+      /// rather than signed out. See BiometricGate.
+      if (gate.locked && auth.shell != Shell.signedOut) {
+        return location == Routes.locked ? null : Routes.locked;
+      }
+      if (!gate.locked && location == Routes.locked) {
+        return Routes.splash;
+      }
 
-        Shell.signedOut =>
-          location == Routes.signIn ? null : Routes.signIn,
+      return switch (auth.shell) {
+        // Still asking `GET /me`. Hold the splash rather than flashing the
+        // sign-in screen at somebody who is already signed in.
+        Shell.resolving => location == Routes.splash ? null : Routes.splash,
+
+        Shell.signedOut => location == Routes.signIn ? null : Routes.signIn,
 
         // Staff have no mobile surface. Say so, and say where to go instead —
         // silently refusing a valid password is how a support ticket starts.
@@ -102,19 +86,30 @@ GoRouter buildRouter(SessionState session) {
 
     routes: [
       GoRoute(path: Routes.splash, builder: (context, state) => const _Splash()),
-      GoRoute(path: Routes.signIn, builder: (context, state) => const _Placeholder('Sign in', 'M9')),
-      GoRoute(path: Routes.staffRefused, builder: (context, state) => const _StaffRefused()),
+      GoRoute(
+        path: Routes.signIn,
+        builder: (context, state) => SignInScreen(auth: auth),
+      ),
+      GoRoute(
+        path: Routes.locked,
+        builder: (context, state) => _Locked(gate: gate, auth: auth),
+      ),
+      GoRoute(
+        path: Routes.staffRefused,
+        builder: (context, state) => _StaffRefused(auth: auth),
+      ),
       GoRoute(
         path: Routes.customerHome,
-        builder: (context, state) => const _Placeholder('Customer shell', 'M11'),
+        builder: (context, state) => _Placeholder('Customer shell', 'M11', auth: auth),
       ),
       GoRoute(
         path: Routes.vendorOnboarding,
-        builder: (context, state) => const _Placeholder('Onboarding gate', 'M10'),
+        builder: (context, state) =>
+            _Placeholder('Onboarding gate', 'M10', auth: auth),
       ),
       GoRoute(
         path: Routes.vendorDashboard,
-        builder: (context, state) => const _Placeholder('Vendor shell', 'M10'),
+        builder: (context, state) => _Placeholder('Vendor shell', 'M10', auth: auth),
       ),
       GoRoute(path: Routes.gallery, builder: (context, state) => const GalleryScreen()),
     ],
@@ -146,21 +141,39 @@ class _Splash extends StatelessWidget {
   }
 }
 
-/// Staff sign in on the web. Refused here, with somewhere to go.
-class _StaffRefused extends StatelessWidget {
-  const _StaffRefused();
+/// The resume lock. Not a sign-out.
+class _Locked extends StatelessWidget {
+  const _Locked({required this.gate, required this.auth});
+
+  final BiometricGate gate;
+  final AuthController auth;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(Space.gutter),
-        child: Center(
-          child: ActionRequired(
-            title: 'Staff sign in on the web',
-            body:
-                'This app is for customers and professionals. Ops and admin work '
-                'from the web panel, which has the tools this one does not.',
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(Space.gutter),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Aangan is locked', style: context.text.headlineLarge),
+              const SizedBox(height: Space.sm),
+              Text(
+                'Your session is still active. Unlock to carry on.',
+                textAlign: TextAlign.center,
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: Space.lg),
+              FilledButton(onPressed: gate.unlock, child: const Text('Unlock')),
+              const SizedBox(height: Space.xs),
+              TextButton(
+                onPressed: auth.signOut,
+                child: const Text('Sign out instead'),
+              ),
+            ],
           ),
         ),
       ),
@@ -168,17 +181,57 @@ class _StaffRefused extends StatelessWidget {
   }
 }
 
-/// A screen that a later milestone fills in.
-class _Placeholder extends StatelessWidget {
-  const _Placeholder(this.title, this.milestone);
+/// Staff sign in on the web. Refused here, with somewhere to go.
+class _StaffRefused extends StatelessWidget {
+  const _StaffRefused({required this.auth});
 
-  final String title;
-  final String milestone;
+  final AuthController auth;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(title)),
+      body: Padding(
+        padding: const EdgeInsets.all(Space.gutter),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const ActionRequired(
+                title: 'Staff sign in on the web',
+                body:
+                    'This app is for customers and professionals. Ops and admin '
+                    'work from the web panel, which has the tools this one does '
+                    'not.',
+              ),
+              const SizedBox(height: Space.md),
+              TextButton(onPressed: auth.signOut, child: const Text('Sign out')),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// A shell that a later milestone fills in.
+class _Placeholder extends StatelessWidget {
+  const _Placeholder(this.title, this.milestone, {required this.auth});
+
+  final String title;
+  final String milestone;
+  final AuthController auth;
+
+  @override
+  Widget build(BuildContext context) {
+    final user = auth.user;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        actions: [
+          TextButton(onPressed: auth.signOut, child: const Text('Sign out')),
+        ],
+      ),
       body: Padding(
         padding: const EdgeInsets.all(Space.gutter),
         child: Column(
@@ -186,6 +239,19 @@ class _Placeholder extends StatelessWidget {
           children: [
             StatusPill(milestone, tone: StatusTone.waiting),
             const SizedBox(height: Space.md),
+            if (user != null) ...[
+              Text('Signed in as ${user.name}', style: context.text.headlineSmall),
+              // Their own number, which is the only one this app ever shows.
+              // Anybody else's is a MaskedClientSummary, which has no field
+              // capable of carrying one.
+              Text(
+                user.mobile,
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: Space.md),
+            ],
             Text('$title arrives in $milestone.', style: context.text.bodyLarge),
           ],
         ),

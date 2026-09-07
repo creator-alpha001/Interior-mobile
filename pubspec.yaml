@@ -15,6 +15,7 @@ workspace:
   - app
   - packages/design
   - packages/core_api
+  - packages/core_auth
 
 dev_dependencies:
   melos: ^7.1.0

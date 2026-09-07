@@ -196,7 +196,6 @@ export 'models/api_problem.dart';
 export 'models/get_products_response.dart';
 export 'models/get_professionals_response.dart';
 export 'models/get_posts_response.dart';
-export 'models/session_user_actor_union.dart';
 export 'models/sort.dart';
 export 'models/actor_admin_role.dart';
 export 'models/actor_client_role.dart';

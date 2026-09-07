@@ -162,3 +162,28 @@ class ApiException implements Exception {
       'ApiException($code, ${statusCode ?? '-'}): $message'
       '${requestId == null ? '' : ' [$requestId]'}';
 }
+
+/// Unwraps dio's exception into the [ApiException] it carries.
+///
+/// Dio always throws `DioException` from a request, whatever an interceptor
+/// puts in its `error` field — so `on ApiException catch` on a bare client call
+/// silently never matches, and the failure escapes as an unhandled async error.
+/// That is not hypothetical: it is what this codebase did until the router
+/// tests hung on it.
+///
+/// Every call through a generated client goes through here, so the rest of the
+/// app only ever handles one exception type.
+///
+/// ```dart
+/// final me = await api.public.me().orThrow();
+/// ```
+extension ApiCall<T> on Future<T> {
+  Future<T> orThrow() async {
+    try {
+      return await this;
+    } on DioException catch (error) {
+      final carried = error.error;
+      throw carried is ApiException ? carried : ApiException.from(error);
+    }
+  }
+}

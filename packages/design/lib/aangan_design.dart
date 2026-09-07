@@ -6,6 +6,7 @@
 library;
 
 export 'src/money.dart';
+export 'src/otp_field.dart';
 export 'src/theme.dart';
 export 'src/tokens.dart';
 export 'src/typography.dart';

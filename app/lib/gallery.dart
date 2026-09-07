@@ -30,6 +30,7 @@ class GalleryScreen extends StatelessWidget {
             _TheActionPanel(),
             _Money(),
             _Controls(),
+            _CodeInput(),
             SizedBox(height: Space.xxxl),
           ],
         ),
@@ -327,6 +328,46 @@ class _Controls extends StatelessWidget {
                 decoration: InputDecoration(
                   labelText: 'Budget ceiling',
                   errorText: 'The lower budget must not exceed the upper one',
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _CodeInput extends StatelessWidget {
+  const _CodeInput();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHead('The code field', eyebrow: 'One field, six boxes'),
+        AanganCard(
+          padding: const EdgeInsets.all(Space.cardPaddingWide),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              OtpField(autofocus: false, onCompleted: (_) {}),
+              const SizedBox(height: Space.lg),
+              const AanganDivider(inset: 0),
+              const SizedBox(height: Space.lg),
+              OtpField(
+                autofocus: false,
+                errorText: 'That code is not right.',
+                onCompleted: (_) {},
+              ),
+              const SizedBox(height: Space.md),
+              Text(
+                'There is one TextField behind those boxes, not six. SMS '
+                'autofill delivers all six digits to whichever field has focus, '
+                'so six fields keep the first and silently drop five.',
+                style: context.text.bodySmall?.copyWith(
+                  color: context.colors.onSurfaceVariant,
                 ),
               ),
             ],
