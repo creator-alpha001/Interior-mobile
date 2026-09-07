@@ -1,0 +1,23 @@
+name: aangan_design
+description: Tokens, theme and shared widgets for the Aangan mobile app.
+publish_to: none
+version: 0.1.0
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # The one non-Flutter dependency: Indian digit grouping is a locale rule, not
+  # a format string, and getting it wrong ships "₹450,000".
+  intl: ^0.20.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

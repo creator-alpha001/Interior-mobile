@@ -1,0 +1,22 @@
+name: aangan_app
+description: The Aangan mobile app — customer and professional in one binary.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.9.0
+  flutter: ">=3.35.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  aangan_design:
+    path: ../packages/design
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true

@@ -1,0 +1,34 @@
+# The melos workspace.
+#
+# Two shells over a shared core, as separate packages, so they cannot quietly
+# fuse. MOBILE.md §2: splitting into two binaries later should be a build
+# flavour and an entrypoint, not a rewrite — which only stays true if
+# feature_customer and feature_vendor never import each other. Enforce that with
+# a dependency lint in CI rather than by asking.
+name: aangan_mobile
+publish_to: none
+
+environment:
+  sdk: ^3.9.0
+
+workspace:
+  - app
+  - packages/design
+
+dev_dependencies:
+  melos: ^7.1.0
+
+melos:
+  scripts:
+    analyze:
+      run: dart analyze --fatal-infos
+      exec:
+        concurrency: 1
+    test:
+      run: flutter test
+      exec:
+        concurrency: 1
+      packageFilters:
+        dirExists: test
+    check:
+      run: melos run analyze && melos run test
