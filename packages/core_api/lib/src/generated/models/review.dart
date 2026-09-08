@@ -18,7 +18,7 @@ abstract class Review with _$Review {
     required String clientId,
     required String professionalId,
     required String domainId,
-    required dynamic rating,
+    required int rating,
     required String comment,
     required num? qualityRating,
     required num? timelinessRating,

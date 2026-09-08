@@ -59,7 +59,8 @@ melos:
         cd packages/core_api &&
         dart run swagger_parser &&
         dart run tool/fix_generated.dart &&
-        dart run build_runner build --delete-conflicting-outputs
+        dart run build_runner build --delete-conflicting-outputs &&
+        dart format lib
 
     check:
       run: melos run analyze && melos run test && melos run test:api
