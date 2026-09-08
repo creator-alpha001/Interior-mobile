@@ -16,6 +16,7 @@ import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'about_screens.dart';
 import 'account_screens.dart';
 import 'agreements_screen.dart';
 import 'blog_screen.dart';
@@ -731,6 +732,27 @@ class _AccountTab extends ConsumerWidget {
               onTap: () => Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (_) => const SupportScreen())),
+            ),
+
+            const SizedBox(height: Space.xs),
+            _Link(
+              title: context.t('How it works'),
+              subtitle: context.t('Seven steps, and who holds the money'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => HowItWorksScreen(onStart: null),
+                ),
+              ),
+            ),
+            const SizedBox(height: Space.xs),
+            _Link(
+              title: context.t('Work with us'),
+              subtitle: context.t('For carpenters, painters and fabricators'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => const JoinAsProfessionalScreen(),
+                ),
+              ),
             ),
 
             /// The language switcher.

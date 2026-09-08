@@ -42,6 +42,13 @@ const hiCustomer = <String, String>{
   'Work counts as done when our team has seen evidence of it — not when somebody says so.':
       'काम तब पूरा गिना जाता है जब हमारी टीम उसका सबूत देख लेती है — तब नहीं जब कोई कह दे।',
 
+  // ---- social proof, and the platform's own figures ----
+  'What people say': 'लोग क्या कहते हैं',
+  'Finished jobs': 'पूरे हुए काम',
+  'Jobs done': 'काम पूरे',
+  'Cities': 'शहर',
+  'Average': 'औसत',
+
   // ---- explore ----
   'Professionals': 'कारीगर',
   'Nobody to show yet': 'अभी दिखाने के लिए कोई नहीं',

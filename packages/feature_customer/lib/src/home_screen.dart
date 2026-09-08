@@ -83,6 +83,14 @@ class HomeScreen extends ConsumerWidget {
                 orElse: () => const SizedBox.shrink(),
               ),
 
+              /// The banner strip.
+              ///
+              /// Absent rather than empty when it fails or has nothing: a
+              /// promotional carousel is the one thing on this screen nobody
+              /// came for, and an error box where one would be is worse than
+              /// the space it occupies.
+              _Banners(),
+
               SectionHead(
                 context.t('What do you need?'),
                 eyebrow: context.t('Four trades'),
@@ -188,10 +196,225 @@ class HomeScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+
+              /// What other people got, and what the platform has done.
+              ///
+              /// Both are below the guarantee panel rather than above the
+              /// trades: somebody who opened the app to get a wardrobe quoted
+              /// should reach the four trades first, and social proof is what
+              /// they read on the way back up if they hesitate.
+              _Testimonials(),
+              _Stats(),
+
               const SizedBox(height: Space.xxxl),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The promotional strip. Silent when there is nothing to show.
+class _Banners extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(bannersProvider)
+        .maybeWhen(
+          data: (banners) {
+            final live = banners.where((b) => b.isActive).toList();
+            if (live.isEmpty) return const SizedBox.shrink();
+
+            return Padding(
+              padding: const EdgeInsets.only(top: Space.lg),
+              child: SizedBox(
+                height: 150,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: live.length,
+                  separatorBuilder: (context, i) =>
+                      const SizedBox(width: Space.sm),
+                  itemBuilder: (context, i) {
+                    final banner = live[i];
+                    return SizedBox(
+                      width: 280,
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          AanganMedia(src: banner.imageUrl, alt: banner.title),
+                          // A scrim, so the title stays legible over whatever
+                          // photograph or generated tile sits behind it.
+                          DecoratedBox(
+                            decoration: BoxDecoration(
+                              borderRadius: Radii.panelRadius,
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  Colors.transparent,
+                                  Colors.black.withValues(alpha: 0.55),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(Space.cardPadding),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  banner.title,
+                                  style: context.text.titleLarge?.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                Text(
+                                  banner.subtitle,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: context.text.bodySmall?.copyWith(
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            );
+          },
+          orElse: () => const SizedBox.shrink(),
+        );
+  }
+}
+
+class _Testimonials extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(testimonialsProvider)
+        .maybeWhen(
+          data: (list) {
+            if (list.isEmpty) return const SizedBox.shrink();
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SectionHead(
+                  context.t('What people say'),
+                  eyebrow: context.t('Finished jobs'),
+                ),
+                SizedBox(
+                  height: 170,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: list.length,
+                    separatorBuilder: (context, i) =>
+                        const SizedBox(width: Space.sm),
+                    itemBuilder: (context, i) {
+                      final testimonial = list[i];
+                      return SizedBox(
+                        width: 260,
+                        child: AanganCard(
+                          padding: const EdgeInsets.all(Space.cardPaddingWide),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '${testimonial.rating.toStringAsFixed(1)} ★',
+                                style: context.text.titleMedium,
+                              ),
+                              const SizedBox(height: Space.xxs),
+                              Expanded(
+                                child: Text(
+                                  testimonial.quote,
+                                  maxLines: 4,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: context.text.bodyMedium,
+                                ),
+                              ),
+                              const SizedBox(height: Space.xxs),
+                              Text(
+                                // Their words, their name, their city — all
+                                // from the row, none of it composed here.
+                                '${testimonial.clientName}, '
+                                '${testimonial.cityName}',
+                                style: context.text.bodySmall?.copyWith(
+                                  color: context.colors.onSurfaceVariant,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            );
+          },
+          orElse: () => const SizedBox.shrink(),
+        );
+  }
+}
+
+class _Stats extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(platformStatsProvider)
+        .maybeWhen(
+          data: (stats) => Padding(
+            padding: const EdgeInsets.only(top: Space.lg),
+            child: Row(
+              children: [
+                _Stat(
+                  value: '${stats.professionals}',
+                  label: context.t('Professionals'),
+                ),
+                _Stat(
+                  value: '${stats.projects}',
+                  label: context.t('Jobs done'),
+                ),
+                _Stat(value: '${stats.cities}', label: context.t('Cities')),
+                _Stat(
+                  value: stats.avgRating.toStringAsFixed(1),
+                  label: context.t('Average'),
+                ),
+              ],
+            ),
+          ),
+          orElse: () => const SizedBox.shrink(),
+        );
+  }
+}
+
+class _Stat extends StatelessWidget {
+  const _Stat({required this.value, required this.label});
+
+  final String value;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(value, style: context.text.headlineSmall),
+          Text(
+            label,
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+        ],
       ),
     );
   }

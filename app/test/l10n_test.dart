@@ -68,20 +68,41 @@ Iterable<File> _sources() sync* {
 
 /// Copy that reaches `context.t()` as a value rather than as a literal.
 ///
-/// The estimator is table-driven: `context.t(config.basis)` passes a string the
-/// scan below cannot see, because at the call site there is no literal to find.
-/// The literals are all in one file, so they are collected from there directly.
+/// Two screens are table-driven: the estimator's rates and the "how it works"
+/// steps both pass `context.t(someField)`, where the call site has no literal
+/// for the scan below to find. The literals live in a const table in one file
+/// each, so they are collected from there directly.
 ///
-/// If this hole is ever left open, the symptom is specific and quiet — the
-/// estimator alone stays English in a Hindi app, and every other screen looks
-/// finished.
+/// If this hole is ever left open the symptom is specific and quiet — that one
+/// screen stays English in a Hindi app while every other screen looks finished.
+/// A third table-driven screen must be added here, and the compiler will not
+/// say so.
+const _tables = <(String, String)>[
+  (
+    '../packages/feature_customer/lib/src/estimator.dart',
+    'const estimatorConfigs',
+  ),
+  ('../packages/feature_customer/lib/src/about_screens.dart', 'const _steps'),
+  (
+    '../packages/feature_customer/lib/src/about_screens.dart',
+    'const _requirements',
+  ),
+];
+
 final _configLiteral = _literal;
 
 /// Fields that are identifiers or API vocabulary, not copy.
 const _notCopy = <String>['domainSlug:', 'domainName:'];
 
-Set<String> _estimatorCopy() {
-  final file = File('../packages/feature_customer/lib/src/estimator.dart');
+Set<String> _tableCopy() {
+  final keys = <String>{};
+  for (final (path, marker) in _tables) {
+    keys.addAll(_collect(File(path), marker));
+  }
+  return keys;
+}
+
+Set<String> _collect(File file, String marker) {
   if (!file.existsSync()) return {};
 
   final keys = <String>{};
@@ -90,8 +111,16 @@ Set<String> _estimatorCopy() {
 
   for (final line in file.readAsLinesSync()) {
     final trimmed = line.trimLeft();
-    if (trimmed.startsWith('const estimatorConfigs')) inTable = true;
+    if (trimmed.startsWith(marker)) {
+      inTable = true;
+      continue;
+    }
     if (!inTable) continue;
+
+    // The table ends at a `];` in the first column. Without this the scan runs
+    // to the end of the file and collects the widgets below it — which is how
+    // `'$index'` from a row's leading number ended up demanding a translation.
+    if (line.startsWith('];')) break;
     if (trimmed.startsWith('//')) continue;
     if (_notCopy.any(trimmed.startsWith)) continue;
 
@@ -117,11 +146,22 @@ Set<String> _estimatorCopy() {
   return keys;
 }
 
+/// Comments are stripped before scanning.
+///
+/// A doc comment explaining the mechanism naturally contains an example call,
+/// and that example is not a string the app asks for. `about_screens.dart`
+/// carried one and this test demanded a Hindi translation of `…`.
+///
+/// Line comments only. A `/* */` block containing a `context.t(` would slip
+/// through, and if that ever happens the answer is to stop writing example
+/// calls in block comments rather than to write a Dart parser here.
+final _lineComment = RegExp(r'^\s*///?.*$', multiLine: true);
+
 /// Every string the app asks to translate.
 Set<String> _requestedKeys() {
   final keys = <String>{};
   for (final file in _sources()) {
-    final source = file.readAsStringSync();
+    final source = file.readAsStringSync().replaceAll(_lineComment, '');
     for (final m in _call.allMatches(source)) {
       keys.add(_join(m.group(1)!));
     }
@@ -131,7 +171,7 @@ Set<String> _requestedKeys() {
         ..add(_join(m.group(2)!));
     }
   }
-  return keys..addAll(_estimatorCopy());
+  return keys..addAll(_tableCopy());
 }
 
 void main() {
@@ -223,6 +263,7 @@ void main() {
     /// unrelated assertions failed with the same unreadable message.
     final sections = <String, Map<String, String>>{
       'hiCommon': hiCommon,
+      'hiAbout': hiAbout,
       'hiAccount': hiAccount,
       'hiApp': hiApp,
       'hiCatalogue': hiCatalogue,

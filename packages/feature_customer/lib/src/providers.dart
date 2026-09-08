@@ -37,6 +37,27 @@ final professionalsProvider = FutureProvider<GetProfessionalsResponse>(
   (ref) => _public(ref).listProfessionals().orThrow(),
 );
 
+final bannersProvider = FutureProvider<List<Banner>>(
+  (ref) => _public(ref).listBanners().orThrow(),
+);
+
+final testimonialsProvider = FutureProvider<List<Testimonial>>(
+  (ref) => _public(ref).listTestimonials().orThrow(),
+);
+
+final platformStatsProvider = FutureProvider<PlatformStats>(
+  (ref) => _public(ref).platformStats().orThrow(),
+);
+
+/// How many products and packages sit behind each trade.
+///
+/// The web puts these under the four trade cells, and they do real work: a
+/// trade with a number beside it reads as something with depth behind it
+/// rather than as a category heading.
+final catalogueCountsProvider = FutureProvider<List<CatalogueCount>>(
+  (ref) => _public(ref).catalogueCounts().orThrow(),
+);
+
 /* ---------------- what is mine ---------------- */
 
 /// A requirement is **N service tracks**, not one thing.
