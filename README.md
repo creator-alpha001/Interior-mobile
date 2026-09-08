@@ -58,13 +58,7 @@ caught about layout at `textScale` 1.3 is asserted without pixels in
 client's: bundling Devanagari fallbacks now, or shipping English-only at v1 and
 recording that as a decision rather than discovering it in a translation sprint.
 
-### Two things deliberately not built
-
-**The blog and the estimator.** MOBILE.md open question 3 asks whether the
-customer app needs them at all — *"the two largest pieces of M11 with the least
-in-app value; a native blog exists mainly for deep links from search."* That is
-a question for the client, and building them speculatively would be the
-expensive way to find out the answer was no.
+### One thing deliberately not built
 
 **Anything that implies a payment.** Payments are off-platform: terms are
 recorded, not enforced. This matters more than it sounds, because the prototype
@@ -79,8 +73,26 @@ melos bootstrap
 melos run check                   # analyze + test, every package
 ```
 
-To look at the gallery: `cd app && flutter run`, or navigate to `/_gallery` in
-any non-production build.
+### Running it
+
+**From `app/`, not from the root.** The root is the melos workspace and has no
+`lib/`, so `flutter run` there fails with `Target file "lib\main.dart" not
+found` — which reads like a missing file rather than a wrong directory.
+
+```bash
+cd app
+flutter run
+```
+
+`.vscode/launch.json` carries the same three configurations, so the IDE's run
+button works from anywhere in the repository.
+
+The app talks to `http://10.0.2.2:4000` by default, which is the host machine as
+seen from the Android emulator. Start the API first — `npm run dev` in the web
+repository's `apps/api` — or every screen shows "No connection", correctly.
+
+To look at the component gallery, navigate to `/_gallery` in any non-production
+build.
 
 ### Signing in
 
@@ -106,9 +118,14 @@ Nothing defaults to production. A build that forgets to say where it is going
 talks to localhost and fails loudly on a device, which is the failure you want.
 
 ```bash
+cd app
 flutter run --dart-define=AANGAN_ENV=staging
 flutter run --dart-define=AANGAN_API_URL=http://192.168.1.20:4000   # a laptop on the same wifi
 ```
+
+A device on the same wifi also needs that machine's address added to
+`app/android/app/src/debug/res/xml/network_security_config.xml`, which permits
+cleartext to two hosts rather than to everything.
 
 ## The design system is the deliverable of this phase
 

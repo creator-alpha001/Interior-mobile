@@ -3,7 +3,13 @@
 build/
 *.iml
 .idea/
-.vscode/
+
+# Editor settings are personal; the run configurations are not. Everyone
+# needs the same answer to "which entrypoint, and with which defines",
+# and the obvious guess — `flutter run` at the root — fails with a
+# message about a missing file rather than a wrong directory.
+.vscode/*
+!.vscode/launch.json
 .flutter-plugins
 .flutter-plugins-dependencies
 **/ios/Pods/

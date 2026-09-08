@@ -1,0 +1,45 @@
+{
+  // Run configurations for the app.
+  //
+  // These exist because the obvious thing fails. The repository root is the
+  // melos workspace — it has a `pubspec.yaml` and no `lib/` — so `flutter run`
+  // there answers `Target file "lib\main.dart" not found`, which reads like a
+  // missing file rather than a wrong directory. `program` pins the entrypoint
+  // so the run button works from whichever file happens to be open.
+  //
+  // Nothing here points at production, deliberately: a build that forgets to
+  // say where it is going talks to localhost and fails loudly on a device,
+  // which is the failure you want. Production is a CI concern, not a button.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Aangan (dev)",
+      "request": "launch",
+      "type": "dart",
+      "program": "app/lib/main.dart",
+      // `10.0.2.2` is the host machine as seen from the Android emulator, and
+      // is already the dev flavour's default — set explicitly so the value is
+      // visible rather than buried in `env.dart`.
+      "args": ["--dart-define=AANGAN_API_URL=http://10.0.2.2:4000"]
+    },
+    {
+      "name": "Aangan (dev, device on this wifi)",
+      "request": "launch",
+      "type": "dart",
+      "program": "app/lib/main.dart",
+      // A physical handset cannot reach 10.0.2.2. Put this machine's LAN
+      // address here, and add it to
+      // `app/android/app/src/debug/res/xml/network_security_config.xml` too —
+      // that file permits cleartext to two named hosts rather than to
+      // everything, so an address it does not list is refused silently.
+      "args": ["--dart-define=AANGAN_API_URL=http://192.168.1.20:4000"]
+    },
+    {
+      "name": "Aangan (staging)",
+      "request": "launch",
+      "type": "dart",
+      "program": "app/lib/main.dart",
+      "args": ["--dart-define=AANGAN_ENV=staging"]
+    }
+  ]
+}
