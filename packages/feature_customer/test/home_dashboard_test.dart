@@ -99,7 +99,7 @@ void main() {
   });
 
   group('with work under way', () {
-    testWidgets('lists the job, and says the customer is the blocker', (
+    testWidgets('counts the jobs and says how many need the reader', (
       tester,
     ) async {
       await _pump(
@@ -114,14 +114,32 @@ void main() {
       );
 
       expect(find.text('Your work'), findsOneWidget);
-      expect(find.text('REQ-1042'), findsOneWidget);
-      // Peach, and worded as an instruction rather than a status.
-      expect(findPill('Choose a quote'), findsOneWidget);
+      expect(find.text('1 job'), findsOneWidget);
+      expect(findPill('1 needs you'), findsOneWidget);
       // Never the empty state at the same time.
       expect(find.text('Nothing under way yet'), findsNothing);
     });
 
-    testWidgets('the row opens the Jobs tab', (tester) async {
+    testWidgets('does not reprint the Jobs tab', (tester) async {
+      /// **The rule this group exists for now.**
+      ///
+      /// Home used to list every live requirement with its trades, its
+      /// reference and its state — which is the Jobs tab in a smaller font.
+      /// Two screens showing one list is not a dashboard; it is the same
+      /// screen twice, and the second copy is the one that goes stale.
+      ///
+      /// The reference number is the tell: it belongs to the record, and the
+      /// record lives one tap away.
+      await _pump(
+        tester,
+        requirements: AsyncValue.data([fixtureRequirement()]),
+      );
+
+      expect(find.text('REQ-1042'), findsNothing);
+      expect(find.text('Furniture Work'), findsNothing);
+    });
+
+    testWidgets('the summary row opens the Jobs tab', (tester) async {
       var opened = false;
       await _pump(
         tester,
@@ -129,24 +147,28 @@ void main() {
         onOpenJobs: () => opened = true,
       );
 
-      await tester.tap(find.text('REQ-1042'));
+      await tester.tap(find.text('1 job'));
       await tester.pump();
 
       expect(opened, isTrue);
     });
 
-    testWidgets('does not claim quotes are ready when none are', (
+    testWidgets('says nothing is stuck on the reader when nothing is', (
       tester,
     ) async {
-      // fixtureService() carries no quotes, so the peach alert must stay away
-      // — it means "you are the blocker" and nothing else.
+      // fixtureService() carries no quotes, so nothing is waiting on them and
+      // the peach alert must stay away — it means "you are the blocker" and
+      // nothing else.
       await _pump(
         tester,
         requirements: AsyncValue.data([fixtureRequirement()]),
       );
 
-      expect(findPill('Choose a quote'), findsNothing);
-      expect(findPill('Finding professionals'), findsOneWidget);
+      expect(findPill('All with us'), findsOneWidget);
+      expect(
+        find.text('Quotes are ready for your furniture work'),
+        findsNothing,
+      );
     });
   });
 

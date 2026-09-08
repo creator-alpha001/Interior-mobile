@@ -136,10 +136,34 @@ class RequirementCard extends StatelessWidget {
             /// Visits for this service, with the one thing a customer can do
             /// about them. The web can ask to move a visit and the app could
             /// not — `requestReschedule` was unreachable.
-            for (final meeting in service.meetings)
-              VisitRow(meeting: meeting, trade: service.domain.name),
+            ///
+            /// **Indented, and labelled.** These used to sit at the service
+            /// row's own width, so a card reading "Yadav Furniture Works ·
+            /// 26 Aug" looked like a peer of "Furniture Work · 3 quotes" —
+            /// two visits between two services read as four things at the same
+            /// level, and the screen became a wall of similar grey boxes. They
+            /// belong *to* the service above them, and now look it.
+            if (service.meetings.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(left: Space.md),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: Space.xs),
+                    Text(
+                      context.t('Visits').toUpperCase(),
+                      style: AanganTextStyles.eyebrow.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                      semanticsLabel: context.t('Visits'),
+                    ),
+                    for (final meeting in service.meetings)
+                      VisitRow(meeting: meeting, trade: service.domain.name),
+                  ],
+                ),
+              ),
 
-            const SizedBox(height: Space.xs),
+            const SizedBox(height: Space.sm),
           ],
 
           if (lead.isMultiDomain) ...[

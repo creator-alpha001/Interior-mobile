@@ -17,9 +17,9 @@ const hiCustomer = <String, String>{
 
   // ---- home ----
   'Quotes are ready for your {trade}': 'आपके {trade} के कोटेशन तैयार हैं',
-  'Quotes are ready for {n} of your jobs': 'आपके {n} कामों के कोटेशन तैयार हैं',
+  'Quotes are ready on {n} of your trades': '{n} कामों के कोटेशन तैयार हैं',
   'Compare them and choose a professional. Nothing moves until you do.':
-      'इन्हें मिलाकर देखिए और एक कारीगर चुनिए। जब तक आप नहीं चुनते, कुछ आगे नहीं बढ़ेगा।',
+      'उन्हें मिलाकर देखिए और कारीगर चुनिए। जब तक आप नहीं चुनते, कुछ आगे नहीं बढ़ता।',
   'What do you need?': 'आपको क्या चाहिए?',
   'Four trades': 'चार काम',
   'Tell us what you need': 'बताइए आपको क्या चाहिए',
@@ -261,19 +261,6 @@ const hiCustomer = <String, String>{
   'Your work': 'आपका काम',
   'Still moving': 'जो अभी चल रहा है',
 
-  /// The one state where the customer is the one holding the job up. Peach,
-  /// and worded as an instruction rather than as a status.
-  'Choose a quote': 'कोटेशन चुनिए',
-  '{n} new message': '{n} नया संदेश',
-  '{n} new messages': '{n} नए संदेश',
-
-  /// Said from the customer's side. `vendor_selected` is a database word;
-  /// "professional chosen" is what actually happened.
-  'Finding professionals': 'कारीगर ढूँढ़े जा रहे हैं',
-  'Visits being arranged': 'विज़िट तय की जा रही हैं',
-  'Professional chosen': 'कारीगर चुन लिया गया',
-  'Work started': 'काम शुरू हो गया',
-
   '{n} agreement ready to sign': '{n} एग्रीमेंट हस्ताक्षर के लिए तैयार',
   '{n} agreements ready to sign': '{n} एग्रीमेंट हस्ताक्षर के लिए तैयार',
   'One per professional, not per job': 'हर कारीगर का एक, हर काम का नहीं',
@@ -330,4 +317,13 @@ const hiCustomer = <String, String>{
 
   // ---- the trade tiles ----
   '{items} items · {packages} packages': '{items} चीज़ें · {packages} पैकेज',
+  // ---- home's summary row, which replaced a copy of the Jobs list ----
+  '{n} job': '{n} काम',
+  '{n} jobs': '{n} काम',
+  'Quotes, visits and messages': 'कोटेशन, विज़िट और संदेश',
+  '{n} needs you': '{n} आपके इंतज़ार में',
+  '{n} need you': '{n} आपके इंतज़ार में',
+
+  /// The opposite state, and worth naming: nothing is stuck on the reader.
+  'All with us': 'सब हमारे पास',
 };

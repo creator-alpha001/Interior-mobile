@@ -97,9 +97,23 @@ class HomeScreen extends ConsumerWidget {
                           ? context.t('Quotes are ready for your {trade}', {
                               'trade': waiting.first.domain.name.toLowerCase(),
                             })
-                          : context.t('Quotes are ready for {n} of your jobs', {
-                              'n': waiting.length,
-                            }),
+                          /// **Trades, not jobs.**
+                          ///
+                          /// `waiting` counts services, and a job can carry
+                          /// several — so one requirement with quotes on its
+                          /// furniture and its painting made this say "2 of
+                          /// your jobs" directly above a row saying "1 needs
+                          /// you". Both numbers were right about their own
+                          /// unit and the screen contradicted itself.
+                          ///
+                          /// A job is the requirement, which is what the Jobs
+                          /// tab lists and numbers. A trade is a track inside
+                          /// it, which is what gets quoted. This counts
+                          /// trades and says trades.
+                          : context.t(
+                              'Quotes are ready on {n} of your trades',
+                              {'n': waiting.length},
+                            ),
                       body: context.t(
                         'Compare them and choose a professional. Nothing '
                         'moves until you do.',
@@ -565,6 +579,9 @@ class _YourWork extends StatelessWidget {
     /// Nothing at all, and we know it — `data` came back empty rather than
     /// failing. That distinction matters: telling somebody they have no jobs
     /// because the request 500'd would be a lie with a button on it.
+    /// How many of those are held up by the reader rather than by us.
+    final needsYou = live.where(_waitingOnCustomer).length;
+
     final knownEmpty =
         requirements.hasValue && live.isEmpty && toSign == 0 && running == 0;
 
@@ -613,12 +630,27 @@ class _YourWork extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHead(context.t('Your work'), eyebrow: context.t('Still moving')),
-        for (final lead in live) ...[
+
+        /// **One row for the jobs, not one row per job.**
+        ///
+        /// This listed every live requirement with its trades, its reference
+        /// and its state — which is the Jobs tab, in a smaller font. Two
+        /// screens showing the same list is not a dashboard; it is the same
+        /// screen twice, and the second one is always the one that goes stale.
+        ///
+        /// Home's question is "is anything waiting on me, and where do I go".
+        /// The Jobs tab's is "what exactly is happening on each of them". So
+        /// this counts, says whether any of it needs the reader, and hands
+        /// over. The three rows below it lead to three *different* screens,
+        /// which is the whole reason they are worth a row at all.
+        if (live.isNotEmpty) ...[
           _WorkRow(
-            title: lead.domainNames.join(' · '),
-            subtitle: lead.lead.reference,
-            status: _statusFor(context, lead),
-            tone: _toneFor(lead),
+            title: context.l10n.plural(live.length, '{n} job', '{n} jobs'),
+            subtitle: context.t('Quotes, visits and messages'),
+            status: needsYou > 0
+                ? context.l10n.plural(needsYou, '{n} needs you', '{n} need you')
+                : context.t('All with us'),
+            tone: needsYou > 0 ? StatusTone.yours : StatusTone.waiting,
             onTap: onOpenJobs,
           ),
           const SizedBox(height: Space.xs),
@@ -669,38 +701,6 @@ class _YourWork extends StatelessWidget {
   static bool _waitingOnCustomer(LeadView lead) => lead.domains.any(
     (s) => s.quotes.isNotEmpty && s.leadDomain.selectedQuoteId == null,
   );
-
-  static StatusTone _toneFor(LeadView lead) =>
-      _waitingOnCustomer(lead) ? StatusTone.yours : StatusTone.waiting;
-
-  static String _statusFor(BuildContext context, LeadView lead) {
-    if (_waitingOnCustomer(lead)) return context.t('Choose a quote');
-
-    final unread = lead.domains.fold<int>(
-      0,
-      (sum, s) => sum + s.unreadMessages,
-    );
-    if (unread > 0) {
-      return context.l10n.plural(unread, '{n} new message', '{n} new messages');
-    }
-
-    /// Said from the customer's side rather than in the API's vocabulary.
-    /// "vendor_selected" is a database word; "professional chosen" is what
-    /// happened.
-    final statuses = lead.domains
-        .where(_isLive)
-        .map((s) => s.leadDomain.status);
-    if (statuses.every((s) => s == LeadDomainStatus.inProgress)) {
-      return context.t('Work started');
-    }
-    if (statuses.any((s) => s == LeadDomainStatus.vendorSelected)) {
-      return context.t('Professional chosen');
-    }
-    if (statuses.any((s) => s == LeadDomainStatus.assigned)) {
-      return context.t('Visits being arranged');
-    }
-    return context.t('Finding professionals');
-  }
 }
 
 /// One line of the dashboard: what it is, where it stands, and a way in.
