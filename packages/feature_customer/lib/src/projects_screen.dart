@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'async_view.dart';
 import 'providers.dart';
+import 'review_screen.dart';
 
 class ProjectsScreen extends ConsumerWidget {
   const ProjectsScreen({super.key});
@@ -67,6 +68,11 @@ class CustomerProjectCard extends StatelessWidget {
     final approved = milestones
         .where((m) => m.verification == MilestoneVerification.approved)
         .length;
+
+    /// A review is offered once every stage has been *approved*, not once the
+    /// vendor says it is finished. Approval is the platform's definition of
+    /// done and the review has to use the same one.
+    final finished = milestones.isNotEmpty && approved == milestones.length;
 
     return AanganCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
@@ -118,6 +124,37 @@ class CustomerProjectCard extends StatelessWidget {
               milestone: milestone,
               isLast: index == milestones.length - 1,
             ),
+
+          if (finished && view.review == null) ...[
+            const SizedBox(height: Space.sm),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ReviewScreen(project: view),
+                  ),
+                ),
+                child: Text(context.t('Leave a review')),
+              ),
+            ),
+          ] else if (view.review != null) ...[
+            const SizedBox(height: Space.sm),
+            Row(
+              children: [
+                Icon(
+                  Icons.star,
+                  size: TapTarget.glyph,
+                  color: context.palette.waiting,
+                ),
+                const SizedBox(width: Space.xxs),
+                Text(
+                  context.t('You rated this {n} ★', {'n': view.review!.rating}),
+                  style: context.text.bodyMedium,
+                ),
+              ],
+            ),
+          ],
 
           const SizedBox(height: Space.sm),
           Text(

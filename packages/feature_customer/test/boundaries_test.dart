@@ -100,15 +100,45 @@ void main() {
   /// erode: an "approve" button looks like an obvious improvement to anybody
   /// who has not read why it is missing.
   test('the progress screen offers no approval control', () {
+    /// Ops approve stages; the customer watches. That is the platform rule and
+    /// this is the screen most likely to be handed an "Approve" button by
+    /// somebody who has not read it.
+    ///
+    /// The check used to be "no FilledButton anywhere in the file", which was
+    /// a fair proxy while the screen was purely read-only and became a false
+    /// positive the moment it grew a legitimate primary action — leaving a
+    /// review on a *finished* project, which is not an approval of anything.
+    ///
+    /// So it now tests the rule rather than a proxy for it: no approval verb
+    /// anywhere, and no button at all inside the stage row, which is where an
+    /// approve control would actually be put.
     final code = _code(File('lib/src/projects_screen.dart')).toLowerCase();
 
-    for (final control in const [
+    for (final verb in const [
       'approvestage',
       'approvemilestone',
+      'markapproved',
+      'verifymilestone',
+      'accepstage',
+      'signoff',
+    ]) {
+      expect(code.contains(verb), isFalse, reason: 'found $verb');
+    }
+
+    final stage = code.substring(code.indexOf('class _stage'));
+    for (final control in const [
       'filledbutton',
       'elevatedbutton',
+      'outlinedbutton',
+      'textbutton',
+      'checkbox',
+      'switch(',
     ]) {
-      expect(code.contains(control), isFalse, reason: 'found $control');
+      expect(
+        stage.contains(control),
+        isFalse,
+        reason: 'found $control inside the stage row, where approval would go',
+      );
     }
   });
 }

@@ -188,6 +188,48 @@ const hiCustomer = <String, String>{
   'We could not confirm whether that went through. Check your connection and pull to refresh before trying again.':
       'हम पक्का नहीं कर पाए कि वह हुआ या नहीं। दोबारा कोशिश करने से पहले कनेक्शन देखिए और रिफ़्रेश कीजिए।',
 
+  // ---- reviews ----
+  ///
+  /// Per trade, and the Hindi must say so. A rating attaches to this
+  /// professional's record in *this* trade and follows them nowhere else —
+  /// somebody rating a painter three stars should know it does not touch
+  /// their carpentry.
+  'Leave a review': 'रिव्यू लिखें',
+  'This rates their {trade} only. Ratings on Aangan are per trade, so it will not affect their other work.':
+      'यह रेटिंग सिर्फ़ इनके {trade} के लिए है। Aangan पर रेटिंग हर काम की अलग होती है, इसलिए इससे इनके बाक़ी काम पर कोई असर नहीं पड़ेगा।',
+  // 'Overall' is in hi_vendor.dart, on the performance screen. One key has
+  //  one home — a duplicate makes the merged const map throw on lookup.
+  'The one that counts': 'यही गिना जाता है',
+  'And in detail': 'और ब्यौरे से',
+  'Quality of the work': 'काम की गुणवत्ता',
+  'Kept to the timeline': 'समय का पालन',
+  'How they were to deal with': 'बात करने में कैसे रहे',
+  'Anything you would tell a friend': 'जो आप किसी दोस्त को बताते',
+  'Optional, and read by the next customer':
+      'ज़रूरी नहीं, और अगला ग्राहक इसे पढ़ेगा',
+  'Post this review': 'रिव्यू भेजें',
+  'Reviews appear on their public profile and cannot be edited afterwards.':
+      'रिव्यू इनकी सार्वजनिक प्रोफ़ाइल पर दिखता है और बाद में बदला नहीं जा सकता।',
+  '{n} star': '{n} स्टार',
+  '{n} stars': '{n} स्टार',
+  'You rated this {n} ★': 'आपने इसे {n} ★ दिए',
+
+  // ---- visits ----
+  ///
+  /// A *request*, never a reschedule. The coordinator arranges visits with
+  /// both sides; a customer who assumes the old time is cancelled would miss
+  /// a professional standing at their door.
+  'Move it': 'समय बदलवाएँ',
+  'Move requested': 'समय बदलने को कहा है',
+  'Ask to move this visit': 'इस विज़िट का समय बदलने को कहें',
+  'We will find a slot that works for both of you and confirm it. The current time stands until we do.':
+      'हम ऐसा समय ढूँढ़कर पक्का करेंगे जो आप दोनों को ठीक लगे। तब तक मौजूदा समय वैसा ही रहेगा।',
+  'When would suit you?': 'आपको कब ठीक रहेगा?',
+  'Any morning next week, say': 'जैसे अगले हफ़्ते कोई भी सुबह',
+  'Send the request': 'अनुरोध भेजें',
+  'Asked. We will come back with a new time.':
+      'कह दिया गया। हम नया समय लेकर आएँगे।',
+
   // ---- progress ----
   'Nothing under way': 'अभी कोई काम नहीं चल रहा',
   'Work starts once you sign an agreement.':

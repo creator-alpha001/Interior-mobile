@@ -213,17 +213,42 @@ void main() {
   });
 
   test('the section tables do not shadow one another', () {
-    // `hindi` merges four maps with spreads, and a later spread silently wins.
-    // Two sections translating the same sentence differently would be the
-    // hardest kind of translation bug to see.
-    final counted =
-        hiCommon.length +
-        hiAccount.length +
-        hiApp.length +
-        hiCatalogue.length +
-        hiCustomer.length +
-        hiGuides.length +
-        hiVendor.length;
+    /// Checked against the *sections*, never against `hindi` itself.
+    ///
+    /// A Dart const map with a duplicate key builds fine and then throws on
+    /// every lookup — an assertion inside `dart:_compact_hash` with no key
+    /// named and no file named. Touching `hindi` here would make this test one
+    /// more casualty of the bug rather than the thing that reports it, which
+    /// is exactly what happened: `'Overall'` appeared in two tables and eight
+    /// unrelated assertions failed with the same unreadable message.
+    final sections = <String, Map<String, String>>{
+      'hiCommon': hiCommon,
+      'hiAccount': hiAccount,
+      'hiApp': hiApp,
+      'hiCatalogue': hiCatalogue,
+      'hiCustomer': hiCustomer,
+      'hiGuides': hiGuides,
+      'hiVendor': hiVendor,
+    };
+
+    final homes = <String, List<String>>{};
+    sections.forEach((name, table) {
+      for (final key in table.keys) {
+        homes.putIfAbsent(key, () => []).add(name);
+      }
+    });
+
+    final shared = homes.entries.where((e) => e.value.length > 1).toList();
+    expect(
+      shared.map((e) => '${e.key} — in ${e.value.join(" and ")}').toList(),
+      isEmpty,
+      reason: 'One key, one home. A duplicate breaks every lookup in the app.',
+    );
+
+    // And the arithmetic, which catches a section nobody merged into `hindi`.
+    final counted = sections.values
+        .map((table) => table.length)
+        .reduce((a, b) => a + b);
 
     expect(
       hindi.length,

@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'async_view.dart';
 import 'providers.dart';
 import 'quote_comparison.dart';
+import 'review_screen.dart';
 
 class RequirementsScreen extends ConsumerWidget {
   const RequirementsScreen({super.key, this.onStartNew});
@@ -131,6 +132,13 @@ class RequirementCard extends StatelessWidget {
           // One card per service. Each has its own everything.
           for (final service in lead.domains) ...[
             ServiceRow(service: service, requirementId: lead.lead.id),
+
+            /// Visits for this service, with the one thing a customer can do
+            /// about them. The web can ask to move a visit and the app could
+            /// not — `requestReschedule` was unreachable.
+            for (final meeting in service.meetings)
+              VisitRow(meeting: meeting, trade: service.domain.name),
+
             const SizedBox(height: Space.xs),
           ],
 
@@ -147,6 +155,66 @@ class RequirementCard extends StatelessWidget {
             ),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// One visit, and the request to move it.
+///
+/// Confirming a visit is what releases the customer's address to that
+/// professional — per service, not per customer — so this row is also where
+/// somebody learns that has happened.
+class VisitRow extends ConsumerWidget {
+  const VisitRow({super.key, required this.meeting, required this.trade});
+
+  final MeetingView meeting;
+  final String trade;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asked = meeting.meeting.rescheduleRequestedAt != null;
+    final settled =
+        meeting.meeting.status == MeetingStatus.completed ||
+        meeting.meeting.status == MeetingStatus.noShow;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: Space.xxs),
+      child: AanganCard(
+        nested: true,
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    meeting.professional.companyName,
+                    style: context.text.titleMedium,
+                  ),
+                  Text(
+                    meeting.meeting.scheduledAt,
+                    style: context.text.bodySmall?.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (asked)
+              // Ochre: it is with us now, not with them.
+              StatusPill(context.t('Move requested'), tone: StatusTone.waiting)
+            else if (!settled)
+              TextButton(
+                onPressed: () => showRescheduleSheet(
+                  context,
+                  ref,
+                  meetingId: meeting.meeting.id,
+                ),
+                child: Text(context.t('Move it')),
+              ),
+          ],
+        ),
       ),
     );
   }
