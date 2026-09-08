@@ -195,7 +195,10 @@ class _InvoiceCard extends StatelessWidget {
           MoneyText(Rupees(view.invoice.amount).formatted, tone: amountColour),
           const SizedBox(height: Space.xs),
           Text(
-            'Due ${view.invoice.dueDate} · ${view.domains.join(", ")}',
+            context.t('Due {date} · {trades}', {
+              'date': view.invoice.dueDate,
+              'trades': view.domains.join(', '),
+            }),
             style: context.text.bodySmall?.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
@@ -227,9 +230,11 @@ class PerformanceScreen extends ConsumerWidget {
                 eyebrow: context.t('Rated separately'),
               ),
               Text(
-                'A good carpenter is not automatically a good painter, so each '
-                'trade is rated on its own — and leads are ranked by your '
-                'rating in the trade being browsed.',
+                context.t(
+                  'A good carpenter is not automatically a good painter, so '
+                  'each trade is rated on its own — and leads are ranked by '
+                  'your rating in the trade being browsed.',
+                ),
                 style: context.text.bodySmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
                 ),
@@ -259,14 +264,24 @@ class PerformanceScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: Space.xs),
                       Text(
-                        '${row.completed} completed · ${row.won} won · '
-                        '${row.lost} lost · ${row.winRatePercent.round()}% win rate',
+                        context.t(
+                          '{completed} completed · {won} won · {lost} lost · '
+                          '{rate}% win rate',
+                          {
+                            'completed': row.completed,
+                            'won': row.won,
+                            'lost': row.lost,
+                            'rate': row.winRatePercent.round(),
+                          },
+                        ),
                         style: context.text.bodySmall?.copyWith(
                           color: context.colors.onSurfaceVariant,
                         ),
                       ),
                       Text(
-                        'Commission ${row.commissionPercent}%',
+                        context.t('Commission {percent}%', {
+                          'percent': row.commissionPercent,
+                        }),
                         style: context.text.bodySmall?.copyWith(
                           color: context.colors.onSurfaceVariant,
                         ),
@@ -286,12 +301,16 @@ class PerformanceScreen extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Revenue', style: context.text.labelMedium),
+                    Text(context.t('Revenue'), style: context.text.labelMedium),
                     const SizedBox(height: Space.xxs),
                     MoneyText(Rupees(data.totalRevenue).formatted),
                     const SizedBox(height: Space.sm),
                     Text(
-                      'Median response ${data.avgResponseHours} hours',
+                      context.l10n.plural(
+                        data.avgResponseHours.round(),
+                        'Median response {n} hour',
+                        'Median response {n} hours',
+                      ),
                       style: context.text.bodyMedium,
                     ),
                   ],

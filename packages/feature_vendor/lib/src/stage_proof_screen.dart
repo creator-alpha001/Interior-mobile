@@ -222,8 +222,13 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
                 // The queue survives the app closing, so this is recoverable
                 // rather than lost — worth saying, because the vendor's
                 // instinct after a failure is to start again from the camera.
-                '${failed.length} did not send. They are saved on this device '
-                'and will retry — you will not have to take them again.',
+                context.l10n.plural(
+                  failed.length,
+                  '{n} did not send. It is saved on this device and will '
+                      'retry — you will not have to take it again.',
+                  '{n} did not send. They are saved on this device and will '
+                      'retry — you will not have to take them again.',
+                ),
                 style: context.text.bodySmall?.copyWith(
                   color: context.palette.wrong,
                 ),
@@ -274,7 +279,11 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
             const SizedBox(height: Space.xs),
             Text(
               pending.isNotEmpty
-                  ? 'Waiting for ${pending.length} photograph(s) to finish sending.'
+                  ? context.l10n.plural(
+                      pending.length,
+                      'Waiting for {n} photograph to finish sending.',
+                      'Waiting for {n} photographs to finish sending.',
+                    )
                   : context.t(
                       'Ops check the photographs against the stage. The customer’s '
                       'progress moves when they approve, not when you submit.',

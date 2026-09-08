@@ -148,7 +148,7 @@ class VisitCard extends StatelessWidget {
 
           const SizedBox(height: Space.sm),
           Text(
-            _when(visit.meeting.scheduledAt),
+            formatWhen(context, visit.meeting.scheduledAt),
             style: context.text.titleLarge,
           ),
 
@@ -341,29 +341,3 @@ String _typeLabel(BuildContext context, MeetingType type) => switch (type) {
   MeetingType.handover => context.t('Handover'),
   MeetingType.$unknown => context.t('Visit'),
 };
-
-/// A readable local time from the ISO-8601 the API sends.
-String _when(String isoTimestamp) {
-  final parsed = DateTime.tryParse(isoTimestamp)?.toLocal();
-  if (parsed == null) return isoTimestamp;
-
-  const months = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ];
-  final hour = parsed.hour % 12 == 0 ? 12 : parsed.hour % 12;
-  final minute = parsed.minute.toString().padLeft(2, '0');
-  final meridiem = parsed.hour < 12 ? 'am' : 'pm';
-
-  return '${parsed.day} ${months[parsed.month - 1]}, $hour:$minute $meridiem';
-}

@@ -157,6 +157,121 @@ Set<String> _collect(File file, String marker) {
 /// calls in block comments rather than to write a Dart parser here.
 final _lineComment = RegExp(r'^\s*///?.*$', multiLine: true);
 
+/// A run of adjacent literals, which Dart concatenates into one string.
+final _literalRun = RegExp(r"""((?:'(?:[^'\\\n]|\\.)*'\s*)+)""");
+
+/// Interpolations, removed before asking whether a literal contains words.
+/// `'${summary.invited}'` has no copy in it; `'{n} unread'` does.
+final _interpolation = RegExp(r'[$][{][^}]*[}]|[$][A-Za-z_][A-Za-z0-9_]*');
+
+final _twoWords = RegExp(r'[A-Za-z]{3,}\s+[A-Za-z]{3,}');
+final _oneWord = RegExp(r'[A-Za-z]{3,}');
+final _wrappedHere = RegExp(r'(context\.t|\.t|plural|call)\(\s*$');
+
+/// Literals that are user-visible copy but never reach `context.t()`.
+///
+/// This is the check the header promises, and the one the compiler cannot
+/// make. Every other check in this file starts from a `context.t(` call — so a
+/// sentence nobody wrapped is invisible to all of them, and the tables read as
+/// complete while a whole screen is English.
+///
+/// It found thirty: the vendor's entire performance card, the quote builder's
+/// replace dialog, the stale-data banner, "N unread", "N others quoting", and
+/// the OTP field's own hint.
+///
+/// A run is accepted when it is wrapped *here*, or when the string it forms is
+/// already something the app requests — which is how the plural forms and the
+/// two table-driven screens pass without being special-cased twice.
+List<String> _unwrapped(Set<String> requested) {
+  final found = <String>[];
+
+  for (final file in _sources()) {
+    final path = file.path.replaceAll(r'\', '/');
+    if (_notCopyFiles.any(path.endsWith)) continue;
+
+    final source = file.readAsStringSync().replaceAll(_lineComment, '');
+    for (final m in _literalRun.allMatches(source)) {
+      final joined = _join(m.group(1)!);
+      if (_allowed.contains(joined)) continue;
+      if (requested.contains(joined)) continue;
+
+      final bare = joined.replaceAll(_interpolation, ' ');
+      final interpolated = bare.length != joined.length;
+      final copy =
+          _twoWords.hasMatch(bare) || (interpolated && _oneWord.hasMatch(bare));
+      if (!copy) continue;
+
+      final before = source.substring(0, m.start).trimRight();
+      if (_wrappedHere.hasMatch(before)) continue;
+
+      final line = '\n'.allMatches(source.substring(0, m.start)).length + 1;
+      found.add('$path:$line  $joined');
+    }
+  }
+  return found..sort();
+}
+
+/// Files whose literals are never read by a person.
+///
+/// `async_view.dart` builds a debug line, `main.dart` logs a cache failure,
+/// `media.dart` builds a `ph:` token, `typography.dart` names font families,
+/// `money.dart` writes `Cr`/`L`/`K` — the same abbreviations in Hindi — and
+/// the two `providers.dart` throw a developer message when an override is
+/// missing.
+const _notCopyFiles = <String>[
+  'async_view.dart',
+  'main.dart',
+  'media.dart',
+  'money.dart',
+  'requirement_draft.dart',
+  'typography.dart',
+  'providers.dart',
+];
+
+/// Individually exempt, each with the reason it earns it.
+const _allowed = <String>{
+  // The company's name, in either language.
+  'Aangan',
+
+  // Pure layout: a bullet, a separator, a rating glyph, a locality pair.
+  r'• $note',
+  r'• $item',
+  r'${lead.client.locality} · ${lead.client.city.name}',
+  r'${lead.client.locality}, ${lead.client.city.name}',
+  r'${visit.client.locality}, ${visit.client.city.name}',
+  r'${testimonial.clientName}, ',
+  r'${project.project.reference} · ${project.cityName}',
+  r'${line.description} · ${line.quantity} ${line.unit}',
+
+  // A version stamp and a rating read the same in both languages.
+  r'v${terms.version}',
+  r'v${lead.myQuote!.version}',
+  r'${row.rating.toStringAsFixed(1)} ★',
+  r'${stat.avgRating.toStringAsFixed(1)} ★',
+  r'${testimonial.rating.toStringAsFixed(1)} ★',
+  r'${review.review.rating} ★',
+
+  // The maps launcher's URL.
+  r'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+
+  /// Trade names, which are the API's words everywhere else in the app.
+  ///
+  /// The estimator holds its own copies beside the rates, and translating
+  /// only these would have its tabs read "फ़र्नीचर का काम" while the home
+  /// screen's cell for the same trade — straight from `/domains` — still says
+  /// "Furniture Work". So they stay English here, and a Hindi reader sees
+  /// English trade names throughout. That is a **server-side** gap: the fix is
+  /// a Hindi name on the domain row, not a table entry here.
+  'Interior Design',
+  'Furniture Work',
+
+  // A real Lucknow locality, offered as an example. A place name.
+  'Gomti Nagar',
+
+  // Dev builds only, behind Env.isDev. Never reaches a customer.
+  r'Code is ${state.devCode}',
+};
+
 /// Every string the app asks to translate.
 Set<String> _requestedKeys() {
   final keys = <String>{};
@@ -194,6 +309,25 @@ void main() {
       reason:
           'These are wrapped in context.t() but have no entry in any hi_*.dart '
           'table, so a Hindi reader sees English:\n  ${missing.join("\n  ")}',
+    );
+  });
+
+  test('no user-visible sentence skipped context.t() altogether', () {
+    // The failure every other check in this file is blind to. A string that
+    // was never wrapped is not a missing *translation* — it is a missing
+    // *request*, and the tables can look complete while a whole screen is
+    // English.
+    final bare = _unwrapped(requested);
+
+    expect(
+      bare,
+      isEmpty,
+      reason:
+          'These are user-visible literals with no context.t() around them, so '
+          'they stay English in Hindi and no other check here can see them. '
+          'Wrap them, or — if they are genuinely not copy — add the file to '
+          '_notCopyFiles or the string to _allowed, with the reason:\n  '
+          '${bare.join("\n  ")}',
     );
   });
 

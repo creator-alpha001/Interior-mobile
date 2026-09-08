@@ -104,10 +104,15 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Replace quote v${existing.version}?'),
+          title: Text(
+            context.t('Replace quote v{n}?', {'n': existing.version}),
+          ),
           content: Text(
-            'Your current quote of ${Rupees(existing.total).formatted} will be '
-            'superseded by this one. The customer sees only the new version.',
+            context.t(
+              'Your current quote of {amount} will be superseded by this one. '
+              'The customer sees only the new version.',
+              {'amount': Rupees(existing.total).formatted},
+            ),
           ),
           actions: [
             TextButton(
@@ -116,7 +121,9 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text('Replace with v${existing.version + 1}'),
+              child: Text(
+                context.t('Replace with v{n}', {'n': existing.version + 1}),
+              ),
             ),
           ],
         ),
@@ -188,10 +195,14 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
             if (existing != null) ...[
               const SizedBox(height: Space.md),
               ActionRequired(
-                title: 'This replaces quote v${existing.version}',
-                body:
-                    'Currently ${Rupees(existing.total).formatted}. One quote '
-                    'per job is live at a time; sending this supersedes it.',
+                title: context.t('This replaces quote v{n}', {
+                  'n': existing.version,
+                }),
+                body: context.t(
+                  'Currently {amount}. One quote per job is live at a time; '
+                  'sending this supersedes it.',
+                  {'amount': Rupees(existing.total).formatted},
+                ),
               ),
             ],
 
@@ -269,8 +280,10 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                     Text(
                       // Not blocked — a ceiling is a signal, not a rule, and a
                       // job may genuinely cost more. But say so before sending.
-                      'Above the customer’s stated ceiling of '
-                      '${Rupees(widget.lead.budgetMax!).formatted}.',
+                      context.t(
+                        'Above the customer’s stated ceiling of {amount}.',
+                        {'amount': Rupees(widget.lead.budgetMax!).formatted},
+                      ),
                       style: context.text.bodySmall?.copyWith(
                         color: context.palette.waiting,
                       ),
@@ -350,8 +363,12 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                       )
                     : Text(
                         existing == null
-                            ? 'Send quote · ${Rupees(_total).formatted}'
-                            : 'Replace with v${existing.version + 1}',
+                            ? context.t('Send quote · {amount}', {
+                                'amount': Rupees(_total).formatted,
+                              })
+                            : context.t('Replace with v{n}', {
+                                'n': existing.version + 1,
+                              }),
                       ),
               ),
             ),

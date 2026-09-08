@@ -301,8 +301,10 @@ class _QuoteRow extends StatelessWidget {
           MoneyText(Rupees(view.quote.total).formatted),
           const SizedBox(height: Space.xxs),
           Text(
-            '${view.quote.timelineDays} days · '
-            '${view.quote.warrantyMonths} months warranty',
+            context.t('{days} days · {months} months warranty', {
+              'days': view.quote.timelineDays,
+              'months': view.quote.warrantyMonths,
+            }),
             style: context.text.bodySmall?.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
@@ -325,7 +327,11 @@ class _QuoteRow extends StatelessWidget {
               shape: const Border(),
               collapsedShape: const Border(),
               title: Text(
-                '${view.quote.lineItems.length} lines',
+                context.l10n.plural(
+                  view.quote.lineItems.length,
+                  '{n} line',
+                  '{n} lines',
+                ),
                 style: context.text.titleMedium,
               ),
               children: [

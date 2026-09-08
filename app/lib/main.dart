@@ -85,6 +85,13 @@ Future<void> main() async {
   final language = LanguageController();
   await language.load();
 
+  /// Month names and meridiems, for every locale intl carries.
+  ///
+  /// Not awaited into the critical path for its own sake — `formatWhen` falls
+  /// back to English if this has not finished — but it resolves off a bundled
+  /// asset and finishes long before the first visit row is drawn.
+  unawaited(loadDateFormats());
+
   /// The forced upgrade, checked before anything else is drawn.
   ///
   /// Deliberately not awaited into a blocking splash: `check()` fails silently

@@ -18,6 +18,8 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import 'l10n/l10n.dart';
+
 import 'theme.dart';
 import 'tokens.dart';
 import 'typography.dart';
@@ -159,7 +161,7 @@ class _OtpFieldState extends State<OtpField> {
         ] else ...[
           const SizedBox(height: Space.xs),
           Text(
-            'Enter the ${widget.length}-digit code',
+            context.t('Enter the {n}-digit code', {'n': widget.length}),
             style: context.text.bodySmall?.copyWith(
               color: colors.onSurfaceVariant,
             ),

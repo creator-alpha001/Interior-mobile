@@ -12,6 +12,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import 'l10n/l10n.dart';
 import 'theme.dart';
 import 'tokens.dart';
 
@@ -47,8 +48,11 @@ class StaleBanner extends StatelessWidget {
               const SizedBox(width: Space.xs),
               Expanded(
                 child: Text(
-                  'Showing what we had ${_ago(at)}. We will refresh when you '
-                  'are back online.',
+                  context.t(
+                    'Showing what we had {when}. We will refresh when you are '
+                    'back online.',
+                    {'when': _ago(context, at)},
+                  ),
                   style: context.text.bodySmall,
                 ),
               ),
@@ -64,16 +68,17 @@ class StaleBanner extends StatelessWidget {
   /// "3 days ago" is more useful than a date somebody has to subtract from
   /// today, and precision beyond a minute implies a freshness the cache does
   /// not have.
-  static String _ago(DateTime at) {
+  static String _ago(BuildContext context, DateTime at) {
     final gap = DateTime.now().difference(at);
+    final l10n = context.l10n;
 
-    if (gap.inMinutes < 1) return 'a moment ago';
+    if (gap.inMinutes < 1) return context.t('a moment ago');
     if (gap.inMinutes < 60) {
-      return '${gap.inMinutes} ${gap.inMinutes == 1 ? "minute" : "minutes"} ago';
+      return l10n.plural(gap.inMinutes, '{n} minute ago', '{n} minutes ago');
     }
     if (gap.inHours < 24) {
-      return '${gap.inHours} ${gap.inHours == 1 ? "hour" : "hours"} ago';
+      return l10n.plural(gap.inHours, '{n} hour ago', '{n} hours ago');
     }
-    return '${gap.inDays} ${gap.inDays == 1 ? "day" : "days"} ago';
+    return l10n.plural(gap.inDays, '{n} day ago', '{n} days ago');
   }
 }

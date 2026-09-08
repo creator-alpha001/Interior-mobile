@@ -138,7 +138,10 @@ class ProjectCard extends StatelessWidget {
               ),
               const Spacer(),
               Text(
-                '$approved of ${milestones.length} stages approved',
+                context.t('{approved} of {total} stages approved', {
+                  'approved': approved,
+                  'total': milestones.length,
+                }),
                 style: context.text.bodySmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
                 ),

@@ -251,4 +251,8 @@ const hiCustomer = <String, String>{
   /// two need different things from the reader.
   'Nobody matches this trade and city yet. We source and verify professionals for new areas continuously — tell us what you need anyway.':
       'इस काम और शहर के लिए अभी कोई नहीं मिला। नए इलाक़ों के लिए हम लगातार कारीगर ढूँढ़ते और जाँचते रहते हैं — आप फिर भी बताइए कि आपको क्या चाहिए।',
+  // ---- strings the unwrapped-literal scan turned up ----
+  '{approved} of {total}': '{total} में से {approved}',
+  '{n} line': '{n} मद',
+  '{n} lines': '{n} मदें',
 };

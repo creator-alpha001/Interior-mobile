@@ -259,7 +259,11 @@ class LeadCard extends StatelessWidget {
               Text(
                 lead.competingQuotes == 0
                     ? context.t('First to quote')
-                    : '${lead.competingQuotes} others quoting',
+                    : context.l10n.plural(
+                        lead.competingQuotes,
+                        '{n} other quoting',
+                        '{n} others quoting',
+                      ),
                 style: context.text.bodySmall?.copyWith(
                   color: lead.competingQuotes > 2
                       ? palette.waiting
@@ -292,7 +296,7 @@ class _LeadStatus extends StatelessWidget {
     }
     if (lead.unreadMessages > 0) {
       return StatusPill(
-        '${lead.unreadMessages} unread',
+        context.t('{n} unread', {'n': lead.unreadMessages}),
         tone: StatusTone.yours,
       );
     }

@@ -268,4 +268,60 @@ const hiVendor = <String, String>{
   /// the app is broken rather than that the feature is absent.
   'To change any of this, message your coordinator. Editing from the app is not built yet.':
       'इनमें कुछ भी बदलवाने के लिए अपने को-ऑर्डिनेटर को संदेश भेजिए। ऐप से बदलाव की सुविधा अभी नहीं बनी है।',
+  // ---- strings that never reached context.t(), and so were never asked for
+  //      until the scan in l10n_test.dart started looking for them ----
+
+  // performance
+  'A good carpenter is not automatically a good painter, so each trade is rated on its own — and leads are ranked by your rating in the trade being browsed.':
+      'अच्छा बढ़ई अपने आप अच्छा पेंटर नहीं हो जाता, इसलिए हर काम की रेटिंग अलग बनती है — और लीड उसी काम में आपकी रेटिंग के हिसाब से क्रम में लगती हैं।',
+  '{completed} completed · {won} won · {lost} lost · {rate}% win rate':
+      '{completed} पूरे · {won} जीते · {lost} हारे · {rate}% जीत दर',
+  'Commission {percent}%': 'कमीशन {percent}%',
+  'Revenue': 'आमदनी',
+  'Median response {n} hour': 'जवाब में आम तौर पर {n} घंटा',
+  'Median response {n} hours': 'जवाब में आम तौर पर {n} घंटे',
+
+  // commission
+  'Due {date} · {trades}': '{date} तक देना है · {trades}',
+
+  // leads
+  '{n} other quoting': '{n} और कोटेशन दे रहा है',
+  '{n} others quoting': '{n} और कोटेशन दे रहे हैं',
+  '{n} unread': '{n} बिना पढ़े',
+  'Quote v{n} out': 'कोटेशन v{n} भेजा जा चुका है',
+  '{days} days · {months} months warranty':
+      '{days} दिन · {months} महीने की वारंटी',
+
+  /// The masking rule again, on the screen where a vendor is most likely to
+  /// go looking for a phone number.
+  'Every message goes through Aangan. We carry questions to the customer and their answers back to you.':
+      'हर संदेश Aangan के ज़रिए जाता है। सवाल हम ग्राहक तक ले जाते हैं और उनके जवाब आप तक लाते हैं।',
+
+  // the quote builder's replace dialog
+  'Replace quote v{n}?': 'कोटेशन v{n} बदलें?',
+  'Your current quote of {amount} will be superseded by this one. The customer sees only the new version.':
+      'आपका मौजूदा {amount} का कोटेशन इससे बदल जाएगा। ग्राहक को सिर्फ़ नया कोटेशन दिखता है।',
+  'Replace with v{n}': 'v{n} से बदलें',
+  'This replaces quote v{n}': 'यह कोटेशन v{n} की जगह लेगा',
+  'Currently {amount}. One quote per job is live at a time; sending this supersedes it.':
+      'अभी {amount}। एक काम पर एक ही कोटेशन चलता है; यह भेजते ही पुराना ख़त्म हो जाएगा।',
+  'Above the customer’s stated ceiling of {amount}.':
+      'ग्राहक की बताई {amount} की हद से ऊपर।',
+  'Send quote · {amount}': 'कोटेशन भेजें · {amount}',
+
+  // the partner agreement
+  'Tick all {n} to continue': 'आगे बढ़ने के लिए सभी {n} पर निशान लगाइए',
+  'Effective {date}': '{date} से लागू',
+
+  // projects and stage proof
+  '{approved} of {total} stages approved':
+      '{total} में से {approved} चरण मंज़ूर',
+  '{n} did not send. It is saved on this device and will retry — you will not have to take it again.':
+      '{n} नहीं भेजी जा सकी। वह इसी फ़ोन में सुरक्षित है और दोबारा कोशिश होगी — आपको फिर से खींचनी नहीं पड़ेगी।',
+  '{n} did not send. They are saved on this device and will retry — you will not have to take them again.':
+      '{n} नहीं भेजी जा सकीं। वे इसी फ़ोन में सुरक्षित हैं और दोबारा कोशिश होगी — आपको फिर से खींचनी नहीं पड़ेंगी।',
+  'Waiting for {n} photograph to finish sending.':
+      '{n} तस्वीर भेजी जा रही है, इंतज़ार कीजिए।',
+  'Waiting for {n} photographs to finish sending.':
+      '{n} तस्वीरें भेजी जा रही हैं, इंतज़ार कीजिए।',
 };

@@ -155,7 +155,7 @@ class _DetailState extends ConsumerState<_Detail> {
               StatusPill(context.t('Lost'), tone: StatusTone.wrong),
             if (lead.myQuote != null && !lead.won && !lead.lost)
               StatusPill(
-                'Quote v${lead.myQuote!.version} out',
+                context.t('Quote v{n} out', {'n': lead.myQuote!.version}),
                 tone: StatusTone.waiting,
               ),
           ],
@@ -293,7 +293,7 @@ class _DetailState extends ConsumerState<_Detail> {
                 value: switch (lead.materialSource) {
                   MaterialSource.vendorSupplied => context.t('You supply'),
                   MaterialSource.customerSupplied => context.t(
-                    context.t('Customer supplies'),
+                    'Customer supplies',
                   ),
                   MaterialSource.undecided => context.t('Undecided'),
                   MaterialSource.$unknown => context.t('Unknown'),
@@ -372,8 +372,10 @@ class _DetailState extends ConsumerState<_Detail> {
                 MoneyText(Rupees(lead.myQuote!.total).formatted),
                 const SizedBox(height: Space.xxs),
                 Text(
-                  '${lead.myQuote!.timelineDays} days · '
-                  '${lead.myQuote!.warrantyMonths} months warranty',
+                  context.t('{days} days · {months} months warranty', {
+                    'days': lead.myQuote!.timelineDays,
+                    'months': lead.myQuote!.warrantyMonths,
+                  }),
                   style: context.text.bodySmall?.copyWith(
                     color: context.colors.onSurfaceVariant,
                   ),
@@ -421,8 +423,10 @@ class _DetailState extends ConsumerState<_Detail> {
         Text(
           // Said plainly, because a vendor will look for the customer's number
           // and should understand why there isn't one.
-          'Every message goes through Aangan. We carry questions to the '
-          'customer and their answers back to you.',
+          context.t(
+            'Every message goes through Aangan. We carry questions to the '
+            'customer and their answers back to you.',
+          ),
           style: context.text.bodySmall?.copyWith(
             color: context.colors.onSurfaceVariant,
           ),

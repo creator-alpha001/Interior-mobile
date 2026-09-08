@@ -98,7 +98,10 @@ class CustomerProjectCard extends StatelessWidget {
                 ),
               ),
               StatusPill(
-                '$approved of ${milestones.length}',
+                context.t('{approved} of {total}', {
+                  'approved': approved,
+                  'total': milestones.length,
+                }),
                 tone: approved == milestones.length
                     ? StatusTone.verified
                     : StatusTone.neutral,

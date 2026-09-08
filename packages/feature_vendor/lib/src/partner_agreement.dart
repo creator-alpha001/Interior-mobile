@@ -106,7 +106,7 @@ class _PartnerAgreementScreenState
                 StatusPill('v${terms.version}', tone: StatusTone.neutral),
                 const SizedBox(width: Space.xs),
                 Text(
-                  'Effective ${terms.effectiveFrom}',
+                  context.t('Effective {date}', {'date': terms.effectiveFrom}),
                   style: context.text.bodySmall?.copyWith(
                     color: context.colors.onSurfaceVariant,
                   ),
@@ -219,7 +219,9 @@ class _PartnerAgreementScreenState
                     : Text(
                         _complete
                             ? context.t('Sign and continue')
-                            : 'Tick all ${terms.acknowledgements.length} to continue',
+                            : context.t('Tick all {n} to continue', {
+                                'n': terms.acknowledgements.length,
+                              }),
                       ),
               ),
             ),

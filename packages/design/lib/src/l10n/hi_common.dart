@@ -93,4 +93,17 @@ const hiCommon = <String, String>{
   'Budget': 'बजट',
   'Up to': 'अधिकतम',
   'Whole rupees': 'पूरे रुपये',
+  // ---- the shared widgets' own copy ----
+  'Enter the {n}-digit code': '{n} अंकों का कोड डालिए',
+
+  /// The stale banner. Ochre, and never an error — the data is old, not wrong.
+  'Showing what we had {when}. We will refresh when you are back online.':
+      '{when} का सहेजा हुआ दिखा रहे हैं। नेट आते ही ताज़ा कर देंगे।',
+  'a moment ago': 'अभी-अभी',
+  '{n} minute ago': '{n} मिनट पहले',
+  '{n} minutes ago': '{n} मिनट पहले',
+  '{n} hour ago': '{n} घंटा पहले',
+  '{n} hours ago': '{n} घंटे पहले',
+  '{n} day ago': '{n} दिन पहले',
+  '{n} days ago': '{n} दिन पहले',
 };

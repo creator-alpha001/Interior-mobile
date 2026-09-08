@@ -5,6 +5,7 @@
 /// component gallery render every state without a server.
 library;
 
+export 'src/dates.dart';
 export 'src/l10n/hi.dart';
 export 'src/l10n/l10n.dart';
 export 'src/l10n/language_scope.dart';
