@@ -97,6 +97,44 @@ const hiCatalogue = <String, String>{
   'We pass this on as a preference and try to honour it. You will still see quotes from others, so you can compare.':
       'हम यह आपकी पसंद के तौर पर आगे बताते हैं और उसे पूरा करने की कोशिश करते हैं। बाक़ी कारीगरों के कोटेशन भी आपको दिखेंगे, ताकि आप मिलाकर देख सकें।',
 
+  // ---- packages ----
+  ///
+  /// A package is a bounded scope, and what it *excludes* is why a customer
+  /// trusts one. The Hindi gives the exclusions the same weight as the
+  /// inclusions, because an exclusion discovered halfway through a job is the
+  /// complaint that costs a professional their rating.
+  'Packages': 'पैकेज',
+  'Fixed scope, fixed price': 'तय काम, तय दाम',
+  'Fixed scope': 'तय काम',
+  'A fixed scope at a fixed price. Everything a package leaves out is listed too, because that is the part people find out about halfway through.':
+      'तय काम, तय दाम। पैकेज में जो शामिल नहीं है वह भी लिखा है, क्योंकि लोगों को उसी का पता आधे काम के बाद चलता है।',
+  'No packages yet': 'अभी कोई पैकेज नहीं',
+  'Tell us what you need instead and we will have it quoted from scratch.':
+      'इसके बजाय बता दीजिए आपको क्या चाहिए, हम शुरू से कोटेशन बनवा देंगे।',
+  'What it covers': 'इसमें क्या-क्या है',
+  'Line by line': 'एक-एक करके',
+  'Included': 'शामिल है',
+  'In the price': 'दाम में',
+  'Quoted separately': 'अलग से कोटेशन होगा',
+  'About {n} day of work': 'क़रीब {n} दिन का काम',
+  'About {n} days of work': 'क़रीब {n} दिन का काम',
+  'Get quotes for this package': 'इस पैकेज के लिए कोटेशन मँगाएँ',
+  'The package sets the scope. Professionals still quote against it, so you see real prices before deciding.':
+      'पैकेज से काम का दायरा तय होता है। कारीगर फिर भी उसी पर कोटेशन देते हैं, ताकि तय करने से पहले आपको असली दाम दिखें।',
+
+  // ---- search ----
+  'Search everything': 'सब कुछ खोजें',
+  'Clear': 'मिटाएँ',
+  'Products': 'उत्पाद',
+  '{n} match': '{n} नतीजा',
+  '{n} matches': '{n} नतीजे',
+  'Reading': 'पढ़ने के लिए',
+  'Products, packages, professionals and guides — all at once. Two letters is enough to start.':
+      'उत्पाद, पैकेज, कारीगर और गाइड — सब एक साथ। शुरू करने के लिए दो अक्षर काफ़ी हैं।',
+  'Nothing found': 'कुछ नहीं मिला',
+  'Nothing matches that. Tell us what you need in your own words instead — most of what we do is made to order anyway.':
+      'इससे कुछ नहीं मिला। अपने शब्दों में बता दीजिए आपको क्या चाहिए — वैसे भी हमारा ज़्यादातर काम ऑर्डर पर ही बनता है।',
+
   // ---- our work ----
   'Nothing published yet': 'अभी कुछ प्रकाशित नहीं',
   'Work appears here once our team has approved it for a public profile.':

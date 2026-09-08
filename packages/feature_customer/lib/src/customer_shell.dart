@@ -19,7 +19,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'agreements_screen.dart';
 import 'blog_screen.dart';
 import 'catalogue.dart';
+import 'packages_screen.dart';
 import 'professional_screen.dart';
+import 'search_screen.dart';
 import 'estimator_screen.dart';
 import 'async_view.dart';
 import 'home_screen.dart';
@@ -140,6 +142,17 @@ class _ExploreTab extends ConsumerWidget {
           children: [
             const SizedBox(height: Space.md),
 
+            /// Search sits above the browse grid rather than inside it.
+            ///
+            /// Somebody who knows what they want should not have to pick a
+            /// category first — that is the whole argument for search, and
+            /// burying it behind a shortcut tile would undo it.
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+              child: _SearchBar(onStart: onStart),
+            ),
+            const SizedBox(height: Space.md),
+
             /// Everything browsable that is not the directory below.
             ///
             /// In a grid here rather than in tabs of their own: five tabs is
@@ -207,6 +220,27 @@ class _ExploreTab extends ConsumerWidget {
                           ),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.xs),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _Shortcut(
+                          icon: Icons.inventory_2_outlined,
+                          title: context.t('Packages'),
+                          subtitle: context.t('Fixed scope, fixed price'),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => PackagesScreen(onStart: onStart),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: Space.xs),
+                      // A spacer, so a lone tile does not stretch across the
+                      // row and read as a different kind of control.
+                      const Expanded(child: SizedBox.shrink()),
                     ],
                   ),
                 ],
@@ -762,6 +796,40 @@ class _Shortcut extends StatelessWidget {
             subtitle,
             style: context.text.bodySmall?.copyWith(
               color: context.colors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The tap target that opens search.
+///
+/// A button dressed as a field rather than a real one: a live TextField here
+/// would need its own controller, focus and debounce duplicated from
+/// `SearchScreen`, and two search implementations drift.
+class _SearchBar extends StatelessWidget {
+  const _SearchBar({this.onStart});
+
+  final VoidCallback? onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    return AanganCard(
+      onTap: () => Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => SearchScreen(onStart: onStart))),
+      child: Row(
+        children: [
+          Icon(Icons.search, color: context.colors.onSurfaceVariant),
+          const SizedBox(width: Space.xs),
+          Expanded(
+            child: Text(
+              context.t('Search everything'),
+              style: context.text.bodyLarge?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ),
         ],
