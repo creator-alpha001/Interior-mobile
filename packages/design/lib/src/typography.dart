@@ -57,34 +57,47 @@ abstract final class AanganFonts {
 /// Mapped so a stock Material widget picks the right family without being told:
 /// `headlineSmall` on a card title is Newsreader because that is what a card
 /// title is, not because the widget was overridden at the call site.
+/// **Sized against the web, which is where these roles came from.**
+///
+/// The first version took MOBILE.md §3.4's table literally and shipped a
+/// 38/30/28/22 heading ramp. On a 360dp screen that is enormous: "Compare
+/// quotes" filled a third of the viewport before a single quote appeared, and
+/// a card title was 22 where the same card on the web is **15**. The whole
+/// ramp ran about 1.4x the web's for identical roles, which is backwards — a
+/// phone is held closer than a monitor, so headings can be *smaller* relative
+/// to body text, not larger.
+///
+/// Body sizes are left alone. 14 is the readable default at arm's length and
+/// dropping it to the web's 13.5 buys nothing; the problem was never the
+/// prose. Everything changed below is a heading or a figure.
 const aanganTextTheme = TextTheme(
   // ---- Newsreader. One display line per screen, at most. ----
   displayLarge: TextStyle(
     fontFamily: AanganFonts.serif,
     fontFamilyFallback: AanganFonts.serifFallback,
-    fontSize: 38,
-    height: 46 / 38,
+    fontSize: 28,
+    height: 36 / 28,
     fontWeight: FontWeight.w400,
   ),
   headlineLarge: TextStyle(
     fontFamily: AanganFonts.serif,
     fontFamilyFallback: AanganFonts.serifFallback,
-    fontSize: 30,
-    height: 38 / 30,
+    fontSize: 23,
+    height: 30 / 23,
     fontWeight: FontWeight.w400,
   ),
   headlineMedium: TextStyle(
     fontFamily: AanganFonts.serif,
     fontFamilyFallback: AanganFonts.serifFallback,
-    fontSize: 28,
-    height: 36 / 28,
+    fontSize: 20,
+    height: 27 / 20,
     fontWeight: FontWeight.w500,
   ),
   headlineSmall: TextStyle(
     fontFamily: AanganFonts.serif,
     fontFamilyFallback: AanganFonts.serifFallback,
-    fontSize: 22,
-    height: 28 / 22,
+    fontSize: 17,
+    height: 23 / 17,
     fontWeight: FontWeight.w500,
   ),
 
@@ -92,8 +105,8 @@ const aanganTextTheme = TextTheme(
   titleLarge: TextStyle(
     fontFamily: AanganFonts.sans,
     fontFamilyFallback: AanganFonts.sansFallback,
-    fontSize: 18,
-    height: 24 / 18,
+    fontSize: 16,
+    height: 22 / 16,
     fontWeight: FontWeight.w600,
   ),
   titleMedium: TextStyle(
@@ -157,8 +170,8 @@ abstract final class AanganTextStyles {
   static const financialNum = TextStyle(
     fontFamily: AanganFonts.sans,
     fontFamilyFallback: AanganFonts.sansFallback,
-    fontSize: 24,
-    height: 30 / 24,
+    fontSize: 20,
+    height: 26 / 20,
     fontWeight: FontWeight.w500,
     letterSpacing: -0.48,
     fontFeatures: [FontFeature.tabularFigures()],

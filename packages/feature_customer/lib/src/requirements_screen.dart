@@ -193,7 +193,10 @@ class VisitRow extends ConsumerWidget {
                     style: context.text.titleMedium,
                   ),
                   Text(
-                    meeting.meeting.scheduledAt,
+                    // The API's ISO-8601, not the customer's. "2026-08-26
+                    // 15:30:00+05:30" is a machine's idea of a Wednesday
+                    // afternoon. Same helper the vendor's visits use.
+                    formatWhen(context, meeting.meeting.scheduledAt),
                     style: context.text.bodySmall?.copyWith(
                       color: context.colors.onSurfaceVariant,
                     ),

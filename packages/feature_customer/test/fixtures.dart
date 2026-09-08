@@ -52,6 +52,7 @@ const _client = ClientSummary(
 ProfessionalSummary _professional({
   String id = 'p1',
   String name = 'Meher Interiors',
+  bool rated = true,
 }) => ProfessionalSummary(
   id: id,
   name: name,
@@ -66,11 +67,24 @@ ProfessionalSummary _professional({
   isVerified: true,
   avgResponseHours: 3,
   domains: const [_domain],
-  domainRating: const DomainRating(
-    domainId: 'domain-furniture',
-    avgRating: 4.6,
-    ratingCount: 22,
-  ),
+
+  /// Present but empty when `rated` is false.
+  ///
+  /// That is the shape the API actually sends for somebody nobody has
+  /// reviewed yet — not a null, but a rating of zero out of zero. Code that
+  /// null-checks it prints "0.0 ★", which is the worst possible score shown
+  /// for the absence of any score at all.
+  domainRating: rated
+      ? const DomainRating(
+          domainId: 'domain-furniture',
+          avgRating: 4.6,
+          ratingCount: 22,
+        )
+      : const DomainRating(
+          domainId: 'domain-furniture',
+          avgRating: 0,
+          ratingCount: 0,
+        ),
 );
 
 Quote _quote({String id = 'q1', int total = 450000}) => Quote(
@@ -97,12 +111,15 @@ Quote _quote({String id = 'q1', int total = 450000}) => Quote(
   notes: null,
 );
 
-QuoteView fixtureQuoteView({String quoteId = 'q1', int total = 450000}) =>
-    QuoteView(
-      quote: _quote(id: quoteId, total: total),
-      professional: _professional(id: quoteId == 'q1' ? 'p1' : 'p2'),
-      domain: _domain,
-    );
+QuoteView fixtureQuoteView({
+  String quoteId = 'q1',
+  int total = 450000,
+  bool rated = true,
+}) => QuoteView(
+  quote: _quote(id: quoteId, total: total),
+  professional: _professional(id: quoteId == 'q1' ? 'p1' : 'p2', rated: rated),
+  domain: _domain,
+);
 
 LeadDomainView fixtureService({
   List<QuoteView> quotes = const [],

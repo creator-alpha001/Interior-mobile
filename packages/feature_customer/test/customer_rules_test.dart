@@ -277,6 +277,16 @@ void main() {
     });
 
     testWidgets('locks the other quotes once one is chosen', (tester) async {
+      /// A tall surface, so the lazy ListView builds the second card.
+      ///
+      /// Only this test needs it, and only since the comparison table went in
+      /// above the cards — the default 800x600 now ends before the second
+      /// quote. Left local rather than moved into `_pump`, because the
+      /// estimator tests in this file want the real height to catch overflow.
+      tester.view.physicalSize = const Size(1200, 4000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
       await _pump(
         tester,
         QuoteComparisonScreen(

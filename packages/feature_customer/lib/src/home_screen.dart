@@ -188,49 +188,54 @@ class HomeScreen extends ConsumerWidget {
                 context.t('What do you need?'),
                 eyebrow: context.t('Four trades'),
               ),
+
+              /// **A grid of tiles, not four full-width rows.**
+              ///
+              /// Four rows of a name and a tagline ran most of a screen and
+              /// read as a settings list. Two columns puts the whole choice in
+              /// view at once, which is what a chooser should do.
+              ///
+              /// The web's equivalent block is deliberately imageless — its
+              /// comment argues a trade is better identified by its name and a
+              /// colour than by "a gradient pretending to be a room". This
+              /// departs from that at the client's request: the tiles carry
+              /// the same deterministic `ph:` art as the catalogue and the
+              /// packages, so the four trades look like the rest of the app
+              /// rather than like a list that lost its pictures.
               AsyncView(
                 value: domains,
                 onRetry: () => ref.invalidate(domainsProvider),
-                data: (list) => Column(
-                  children: [
-                    for (final domain in list.where((d) => d.isActive)) ...[
-                      AanganCard(
-                        onTap: onStart,
-                        padding: const EdgeInsets.all(Space.cardPaddingWide),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  // Trade names come from the API. They are
-                                  // data, not copy, and are translated there
-                                  // or not at all.
-                                  Text(
-                                    domain.name,
-                                    style: context.text.headlineSmall,
-                                  ),
-                                  const SizedBox(height: Space.xxs),
-                                  Text(
-                                    domain.tagline,
-                                    style: context.text.bodyMedium?.copyWith(
-                                      color: context.colors.onSurfaceVariant,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Icon(
-                              Icons.chevron_right,
-                              color: context.colors.onSurfaceVariant,
-                            ),
-                          ],
+                data: (list) {
+                  final active = list.where((d) => d.isActive).toList();
+                  final counts = ref
+                      .watch(catalogueCountsProvider)
+                      .maybeWhen(
+                        data: (rows) => {
+                          for (final row in rows) row.domainId: row,
+                        },
+                        orElse: () => const <String, CatalogueCount>{},
+                      );
+
+                  return GridView.count(
+                    crossAxisCount: 2,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    mainAxisSpacing: Space.xs,
+                    crossAxisSpacing: Space.xs,
+                    // Tile plus two lines of name and one of meta. Tuned
+                    // against the longest name the seed has, "Interior
+                    // Design", which wraps at this width.
+                    childAspectRatio: 0.86,
+                    children: [
+                      for (final domain in active)
+                        _TradeTile(
+                          domain: domain,
+                          count: counts[domain.id],
+                          onTap: onStart,
                         ),
-                      ),
-                      const SizedBox(height: Space.xs),
                     ],
-                  ],
-                ),
+                  );
+                },
               ),
 
               const SizedBox(height: Space.lg),
@@ -739,6 +744,87 @@ class _WorkRow extends StatelessWidget {
             ),
           ),
           Icon(Icons.chevron_right, color: context.colors.onSurfaceVariant),
+        ],
+      ),
+    );
+  }
+}
+
+/// One trade, as a tile.
+class _TradeTile extends StatelessWidget {
+  const _TradeTile({
+    required this.domain,
+    required this.count,
+    required this.onTap,
+  });
+
+  final Domain domain;
+  final CatalogueCount? count;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AanganCard(
+      onTap: onTap,
+      padding: EdgeInsets.zero,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          /// The tile art.
+          ///
+          /// `bannerUrl` when the trade has one and a `ph:` token keyed to the
+          /// slug otherwise, so the colour is stable for a given trade and
+          /// matches the same trade's products in the catalogue.
+          ClipRRect(
+            borderRadius: const BorderRadius.vertical(
+              top: Radius.circular(Radii.panel),
+            ),
+            child: AspectRatio(
+              aspectRatio: 4 / 3,
+              child: AanganMedia(
+                src: (domain.bannerUrl?.isNotEmpty ?? false)
+                    ? domain.bannerUrl!
+                    : 'ph:${domain.slug}:${domain.slug}',
+                alt: domain.name,
+                rounded: false,
+              ),
+            ),
+          ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(Space.cardPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Trade names come from the API. They are data, not copy,
+                  // and are translated there or not at all.
+                  Text(
+                    domain.name,
+                    style: context.text.titleLarge,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const Spacer(),
+
+                  /// What is actually behind the tile, as the web shows it.
+                  /// A trade with a number beside it reads as something with
+                  /// depth rather than as a category heading.
+                  if (count != null)
+                    Text(
+                      context.t('{items} items · {packages} packages', {
+                        'items': count!.products,
+                        'packages': count!.packages,
+                      }),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );

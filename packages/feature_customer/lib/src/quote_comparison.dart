@@ -142,7 +142,7 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
             ),
 
             if (selected == null && quotes.isNotEmpty) ...[
-              const SizedBox(height: Space.lg),
+              const SizedBox(height: Space.md),
               ActionRequired(
                 title: context.t('Your turn'),
                 body: context.t(
@@ -150,6 +150,24 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
                   'ratings beside each price are for this trade only.',
                 ),
               ),
+            ],
+
+            /// **The comparison, before the reading.**
+            ///
+            /// Each quote's own card is most of a screen tall — materials,
+            /// line items, warranty, a rating and a button — so comparing
+            /// three meant scrolling past three of them and holding the
+            /// numbers in your head. That is not a comparison; it is three
+            /// quotes in a row.
+            ///
+            /// The web solves this with a table, and the table is the right
+            /// answer on a phone too: the three figures that actually decide
+            /// it, aligned in columns, all visible at once. The cards below
+            /// are then what somebody reads *after* they know which two they
+            /// are choosing between.
+            if (quotes.length > 1) ...[
+              const SizedBox(height: Space.lg),
+              _AtAGlance(quotes: quotes, domain: service.domain),
             ],
 
             const SizedBox(height: Space.lg),
@@ -182,6 +200,206 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
             const SizedBox(height: Space.xxxl),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Every quote's decisive figures, in one table.
+class _AtAGlance extends StatelessWidget {
+  const _AtAGlance({required this.quotes, required this.domain});
+
+  final List<QuoteView> quotes;
+  final Domain domain;
+
+  @override
+  Widget build(BuildContext context) {
+    /// The winner in each column, worked out once.
+    ///
+    /// One quote can win more than one, and often the cheapest is also the
+    /// slowest — which is exactly the trade-off this screen exists to make
+    /// visible.
+    final cheapest = quotes
+        .map((q) => q.quote.total)
+        .reduce((a, b) => a < b ? a : b);
+    final fastest = quotes
+        .map((q) => q.quote.timelineDays)
+        .reduce((a, b) => a < b ? a : b);
+    final longest = quotes
+        .map((q) => q.quote.warrantyMonths)
+        .reduce((a, b) => a > b ? a : b);
+
+    return AanganCard(
+      padding: const EdgeInsets.all(Space.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Expanded(flex: 4, child: SizedBox.shrink()),
+              _Head(context.t('Price'), flex: 4),
+              _Head(context.t('Time'), flex: 2),
+              _Head(context.t('Warranty'), flex: 3),
+            ],
+          ),
+          const SizedBox(height: Space.xxs),
+          const AanganDivider(inset: 0),
+
+          for (final (index, view) in quotes.indexed) ...[
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: Space.xs),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 4,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${index + 1}. ${view.professional.companyName}',
+                          style: context.text.bodyMedium,
+                          maxLines: 2,
+                        ),
+
+                        /// The rating for **this trade**, never the blended
+                        /// one. A carpentry average under a painting heading
+                        /// is the wrong number under the right label.
+                        ///
+                        /// `ratingCount`, not a null check. The object is
+                        /// present for an unrated professional with an average
+                        /// of zero, so testing for null printed "0.0 ★" — a
+                        /// professional with no reviews shown as the worst
+                        /// possible score, on the screen where somebody is
+                        /// choosing between them. The card below always got
+                        /// this right; the table did not.
+                        Text(
+                          (view.professional.domainRating?.ratingCount ?? 0) ==
+                                  0
+                              ? context.t('Not yet rated here')
+                              : '${view.professional.domainRating!.avgRating.toStringAsFixed(1)} ★',
+                          style: context.text.bodySmall?.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  _Cell(
+                    value: Rupees(view.quote.total).formatted,
+                    best: view.quote.total == cheapest,
+                    bestLabel: context.t('Lowest'),
+                    flex: 4,
+                    tabular: true,
+                  ),
+                  _Cell(
+                    value: context.t('{n}d', {'n': view.quote.timelineDays}),
+                    best: view.quote.timelineDays == fastest,
+                    bestLabel: context.t('Fastest'),
+                    flex: 2,
+                  ),
+                  _Cell(
+                    value: context.t('{n} mo', {
+                      'n': view.quote.warrantyMonths,
+                    }),
+                    best: view.quote.warrantyMonths == longest,
+                    bestLabel: context.t('Longest'),
+                    flex: 3,
+                  ),
+                ],
+              ),
+            ),
+            if (index < quotes.length - 1) const AanganDivider(inset: 0),
+          ],
+
+          const SizedBox(height: Space.xs),
+
+          /// Said once, here, because it is the question a price invites and
+          /// the web's own table answers it in the same words.
+          Text(
+            context.t('Sorted by price. All figures include GST.'),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Head extends StatelessWidget {
+  const _Head(this.label, {required this.flex});
+
+  final String label;
+  final int flex;
+
+  @override
+  Widget build(BuildContext context) {
+    return Expanded(
+      flex: flex,
+      child: Text(
+        label.toUpperCase(),
+        textAlign: TextAlign.right,
+        style: AanganTextStyles.eyebrow.copyWith(
+          color: context.colors.onSurfaceVariant,
+        ),
+        semanticsLabel: label,
+      ),
+    );
+  }
+}
+
+/// One figure, and a word when it is the best of its column.
+///
+/// The word matters. Marking the winner by colour alone would leave the whole
+/// comparison invisible to anybody who cannot separate terracotta from ink,
+/// which on a screen whose entire job is comparing is the wrong corner to cut.
+class _Cell extends StatelessWidget {
+  const _Cell({
+    required this.value,
+    required this.best,
+    required this.bestLabel,
+    required this.flex,
+    this.tabular = false,
+  });
+
+  final String value;
+  final bool best;
+  final String bestLabel;
+  final int flex;
+  final bool tabular;
+
+  @override
+  Widget build(BuildContext context) {
+    final colour = best ? context.colors.primary : context.colors.onSurface;
+
+    return Expanded(
+      flex: flex,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            value,
+            textAlign: TextAlign.right,
+            style: tabular
+                ? AanganTextStyles.financialNum.copyWith(
+                    fontSize: 15,
+                    height: 20 / 15,
+                    color: colour,
+                  )
+                : context.text.bodyMedium?.copyWith(color: colour),
+          ),
+          if (best)
+            Text(
+              bestLabel.toUpperCase(),
+              textAlign: TextAlign.right,
+              style: AanganTextStyles.eyebrow.copyWith(
+                color: context.colors.primary,
+              ),
+              semanticsLabel: bestLabel,
+            ),
+        ],
       ),
     );
   }

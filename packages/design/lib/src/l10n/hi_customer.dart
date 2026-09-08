@@ -311,4 +311,23 @@ const hiCustomer = <String, String>{
   /// end without an account.
   'No account needed to start — we ask for your number at the end, to send the quotes to.':
       'शुरू करने के लिए खाता ज़रूरी नहीं — नंबर हम आख़िर में पूछते हैं, ताकि कोटेशन भेज सकें।',
+  // ---- the quote comparison table ----
+  'Price': 'क़ीमत',
+  'Time': 'समय',
+  'Warranty': 'वारंटी',
+
+  /// The winner in each column, said in a word rather than only in colour —
+  /// a comparison nobody can see is not a comparison.
+  'Lowest': 'सबसे कम',
+  'Fastest': 'सबसे तेज़',
+  'Longest': 'सबसे लंबी',
+
+  '{n}d': '{n} दिन',
+  '{n} mo': '{n} महीने',
+  'Not yet rated here': 'इस काम में अभी रेटिंग नहीं',
+  'Sorted by price. All figures include GST.':
+      'क़ीमत के हिसाब से क्रम में। सभी आँकड़ों में GST शामिल है।',
+
+  // ---- the trade tiles ----
+  '{items} items · {packages} packages': '{items} चीज़ें · {packages} पैकेज',
 };
