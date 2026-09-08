@@ -39,16 +39,18 @@ class AgreementsScreen extends ConsumerWidget {
     final agreements = ref.watch(agreementsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Agreements')),
+      appBar: AppBar(title: Text(context.t('Agreements'))),
       body: SafeArea(
         child: AsyncView(
           value: agreements,
           onRetry: () => ref.invalidate(agreementsProvider),
           data: (list) => list.isEmpty
-              ? const EmptyState(
-                  title: 'No agreements yet',
-                  body: 'Once you choose a quote we draw up the contract and '
-                      'send it here to sign.',
+              ? EmptyState(
+                  title: context.t('No agreements yet'),
+                  body: context.t(
+                    'Once you choose a quote we draw up the contract and '
+                    'send it here to sign.',
+                  ),
                 )
               : RefreshIndicator(
                   onRefresh: () async => ref.invalidate(agreementsProvider),
@@ -92,12 +94,10 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
     setState(() => _signing = true);
 
     _idempotencyKey ??= _newKey();
-    final api = ref.read(apiProvider);
+    final api = ref.read(customerApiProvider);
 
     try {
-      await api.customer
-          .signAgreement(id: widget.view.agreement.id)
-          .orThrow();
+      await api.customer.signAgreement(id: widget.view.agreement.id).orThrow();
 
       if (!mounted) return;
       _finish(signed: true);
@@ -116,8 +116,9 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
       }
 
       setState(() => _signing = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error.message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.message)));
     }
   }
 
@@ -125,12 +126,14 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
   Future<void> _reReadAfterTimeout() async {
     try {
       final fresh = await ref
-          .read(apiProvider)
+          .read(customerApiProvider)
           .customer
           .listAgreements()
           .orThrow();
 
-      final mine = fresh.where((a) => a.agreement.id == widget.view.agreement.id);
+      final mine = fresh.where(
+        (a) => a.agreement.id == widget.view.agreement.id,
+      );
       final signed = mine.isNotEmpty && mine.first.agreement.signedAt != null;
 
       if (!mounted) return;
@@ -143,9 +146,13 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
 
       setState(() => _signing = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'That did not go through. Nothing was signed — you can try again.',
+            context.t(
+              context.t(
+                'That did not go through. Nothing was signed — you can try again.',
+              ),
+            ),
           ),
         ),
       );
@@ -155,10 +162,12 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
       // inviting a tap that might double-sign.
       setState(() => _signing = false);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
+        SnackBar(
           content: Text(
-            'We could not confirm whether that went through. Check your '
-            'connection and pull to refresh before trying again.',
+            context.t(
+              'We could not confirm whether that went through. Check your '
+              'connection and pull to refresh before trying again.',
+            ),
           ),
         ),
       );
@@ -172,7 +181,7 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
 
     if (signed) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Signed. Your project has started.')),
+        SnackBar(content: Text(context.t('Signed. Your project has started.'))),
       );
     }
   }
@@ -180,7 +189,10 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
   static String _newKey() {
     const alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
     final random = Random();
-    return List.generate(24, (_) => alphabet[random.nextInt(alphabet.length)]).join();
+    return List.generate(
+      24,
+      (_) => alphabet[random.nextInt(alphabet.length)],
+    ).join();
   }
 
   @override
@@ -208,16 +220,17 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
                     const SizedBox(height: Space.xxs),
                     Text(
                       agreement.reference,
-                      style: context.text.bodySmall
-                          ?.copyWith(color: context.colors.onSurfaceVariant),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
               ),
               if (isSigned)
-                const StatusPill('Signed', tone: StatusTone.verified)
+                StatusPill(context.t('Signed'), tone: StatusTone.verified)
               else
-                const StatusPill('Your turn', tone: StatusTone.yours),
+                StatusPill(context.t('Your turn'), tone: StatusTone.yours),
             ],
           ),
 
@@ -237,10 +250,13 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
                 borderRadius: Radii.smallRadius,
               ),
               child: Text(
-                'One contract, ${view.lines.length} jobs. The same professional '
-                'is doing all of them, so there is a single agreement — but each '
-                'job runs on its own timeline, and one finishing does not mean '
-                'the others have.',
+                context.t(
+                  'One contract, {n} jobs. The same professional is doing all '
+                  'of them, so there is a single agreement — but each job runs '
+                  'on its own timeline, and one finishing does not mean the '
+                  'others have.',
+                  {'n': view.lines.length},
+                ),
                 style: context.text.bodySmall,
               ),
             ),
@@ -253,7 +269,10 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(line.domain.name, style: context.text.bodyMedium),
+                    child: Text(
+                      line.domain.name,
+                      style: context.text.bodyMedium,
+                    ),
                   ),
                   Text(
                     Rupees(line.quote.total).formatted,
@@ -275,8 +294,11 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
                 const SizedBox(width: Space.xxs),
                 Expanded(
                   child: Text(
-                    'Signed. ${view.projects.length} '
-                    '${view.projects.length == 1 ? "project" : "projects"} started.',
+                    context.l10n.plural(
+                      view.projects.length,
+                      context.t('Signed. {n} project started.'),
+                      context.t('Signed. {n} projects started.'),
+                    ),
                     style: context.text.bodyMedium,
                   ),
                 ),
@@ -298,15 +320,23 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
                           color: Colors.white,
                         ),
                       )
-                    : const Text('Sign this agreement'),
+                    : Text(context.t('Sign this agreement')),
               ),
             ),
             const SizedBox(height: Space.xs),
             Text(
-              'Signing starts the work and creates your project timeline. '
-              'Payments are arranged directly with the professional.',
-              style: context.text.bodySmall
-                  ?.copyWith(color: context.colors.onSurfaceVariant),
+              /// The payments line is not boilerplate.
+              ///
+              /// Aangan never handles money, and a Hindi rendering that
+              /// implied otherwise would be the single most damaging sentence
+              /// in the app.
+              context.t(
+                'Signing starts the work and creates your project timeline. '
+                'Payments are arranged directly with the professional.',
+              ),
+              style: context.text.bodySmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ],

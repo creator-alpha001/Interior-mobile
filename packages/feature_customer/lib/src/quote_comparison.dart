@@ -30,7 +30,8 @@ class QuoteComparisonScreen extends ConsumerStatefulWidget {
   final String requirementId;
 
   @override
-  ConsumerState<QuoteComparisonScreen> createState() => _QuoteComparisonScreenState();
+  ConsumerState<QuoteComparisonScreen> createState() =>
+      _QuoteComparisonScreenState();
 }
 
 class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
@@ -40,20 +41,24 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Choose ${view.professional.companyName}?'),
+        title: Text(
+          context.t('Choose {name}?', {'name': view.professional.companyName}),
+        ),
         content: Text(
-          'We will draw up an agreement for '
-          '${Rupees(view.quote.total).formatted} and send it to you to sign. '
-          'The other quotes for this job close.',
+          context.t(
+            'We will draw up an agreement for {amount} and send it to you to '
+            'sign. The other quotes for this job close.',
+            {'amount': Rupees(view.quote.total).formatted},
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Not yet'),
+            child: Text(context.t('Not yet')),
           ),
           FilledButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Choose them'),
+            child: Text(context.t('Choose them')),
           ),
         ],
       ),
@@ -64,7 +69,7 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
 
     try {
       await ref
-          .read(apiProvider)
+          .read(customerApiProvider)
           .customer
           .selectQuote(
             id: widget.service.leadDomain.id,
@@ -83,11 +88,15 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
       // A 409 means the quote moved — most often a vendor revised it while
       // this screen was open. Re-read rather than guess which version won.
       final message = error.failure == ApiFailure.conflict
-          ? 'That quote has been revised since you opened this screen. '
-              'Pull to refresh to see the current one.'
+          ? context.t(
+              'That quote has been revised since you opened this screen. '
+              'Pull to refresh to see the current one.',
+            )
           : error.message;
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -108,23 +117,38 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
           padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
           children: [
             const SizedBox(height: Space.md),
-            Text('Compare quotes', style: context.text.displayLarge),
+            Text(context.t('Compare quotes'), style: context.text.displayLarge),
             const SizedBox(height: Space.xs),
             Text(
               quotes.isEmpty
-                  ? 'No quotes yet. We are still gathering them.'
-                  : '${quotes.length} professionals have quoted for your '
-                      '${service.domain.name.toLowerCase()}.',
-              style: context.text.bodyLarge
-                  ?.copyWith(color: context.colors.onSurfaceVariant),
+                  ? context.t('No quotes yet. We are still gathering them.')
+                  : context.l10n
+                        .plural(
+                          quotes.length,
+                          context.t(
+                            '{n} professional has quoted for your {trade}.',
+                          ),
+                          context.t(
+                            '{n} professionals have quoted for your {trade}.',
+                          ),
+                        )
+                        .replaceAll(
+                          '{trade}',
+                          service.domain.name.toLowerCase(),
+                        ),
+              style: context.text.bodyLarge?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
 
             if (selected == null && quotes.isNotEmpty) ...[
               const SizedBox(height: Space.lg),
-              const ActionRequired(
-                title: 'Your turn',
-                body: 'Nothing moves until you choose. Take your time — the '
-                    'ratings beside each price are for this trade only.',
+              ActionRequired(
+                title: context.t('Your turn'),
+                body: context.t(
+                  'Nothing moves until you choose. Take your time — the '
+                  'ratings beside each price are for this trade only.',
+                ),
               ),
             ],
 
@@ -146,9 +170,11 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
               AanganCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Text(
-                  'Our coordinator calls each professional before offering them '
-                  'your job, so quotes arrive over a day or two rather than '
-                  'instantly.',
+                  context.t(
+                    'Our coordinator calls each professional before offering them '
+                    'your job, so quotes arrive over a day or two rather than '
+                    'instantly.',
+                  ),
                   style: context.text.bodyMedium,
                 ),
               ),
@@ -223,18 +249,47 @@ class _QuoteRow extends StatelessWidget {
                         ),
                         if (professional.isVerified)
                           // Sage: a person at Aangan verified them.
-                          const StatusPill('Verified', tone: StatusTone.verified),
+                          StatusPill(
+                            context.t('Verified'),
+                            tone: StatusTone.verified,
+                          ),
                       ],
                     ),
                     const SizedBox(height: Space.xxs),
                     Text(
                       ratingCount == 0
-                          ? 'No ratings in ${view.domain.name} yet'
-                          : '${rating.toStringAsFixed(1)} ★ · $ratingCount '
-                              '${ratingCount == 1 ? "review" : "reviews"} '
-                              '${showsTradeRating ? "in ${view.domain.name}" : "overall"}',
-                      style: context.text.bodySmall
-                          ?.copyWith(color: context.colors.onSurfaceVariant),
+                          ? context.t('No ratings in {trade} yet', {
+                              'trade': view.domain.name,
+                            })
+                          : showsTradeRating
+                          ? context.l10n
+                                .plural(
+                                  ratingCount,
+                                  context.t(
+                                    '{rating} ★ · {n} review in {trade}',
+                                  ),
+                                  context.t(
+                                    '{rating} ★ · {n} reviews in {trade}',
+                                  ),
+                                )
+                                .replaceAll(
+                                  '{rating}',
+                                  rating.toStringAsFixed(1),
+                                )
+                                .replaceAll('{trade}', view.domain.name)
+                          : context.l10n
+                                .plural(
+                                  ratingCount,
+                                  context.t('{rating} ★ · {n} review overall'),
+                                  context.t('{rating} ★ · {n} reviews overall'),
+                                )
+                                .replaceAll(
+                                  '{rating}',
+                                  rating.toStringAsFixed(1),
+                                ),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -248,8 +303,9 @@ class _QuoteRow extends StatelessWidget {
           Text(
             '${view.quote.timelineDays} days · '
             '${view.quote.warrantyMonths} months warranty',
-            style: context.text.bodySmall
-                ?.copyWith(color: context.colors.onSurfaceVariant),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
 
           if (view.quote.materialsSummary.isNotEmpty) ...[
@@ -297,7 +353,10 @@ class _QuoteRow extends StatelessWidget {
 
           const SizedBox(height: Space.md),
           if (isSelected)
-            const StatusPill('You chose this one', tone: StatusTone.verified)
+            StatusPill(
+              context.t('You chose this one'),
+              tone: StatusTone.verified,
+            )
           else
             SizedBox(
               width: double.infinity,
@@ -312,7 +371,11 @@ class _QuoteRow extends StatelessWidget {
                           color: Colors.white,
                         ),
                       )
-                    : Text(isLocked ? 'Not chosen' : 'Choose this quote'),
+                    : Text(
+                        isLocked
+                            ? context.t('Not chosen')
+                            : context.t('Choose this quote'),
+                      ),
               ),
             ),
         ],

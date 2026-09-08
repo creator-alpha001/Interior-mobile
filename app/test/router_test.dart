@@ -9,6 +9,7 @@ library;
 import 'package:aangan_app/router.dart';
 import 'package:aangan_core_auth/aangan_core_auth.dart';
 import 'package:aangan_core_upload/aangan_core_upload.dart';
+import 'package:aangan_feature_customer/aangan_feature_customer.dart';
 import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:aangan_design/aangan_design.dart';
@@ -34,10 +35,19 @@ Future<(AuthController, StubApi)> _pump(
 
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [apiProvider.overrideWithValue(client)],
+      overrides: [
+        customerApiProvider.overrideWithValue(client),
+        vendorApiProvider.overrideWithValue(client),
+      ],
       child: MaterialApp.router(
         theme: AanganTheme.light,
-        routerConfig: buildRouter(api: client, auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
+        routerConfig: buildRouter(
+          api: client,
+          auth: auth,
+          gate: gate,
+          queueFor: (_) => queue,
+          requirementQueue: queue,
+        ),
       ),
     ),
   );
@@ -74,10 +84,19 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [apiProvider.overrideWithValue(client)],
+        overrides: [
+          customerApiProvider.overrideWithValue(client),
+          vendorApiProvider.overrideWithValue(client),
+        ],
         child: MaterialApp.router(
           theme: AanganTheme.light,
-          routerConfig: buildRouter(api: client, auth: auth, gate: gate, queueFor: (_) => queue, requirementQueue: queue),
+          routerConfig: buildRouter(
+            api: client,
+            auth: auth,
+            gate: gate,
+            queueFor: (_) => queue,
+            requirementQueue: queue,
+          ),
         ),
       ),
     );
@@ -86,15 +105,17 @@ void main() {
     expect(find.text('Resolving your session…'), findsOneWidget);
   });
 
-  testWidgets('no token means the sign-in screen, without asking /me',
-      (tester) async {
+  testWidgets('no token means the sign-in screen, without asking /me', (
+    tester,
+  ) async {
     final (_, api) = await _pump(tester);
 
     expect(find.text('Send code'), findsOneWidget);
     expect(
       api.seen.where((r) => r.path == '/me'),
       isEmpty,
-      reason: 'there is no session to resolve, so /me is not worth a round trip',
+      reason:
+          'there is no session to resolve, so /me is not worth a round trip',
     );
   });
 
@@ -114,8 +135,9 @@ void main() {
     expect(find.text('DASHBOARD'), findsNothing);
   });
 
-  testWidgets('a professional lands on the onboarding gate, not a dashboard',
-      (tester) async {
+  testWidgets('a professional lands on the onboarding gate, not a dashboard', (
+    tester,
+  ) async {
     // The most important redirect in the app. An unsigned professional is in no
     // lead pool however verified they are, so a dashboard reading "0 leads" is
     // true and tells them nothing about why. Whether they have signed is a
@@ -170,7 +192,9 @@ void main() {
     expect(find.text('Staff sign in on the web'), findsOneWidget);
   });
 
-  testWidgets('a revoked session drops to sign-in and says why', (tester) async {
+  testWidgets('a revoked session drops to sign-in and says why', (
+    tester,
+  ) async {
     // Sessions are rows rather than JWTs precisely so a suspension takes effect
     // on the screen somebody is looking at. Being signed out with no
     // explanation is what generates the support call.
@@ -185,7 +209,10 @@ void main() {
     expect(find.text('HOME'), findsOneWidget);
 
     // The next request 401s, as it would for a suspended vendor.
-    api.on('GET', '/me', {'code': 'not_authenticated', 'message': 'no'}, status: 401);
+    api.on('GET', '/me', {
+      'code': 'not_authenticated',
+      'message': 'no',
+    }, status: 401);
     await tester.runAsync(() => auth.resolve());
     await tester.pumpAndSettle();
 
@@ -194,16 +221,19 @@ void main() {
     expect(find.textContaining('suspended'), findsOneWidget);
   });
 
-  testWidgets('a network failure at launch does not present as signed in',
-      (tester) async {
+  testWidgets('a network failure at launch does not present as signed in', (
+    tester,
+  ) async {
     // Guessing is worse than the sign-in screen. An app that assumes the last
     // known role when it cannot reach the API shows a vendor a dashboard built
     // from nothing.
     await _pump(
       tester,
       token: 'sess-customer',
-      stub: (api) => api.on('GET', '/me', {'code': 'internal_error', 'message': 'down'},
-          status: 500),
+      stub: (api) => api.on('GET', '/me', {
+        'code': 'internal_error',
+        'message': 'down',
+      }, status: 500),
     );
 
     expect(find.text('Send code'), findsOneWidget);

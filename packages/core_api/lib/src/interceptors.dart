@@ -58,8 +58,10 @@ class RequestIdInterceptor extends Interceptor {
 
   static const _alphabet = 'abcdefghijklmnopqrstuvwxyz0123456789';
 
-  String _id() =>
-      List.generate(20, (_) => _alphabet[_random.nextInt(_alphabet.length)]).join();
+  String _id() => List.generate(
+    20,
+    (_) => _alphabet[_random.nextInt(_alphabet.length)],
+  ).join();
 
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
@@ -82,7 +84,10 @@ class ErrorInterceptor extends Interceptor {
   final SessionStore _session;
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     final failure = ApiException.from(err);
 
     if (failure.failure == ApiFailure.notAuthenticated) {
@@ -120,7 +125,11 @@ class ErrorInterceptor extends Interceptor {
 /// A request may opt in explicitly by carrying an [kIdempotencyHeader], which
 /// is what the signing screen does.
 class RetryInterceptor extends Interceptor {
-  RetryInterceptor(this._dio, {this.maxAttempts = 2, this.baseDelay = const Duration(milliseconds: 300)});
+  RetryInterceptor(
+    this._dio, {
+    this.maxAttempts = 2,
+    this.baseDelay = const Duration(milliseconds: 300),
+  });
 
   final Dio _dio;
   final int maxAttempts;
@@ -141,7 +150,10 @@ class RetryInterceptor extends Interceptor {
   }
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     final failure = err.error;
     if (failure is! ApiException) return handler.next(err);
 

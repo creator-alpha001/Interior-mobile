@@ -105,8 +105,16 @@ class AanganPalette extends ThemeExtension<AanganPalette> {
     if (other is! AanganPalette) return this;
     return AanganPalette(
       verified: Color.lerp(verified, other.verified, t)!,
-      verifiedContainer: Color.lerp(verifiedContainer, other.verifiedContainer, t)!,
-      onVerifiedContainer: Color.lerp(onVerifiedContainer, other.onVerifiedContainer, t)!,
+      verifiedContainer: Color.lerp(
+        verifiedContainer,
+        other.verifiedContainer,
+        t,
+      )!,
+      onVerifiedContainer: Color.lerp(
+        onVerifiedContainer,
+        other.onVerifiedContainer,
+        t,
+      )!,
       waiting: Color.lerp(waiting, other.waiting, t)!,
       wrong: Color.lerp(wrong, other.wrong, t)!,
       metadata: Color.lerp(metadata, other.metadata, t)!,
@@ -235,7 +243,9 @@ abstract final class AanganTheme {
         shadowColor: noTint,
         elevation: 0,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(Radii.panel)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(Radii.panel),
+          ),
           side: BorderSide(color: AanganColors.overlayBorder),
         ),
       ),

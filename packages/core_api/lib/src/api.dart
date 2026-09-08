@@ -86,8 +86,9 @@ class AanganApi {
     // decides using a typed ApiException, which is what ErrorInterceptor
     // produces. Registered the other way round, retry sees a raw DioException,
     // never matches, and silently does nothing.
-    final cache =
-        cacheDirectory == null ? null : OfflineCacheInterceptor(cacheDirectory);
+    final cache = cacheDirectory == null
+        ? null
+        : OfflineCacheInterceptor(cacheDirectory);
 
     // Order, again. The cache sits *before* ErrorInterceptor so that a
     // connection failure with a cached body resolves as a success and never
@@ -112,7 +113,10 @@ class AanganApi {
   }
 
   /// For tests: build against a dio that already has an adapter installed.
-  factory AanganApi.withDio(Dio dio, {SessionStore session = const NoSession()}) {
+  factory AanganApi.withDio(
+    Dio dio, {
+    SessionStore session = const NoSession(),
+  }) {
     dio.interceptors.addAll([
       AuthInterceptor(session),
       RequestIdInterceptor(),

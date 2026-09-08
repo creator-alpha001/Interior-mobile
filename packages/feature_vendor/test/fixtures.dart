@@ -6,7 +6,8 @@ import 'package:dio/dio.dart';
 
 /// An API that answers nothing. These tests render widgets from fixtures; the
 /// screens that fetch are covered where the fetching is the point.
-AanganApi fixtureApi() => AanganApi.withDio(Dio(BaseOptions(baseUrl: 'https://test')));
+AanganApi fixtureApi() =>
+    AanganApi.withDio(Dio(BaseOptions(baseUrl: 'https://test')));
 
 const _city = City(
   id: 'city-1',
@@ -40,12 +41,12 @@ const _domain = Domain(
 /// A masked client. There is no unmasked variant available to this package —
 /// `boundaries_test.dart` asserts that.
 MaskedClientSummary _client({String? address}) => MaskedClientSummary(
-      displayName: 'Priya S.',
-      city: _city,
-      locality: 'Gomti Nagar',
-      address: address,
-      contactReleased: false,
-    );
+  displayName: 'Priya S.',
+  city: _city,
+  locality: 'Gomti Nagar',
+  address: address,
+  contactReleased: false,
+);
 
 VendorLeadCard fixtureLead({
   int competingQuotes = 2,

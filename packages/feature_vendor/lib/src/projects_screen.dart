@@ -41,7 +41,10 @@ class ProjectsScreen extends ConsumerWidget {
             const SizedBox(height: Space.md),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
-              child: Text('Projects', style: context.text.headlineLarge),
+              child: Text(
+                context.t('Projects'),
+                style: context.text.headlineLarge,
+              ),
             ),
             const SizedBox(height: Space.sm),
             Expanded(
@@ -50,10 +53,12 @@ class ProjectsScreen extends ConsumerWidget {
                 onRetry: () => ref.invalidate(projectsProvider),
                 data: (list) {
                   if (list.isEmpty) {
-                    return const EmptyState(
-                      title: 'No live work',
-                      body: 'A project starts when a customer signs an '
-                          'agreement for a quote you won.',
+                    return EmptyState(
+                      title: context.t('No live work'),
+                      body: context.t(
+                        'A project starts when a customer signs an '
+                        'agreement for a quote you won.',
+                      ),
                     );
                   }
 
@@ -67,10 +72,8 @@ class ProjectsScreen extends ConsumerWidget {
                       itemCount: list.length,
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: Space.md),
-                      itemBuilder: (context, i) => ProjectCard(
-                        project: list[i],
-                        queueFor: queueFor,
-                      ),
+                      itemBuilder: (context, i) =>
+                          ProjectCard(project: list[i], queueFor: queueFor),
                     ),
                   );
                 },
@@ -92,8 +95,9 @@ class ProjectCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final milestones = project.project.milestones;
-    final approved =
-        milestones.where((m) => m.verification == MilestoneVerification.approved).length;
+    final approved = milestones
+        .where((m) => m.verification == MilestoneVerification.approved)
+        .length;
 
     return AanganCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
@@ -181,38 +185,41 @@ class _MilestoneRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.palette;
 
-    final (Color colour, IconData glyph, String label, StatusTone tone) =
-        switch (milestone.verification) {
+    final (
+      Color colour,
+      IconData glyph,
+      String label,
+      StatusTone tone,
+    ) = switch (milestone.verification) {
       MilestoneVerification.approved => (
-          palette.verified,
-          Icons.check_circle,
-          'Approved',
-          StatusTone.verified,
-        ),
+        palette.verified,
+        Icons.check_circle,
+        context.t('Approved'),
+        StatusTone.verified,
+      ),
       // Ochre, not sage. Submitted is waiting on ops, not done.
       MilestoneVerification.submitted => (
-          palette.waiting,
-          Icons.schedule,
-          'Awaiting approval',
-          StatusTone.waiting,
-        ),
+        palette.waiting,
+        Icons.schedule,
+        context.t('Awaiting approval'),
+        StatusTone.waiting,
+      ),
       MilestoneVerification.rejected => (
-          palette.wrong,
-          Icons.error_outline,
-          'Sent back',
-          StatusTone.wrong,
-        ),
-      MilestoneVerification.notStarted ||
-      MilestoneVerification.$unknown =>
-        (
-          context.colors.outline,
-          Icons.radio_button_unchecked,
-          'Not started',
-          StatusTone.neutral,
-        ),
+        palette.wrong,
+        Icons.error_outline,
+        context.t('Sent back'),
+        StatusTone.wrong,
+      ),
+      MilestoneVerification.notStarted || MilestoneVerification.$unknown => (
+        context.colors.outline,
+        Icons.radio_button_unchecked,
+        context.t('Not started'),
+        StatusTone.neutral,
+      ),
     };
 
-    final canSubmit = milestone.verification == MilestoneVerification.notStarted ||
+    final canSubmit =
+        milestone.verification == MilestoneVerification.notStarted ||
         milestone.verification == MilestoneVerification.rejected;
 
     return IntrinsicHeight(
@@ -243,7 +250,10 @@ class _MilestoneRow extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(milestone.title, style: context.text.titleLarge),
+                        child: Text(
+                          milestone.title,
+                          style: context.text.titleLarge,
+                        ),
                       ),
                       StatusPill(label, tone: tone),
                     ],
@@ -252,11 +262,14 @@ class _MilestoneRow extends StatelessWidget {
                     const SizedBox(height: Space.xxs),
                     Text(
                       milestone.verifierNote!,
-                      style: context.text.bodySmall?.copyWith(color: palette.wrong),
+                      style: context.text.bodySmall?.copyWith(
+                        color: palette.wrong,
+                      ),
                     ),
                   ],
                   if (milestone.proofNote != null &&
-                      milestone.verification != MilestoneVerification.rejected) ...[
+                      milestone.verification !=
+                          MilestoneVerification.rejected) ...[
                     const SizedBox(height: Space.xxs),
                     Text(
                       milestone.proofNote!,
@@ -271,8 +284,8 @@ class _MilestoneRow extends StatelessWidget {
                       onPressed: onSubmit,
                       child: Text(
                         milestone.verification == MilestoneVerification.rejected
-                            ? 'Send new proof'
-                            : 'Submit proof',
+                            ? context.t('Send new proof')
+                            : context.t('Submit proof'),
                       ),
                     ),
                   ],

@@ -62,9 +62,9 @@ class DeviceRegistrar {
     required AanganApi api,
     PushTokenSource tokens = const NoPushTokens(),
     String? appVersion,
-  })  : _api = api,
-        _tokens = tokens,
-        _appVersion = appVersion;
+  }) : _api = api,
+       _tokens = tokens,
+       _appVersion = appVersion;
 
   final AanganApi _api;
   final PushTokenSource _tokens;

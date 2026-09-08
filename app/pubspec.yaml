@@ -1,6 +1,11 @@
 name: aangan_app
 description: The Aangan mobile app — customer and professional in one binary.
 publish_to: none
+
+# Resolved from the workspace root, so every package shares one lockfile and
+# one version of dio, freezed and intl. Without this the root `workspace:` key
+# is inert and `flutter pub get` at the root refuses outright.
+resolution: workspace
 version: 0.1.0+1
 
 environment:
@@ -10,6 +15,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Material's own strings — the date picker, the text-selection menu, the
+  # back button's semantics label — in Hindi. Without it the app's copy
+  # translates and the framework's does not, which reads worse than English
+  # throughout because the seams are visible.
+  flutter_localizations:
+    sdk: flutter
+  # Which language somebody chose. Not a secret, so not the keychain.
+  shared_preferences: ^2.3.5
   aangan_design:
     path: ../packages/design
   aangan_core_api:

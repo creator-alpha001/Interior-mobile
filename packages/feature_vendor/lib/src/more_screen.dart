@@ -30,28 +30,31 @@ class MoreScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
           children: [
             const SizedBox(height: Space.md),
-            Text('More', style: context.text.headlineLarge),
+            Text(context.t('More'), style: context.text.headlineLarge),
             const SizedBox(height: Space.md),
             _Link(
-              title: 'Commission',
-              subtitle: 'What you owe the platform',
+              title: context.t('Commission'),
+              subtitle: context.t('What you owe the platform'),
               onTap: () => _push(context, const InvoicesScreen()),
             ),
             const SizedBox(height: Space.xs),
             _Link(
-              title: 'Performance',
-              subtitle: 'Your rating in each trade',
+              title: context.t('Performance'),
+              subtitle: context.t('Your rating in each trade'),
               onTap: () => _push(context, const PerformanceScreen()),
             ),
             const SizedBox(height: Space.xs),
             _Link(
-              title: 'Portfolio',
-              subtitle: 'Approved work on your public profile',
+              title: context.t('Portfolio'),
+              subtitle: context.t('Approved work on your public profile'),
               onTap: () => _push(context, const PortfolioScreen()),
             ),
             if (onSignOut != null) ...[
               const SizedBox(height: Space.xl),
-              OutlinedButton(onPressed: onSignOut, child: const Text('Sign out')),
+              OutlinedButton(
+                onPressed: onSignOut,
+                child: Text(context.t('Sign out')),
+              ),
             ],
             const SizedBox(height: Space.xxxl),
           ],
@@ -65,7 +68,11 @@ class MoreScreen extends StatelessWidget {
 }
 
 class _Link extends StatelessWidget {
-  const _Link({required this.title, required this.subtitle, required this.onTap});
+  const _Link({
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   final String title;
   final String subtitle;
@@ -106,16 +113,18 @@ class InvoicesScreen extends ConsumerWidget {
     final invoices = ref.watch(invoicesProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Commission')),
+      appBar: AppBar(title: Text(context.t('Commission'))),
       body: SafeArea(
         child: AsyncView(
           value: invoices,
           onRetry: () => ref.invalidate(invoicesProvider),
           data: (list) => list.isEmpty
-              ? const EmptyState(
-                  title: 'Nothing owed',
-                  body: 'Commission is raised when a customer signs an '
-                      'agreement, at your rate for that trade.',
+              ? EmptyState(
+                  title: context.t('Nothing owed'),
+                  body: context.t(
+                    'Commission is raised when a customer signs an '
+                    'agreement, at your rate for that trade.',
+                  ),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.all(Space.gutter),
@@ -139,7 +148,10 @@ class _InvoiceCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.palette;
 
-    final (StatusTone tone, Color? amountColour) = switch (view.invoice.status) {
+    final (
+      StatusTone tone,
+      Color? amountColour,
+    ) = switch (view.invoice.status) {
       // Ochre while it is simply due; iron once it is overdue, because that is
       // what can take a vendor out of the assignment pool.
       InvoiceStatus.pending => (StatusTone.waiting, palette.waiting),
@@ -158,7 +170,10 @@ class _InvoiceCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(view.invoice.reference, style: context.text.titleLarge),
+                child: Text(
+                  view.invoice.reference,
+                  style: context.text.titleLarge,
+                ),
               ),
               StatusPill(view.invoice.status.name, tone: tone),
             ],
@@ -186,7 +201,7 @@ class PerformanceScreen extends ConsumerWidget {
     final performance = ref.watch(performanceProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Performance')),
+      appBar: AppBar(title: Text(context.t('Performance'))),
       body: SafeArea(
         child: AsyncView(
           value: performance,
@@ -194,7 +209,10 @@ class PerformanceScreen extends ConsumerWidget {
           data: (data) => ListView(
             padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
             children: [
-              const SectionHead('By trade', eyebrow: 'Rated separately'),
+              SectionHead(
+                context.t('By trade'),
+                eyebrow: context.t('Rated separately'),
+              ),
               Text(
                 'A good carpenter is not automatically a good painter, so each '
                 'trade is rated on its own — and leads are ranked by your '
@@ -213,11 +231,14 @@ class PerformanceScreen extends ConsumerWidget {
                       Row(
                         children: [
                           Expanded(
-                            child: Text(row.domain.name, style: context.text.headlineSmall),
+                            child: Text(
+                              row.domain.name,
+                              style: context.text.headlineSmall,
+                            ),
                           ),
                           Text(
                             row.ratingCount == 0
-                                ? 'Not yet rated'
+                                ? context.t('Not yet rated')
                                 : '${row.rating.toStringAsFixed(1)} ★',
                             style: context.text.titleLarge,
                           ),
@@ -243,7 +264,10 @@ class PerformanceScreen extends ConsumerWidget {
                 const SizedBox(height: Space.xs),
               ],
 
-              const SectionHead('Overall', eyebrow: 'Across every trade'),
+              SectionHead(
+                context.t('Overall'),
+                eyebrow: context.t('Across every trade'),
+              ),
               AanganCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
@@ -277,16 +301,18 @@ class PortfolioScreen extends ConsumerWidget {
     final portfolio = ref.watch(portfolioProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Portfolio')),
+      appBar: AppBar(title: Text(context.t('Portfolio'))),
       body: SafeArea(
         child: AsyncView(
           value: portfolio,
           onRetry: () => ref.invalidate(portfolioProvider),
           data: (list) => list.isEmpty
-              ? const EmptyState(
-                  title: 'Nothing published',
-                  body: 'Portfolio work is moderated before it appears on your '
-                      'public profile.',
+              ? EmptyState(
+                  title: context.t('Nothing published'),
+                  body: context.t(
+                    'Portfolio work is moderated before it appears on your '
+                    'public profile.',
+                  ),
                 )
               : ListView.separated(
                   padding: const EdgeInsets.all(Space.gutter),
@@ -303,13 +329,17 @@ class PortfolioScreen extends ConsumerWidget {
                           Row(
                             children: [
                               Expanded(
-                                child: Text(item.title, style: context.text.headlineSmall),
+                                child: Text(
+                                  item.title,
+                                  style: context.text.headlineSmall,
+                                ),
                               ),
                               // Sage only when a person approved it. A pending
                               // item is not on the public profile.
                               StatusPill(
                                 item.moderationStatus.name,
-                                tone: item.moderationStatus ==
+                                tone:
+                                    item.moderationStatus ==
                                         DomainApprovalStatus.approved
                                     ? StatusTone.verified
                                     : StatusTone.waiting,
@@ -317,7 +347,10 @@ class PortfolioScreen extends ConsumerWidget {
                             ],
                           ),
                           const SizedBox(height: Space.xs),
-                          Text(item.description, style: context.text.bodyMedium),
+                          Text(
+                            item.description,
+                            style: context.text.bodyMedium,
+                          ),
                         ],
                       ),
                     );

@@ -22,7 +22,11 @@ import 'providers.dart';
 import 'quote_builder.dart';
 
 class LeadDetailScreen extends ConsumerWidget {
-  const LeadDetailScreen({super.key, required this.leadDomainId, this.onOpenThread});
+  const LeadDetailScreen({
+    super.key,
+    required this.leadDomainId,
+    this.onOpenThread,
+  });
 
   final String leadDomainId;
   final void Function(VendorLeadCard lead)? onOpenThread;
@@ -32,7 +36,7 @@ class LeadDetailScreen extends ConsumerWidget {
     final lead = ref.watch(leadProvider(leadDomainId));
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Lead')),
+      appBar: AppBar(title: Text(context.t('Lead'))),
       body: SafeArea(
         child: AsyncView(
           value: lead,
@@ -64,7 +68,7 @@ class _DetailState extends ConsumerState<_Detail> {
     setState(() => _busy = true);
     try {
       await ref
-          .read(apiProvider)
+          .read(vendorApiProvider)
           .vendor
           .respondToLead(
             id: widget.lead.leadDomain.id,
@@ -82,8 +86,9 @@ class _DetailState extends ConsumerState<_Detail> {
       ref.invalidate(leadProvider(widget.lead.leadDomain.id));
     } on ApiException catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error.message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.message)));
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -94,25 +99,25 @@ class _DetailState extends ConsumerState<_Detail> {
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Why are you declining?'),
+        title: Text(context.t('Why are you declining?')),
         content: TextField(
           controller: controller,
           autofocus: true,
           maxLines: 3,
-          decoration: const InputDecoration(
-            hintText: 'Too far, fully booked, not my trade…',
+          decoration: InputDecoration(
+            hintText: context.t('Too far, fully booked, not my trade…'),
           ),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(context.t('Cancel')),
           ),
           FilledButton(
             // Ops read these. A blank reason tells the coordinator nothing and
             // the same lead comes back next week.
             onPressed: () => Navigator.of(context).pop(controller.text.trim()),
-            child: const Text('Decline'),
+            child: Text(context.t('Decline')),
           ),
         ],
       ),
@@ -122,7 +127,8 @@ class _DetailState extends ConsumerState<_Detail> {
   @override
   Widget build(BuildContext context) {
     final lead = widget.lead;
-    final responded = lead.assignment.responseStatus != AssignmentResponse.pending;
+    final responded =
+        lead.assignment.responseStatus != AssignmentResponse.pending;
 
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
@@ -143,10 +149,15 @@ class _DetailState extends ConsumerState<_Detail> {
           runSpacing: Space.xxs,
           children: [
             StatusPill(lead.domain.name, tone: StatusTone.neutral),
-            if (lead.won) const StatusPill('Won', tone: StatusTone.verified),
-            if (lead.lost) const StatusPill('Lost', tone: StatusTone.wrong),
+            if (lead.won)
+              StatusPill(context.t('Won'), tone: StatusTone.verified),
+            if (lead.lost)
+              StatusPill(context.t('Lost'), tone: StatusTone.wrong),
             if (lead.myQuote != null && !lead.won && !lead.lost)
-              StatusPill('Quote v${lead.myQuote!.version} out', tone: StatusTone.waiting),
+              StatusPill(
+                'Quote v${lead.myQuote!.version} out',
+                tone: StatusTone.waiting,
+              ),
           ],
         ),
 
@@ -158,19 +169,21 @@ class _DetailState extends ConsumerState<_Detail> {
         if (!responded) ...[
           const SizedBox(height: Space.lg),
           ActionRequired(
-            title: 'Can you take this on?',
-            body: 'Our team offered you this job. Confirming puts you in the '
-                'running; declining tells the coordinator why.',
+            title: context.t('Can you take this on?'),
+            body: context.t(
+              'Our team offered you this job. Confirming puts you in the '
+              'running; declining tells the coordinator why.',
+            ),
             action: Row(
               children: [
                 FilledButton(
                   onPressed: _busy ? null : () => _respond(true),
-                  child: const Text('Accept'),
+                  child: Text(context.t('Accept')),
                 ),
                 const SizedBox(width: Space.xs),
                 OutlinedButton(
                   onPressed: _busy ? null : () => _respond(false),
-                  child: const Text('Decline'),
+                  child: Text(context.t('Decline')),
                 ),
               ],
             ),
@@ -179,20 +192,29 @@ class _DetailState extends ConsumerState<_Detail> {
 
         /// The brief first. It is the real scope.
         if (lead.brief != null && lead.brief!.isNotEmpty) ...[
-          const SectionHead('The brief', eyebrow: 'Captured on the call'),
+          SectionHead(
+            context.t('The brief'),
+            eyebrow: context.t('Captured on the call'),
+          ),
           AanganCard(
             padding: const EdgeInsets.all(Space.cardPaddingWide),
             child: Text(lead.brief!, style: context.text.bodyLarge),
           ),
         ],
 
-        const SectionHead('In the customer’s words', eyebrow: 'As submitted'),
+        SectionHead(
+          context.t('In the customer’s words'),
+          eyebrow: context.t('As submitted'),
+        ),
         AanganCard(
           child: Text(lead.description, style: context.text.bodyMedium),
         ),
 
         if (lead.siteNotes.isNotEmpty) ...[
-          const SectionHead('Site notes', eyebrow: 'Access and conditions'),
+          SectionHead(
+            context.t('Site notes'),
+            eyebrow: context.t('Access and conditions'),
+          ),
           AanganCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -208,7 +230,10 @@ class _DetailState extends ConsumerState<_Detail> {
         ],
 
         if (lead.items.isNotEmpty) ...[
-          const SectionHead('What they picked', eyebrow: 'From the catalogue'),
+          SectionHead(
+            context.t('What they picked'),
+            eyebrow: context.t('From the catalogue'),
+          ),
           AanganCard(
             padding: const EdgeInsets.symmetric(vertical: Space.xs),
             child: Column(
@@ -225,7 +250,10 @@ class _DetailState extends ConsumerState<_Detail> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(item.itemName, style: context.text.titleMedium),
+                              Text(
+                                item.itemName,
+                                style: context.text.titleMedium,
+                              ),
                               if (item.customerNotes != null)
                                 Text(
                                   item.customerNotes!,
@@ -236,7 +264,10 @@ class _DetailState extends ConsumerState<_Detail> {
                             ],
                           ),
                         ),
-                        Text('×${item.quantity}', style: context.text.titleMedium),
+                        Text(
+                          '×${item.quantity}',
+                          style: context.text.titleMedium,
+                        ),
                       ],
                     ),
                   ),
@@ -247,32 +278,37 @@ class _DetailState extends ConsumerState<_Detail> {
           ),
         ],
 
-        const SectionHead('The job', eyebrow: 'Scope and budget'),
+        SectionHead(
+          context.t('The job'),
+          eyebrow: context.t('Scope and budget'),
+        ),
         AanganCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             children: [
-              _Fact(label: 'Urgency', value: lead.urgency),
+              _Fact(label: context.t('Urgency'), value: lead.urgency),
               const SizedBox(height: Space.xs),
               _Fact(
-                label: 'Material',
+                label: context.t('Material'),
                 value: switch (lead.materialSource) {
-                  MaterialSource.vendorSupplied => 'You supply',
-                  MaterialSource.customerSupplied => 'Customer supplies',
-                  MaterialSource.undecided => 'Undecided',
-                  MaterialSource.$unknown => 'Unknown',
+                  MaterialSource.vendorSupplied => context.t('You supply'),
+                  MaterialSource.customerSupplied => context.t(
+                    context.t('Customer supplies'),
+                  ),
+                  MaterialSource.undecided => context.t('Undecided'),
+                  MaterialSource.$unknown => context.t('Unknown'),
                 },
               ),
               const SizedBox(height: Space.xs),
               _Fact(
-                label: 'Budget ceiling',
+                label: context.t('Budget ceiling'),
                 value: lead.budgetMax == null
-                    ? 'Not stated'
+                    ? context.t('Not stated')
                     : Rupees(lead.budgetMax!).formatted,
               ),
               const SizedBox(height: Space.xs),
               _Fact(
-                label: 'Others quoting',
+                label: context.t('Others quoting'),
                 value: '${lead.competingQuotes}',
               ),
             ],
@@ -283,7 +319,10 @@ class _DetailState extends ConsumerState<_Detail> {
         ///
         /// The full address is released per service, and only once a visit for
         /// *that* service is confirmed. See the visits screen.
-        const SectionHead('Where', eyebrow: 'Locality only, for now'),
+        SectionHead(
+          context.t('Where'),
+          eyebrow: context.t('Locality only, for now'),
+        ),
         AanganCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -295,8 +334,10 @@ class _DetailState extends ConsumerState<_Detail> {
               const SizedBox(height: Space.xxs),
               Text(
                 lead.client.address == null
-                    ? 'The full address is released once a site visit for this '
-                        'service is confirmed.'
+                    ? context.t(
+                        'The full address is released once a site visit for this '
+                        'service is confirmed.',
+                      )
                     : lead.client.address!,
                 style: context.text.bodySmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
@@ -316,9 +357,15 @@ class _DetailState extends ConsumerState<_Detail> {
               children: [
                 Row(
                   children: [
-                    Text('Your quote', style: context.text.headlineSmall),
+                    Text(
+                      context.t('Your quote'),
+                      style: context.text.headlineSmall,
+                    ),
                     const Spacer(),
-                    StatusPill('v${lead.myQuote!.version}', tone: StatusTone.neutral),
+                    StatusPill(
+                      'v${lead.myQuote!.version}',
+                      tone: StatusTone.neutral,
+                    ),
                   ],
                 ),
                 const SizedBox(height: Space.xs),
@@ -344,11 +391,15 @@ class _DetailState extends ConsumerState<_Detail> {
               onPressed: _busy
                   ? null
                   : () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => QuoteBuilderScreen(lead: lead),
-                        ),
+                      MaterialPageRoute(
+                        builder: (_) => QuoteBuilderScreen(lead: lead),
                       ),
-              child: Text(lead.myQuote == null ? 'Send a quote' : 'Revise your quote'),
+                    ),
+              child: Text(
+                lead.myQuote == null
+                    ? context.t('Send a quote')
+                    : context.t('Revise your quote'),
+              ),
             ),
           ),
 
@@ -359,8 +410,10 @@ class _DetailState extends ConsumerState<_Detail> {
             onPressed: () => widget.onOpenThread?.call(lead),
             child: Text(
               lead.unreadMessages > 0
-                  ? 'Messages with Aangan (${lead.unreadMessages})'
-                  : 'Messages with Aangan',
+                  ? context.t('Messages with Aangan ({n})', {
+                      'n': lead.unreadMessages,
+                    })
+                  : context.t('Messages with Aangan'),
             ),
           ),
         ),

@@ -51,12 +51,16 @@ class _Masthead extends StatelessWidget {
         children: [
           Text(
             'COMPONENT GALLERY',
-            style: AanganTextStyles.eyebrow
-                .copyWith(color: context.colors.onSurfaceVariant),
+            style: AanganTextStyles.eyebrow.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
             semanticsLabel: 'Component gallery',
           ),
           const SizedBox(height: Space.xs),
-          Text('Warm Architectural\nMinimalism', style: context.text.displayLarge),
+          Text(
+            'Warm Architectural\nMinimalism',
+            style: context.text.displayLarge,
+          ),
           const SizedBox(height: Space.sm),
           Text(
             'Every component, in every state. If a padding changes, this screen '
@@ -217,12 +221,18 @@ class _TheActionPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SectionHead('Action required', eyebrow: 'When you are the blocker'),
+        const SectionHead(
+          'Action required',
+          eyebrow: 'When you are the blocker',
+        ),
         ActionRequired(
           title: 'Three quotes are ready',
           body:
               'Compare them and choose a professional. Nothing moves until you do.',
-          action: FilledButton(onPressed: () {}, child: const Text('Compare quotes')),
+          action: FilledButton(
+            onPressed: () {},
+            child: const Text('Compare quotes'),
+          ),
         ),
       ],
     );
@@ -251,7 +261,9 @@ class _Money extends StatelessWidget {
             children: [
               for (final (index, quote) in quotes.indexed) ...[
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: Space.cardPadding),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: Space.cardPadding,
+                  ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
@@ -305,7 +317,10 @@ class _Controls extends StatelessWidget {
                 children: [
                   FilledButton(onPressed: () {}, child: const Text('Primary')),
                   const SizedBox(width: Space.sm),
-                  OutlinedButton(onPressed: () {}, child: const Text('Secondary')),
+                  OutlinedButton(
+                    onPressed: () {},
+                    child: const Text('Secondary'),
+                  ),
                 ],
               ),
               const SizedBox(height: Space.sm),

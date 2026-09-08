@@ -45,7 +45,10 @@ class VisitsScreen extends ConsumerWidget {
             const SizedBox(height: Space.md),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
-              child: Text('Visits', style: context.text.headlineLarge),
+              child: Text(
+                context.t('Visits'),
+                style: context.text.headlineLarge,
+              ),
             ),
             const SizedBox(height: Space.sm),
             Expanded(
@@ -54,11 +57,13 @@ class VisitsScreen extends ConsumerWidget {
                 onRetry: () => ref.invalidate(visitsProvider),
                 data: (list) {
                   if (list.isEmpty) {
-                    return const EmptyState(
-                      title: 'No visits booked',
-                      body: 'The coordinator arranges site visits with both '
-                          'sides and confirms the slot. Nothing to travel to '
-                          'yet.',
+                    return EmptyState(
+                      title: context.t('No visits booked'),
+                      body: context.t(
+                        'The coordinator arranges site visits with both '
+                        'sides and confirms the slot. Nothing to travel to '
+                        'yet.',
+                      ),
                     );
                   }
 
@@ -134,7 +139,10 @@ class VisitCard extends StatelessWidget {
             spacing: Space.xxs,
             children: [
               StatusPill(visit.domain.name, tone: StatusTone.neutral),
-              StatusPill(_typeLabel(visit.meeting.type), tone: StatusTone.neutral),
+              StatusPill(
+                _typeLabel(context, visit.meeting.type),
+                tone: StatusTone.neutral,
+              ),
             ],
           ),
 
@@ -181,7 +189,9 @@ class _ReleasedAddress extends StatelessWidget {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open maps on this device.')),
+        SnackBar(
+          content: Text(context.t('Could not open maps on this device.')),
+        ),
       );
     }
   }
@@ -200,7 +210,10 @@ class _ReleasedAddress extends StatelessWidget {
               color: context.palette.verified,
             ),
             const SizedBox(width: Space.xxs),
-            Text('Address released', style: context.text.labelMedium),
+            Text(
+              context.t('Address released'),
+              style: context.text.labelMedium,
+            ),
           ],
         ),
         const SizedBox(height: Space.xs),
@@ -211,17 +224,17 @@ class _ReleasedAddress extends StatelessWidget {
             OutlinedButton.icon(
               onPressed: () => _openMap(context),
               icon: const Icon(Icons.map_outlined, size: TapTarget.glyph),
-              label: const Text('Directions'),
+              label: Text(context.t('Directions')),
             ),
             const SizedBox(width: Space.xs),
             OutlinedButton(
               onPressed: () {
                 Clipboard.setData(ClipboardData(text: visit.client.address!));
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Address copied')),
+                  SnackBar(content: Text(context.t('Address copied'))),
                 );
               },
-              child: const Text('Copy'),
+              child: Text(context.t('Copy')),
             ),
           ],
         ),
@@ -256,7 +269,10 @@ class _SealedAddress extends StatelessWidget {
                 color: context.colors.onSurfaceVariant,
               ),
               const SizedBox(width: Space.xxs),
-              Text('Address not released yet', style: context.text.labelMedium),
+              Text(
+                context.t('Address not released yet'),
+                style: context.text.labelMedium,
+              ),
             ],
           ),
           const SizedBox(height: Space.xs),
@@ -267,9 +283,11 @@ class _SealedAddress extends StatelessWidget {
           const SizedBox(height: Space.xxs),
           Text(
             // Explains the mechanism, so it reads as a rule rather than a bug.
-            'The full address is released once the coordinator confirms this '
-            'visit with both sides. It is released per service, so confirming '
-            'one job does not unlock another.',
+            context.t(
+              'The full address is released once the coordinator confirms this '
+              'visit with both sides. It is released per service, so confirming '
+              'one job does not unlock another.',
+            ),
             style: context.text.bodySmall?.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
@@ -288,23 +306,41 @@ class _VisitStatus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (status) {
-      MeetingStatus.confirmed => const StatusPill('Confirmed', tone: StatusTone.verified),
-      MeetingStatus.scheduled => const StatusPill('Awaiting confirmation', tone: StatusTone.waiting),
-      MeetingStatus.rescheduled => const StatusPill('Rescheduling', tone: StatusTone.waiting),
-      MeetingStatus.completed => const StatusPill('Done', tone: StatusTone.verified),
-      MeetingStatus.noShow => const StatusPill('No show', tone: StatusTone.wrong),
-      MeetingStatus.$unknown => const StatusPill('Unknown', tone: StatusTone.neutral),
+      MeetingStatus.confirmed => StatusPill(
+        context.t('Confirmed'),
+        tone: StatusTone.verified,
+      ),
+      MeetingStatus.scheduled => StatusPill(
+        context.t('Awaiting confirmation'),
+        tone: StatusTone.waiting,
+      ),
+      MeetingStatus.rescheduled => StatusPill(
+        context.t('Rescheduling'),
+        tone: StatusTone.waiting,
+      ),
+      MeetingStatus.completed => StatusPill(
+        context.t('Done'),
+        tone: StatusTone.verified,
+      ),
+      MeetingStatus.noShow => StatusPill(
+        context.t('No show'),
+        tone: StatusTone.wrong,
+      ),
+      MeetingStatus.$unknown => StatusPill(
+        context.t('Unknown'),
+        tone: StatusTone.neutral,
+      ),
     };
   }
 }
 
-String _typeLabel(MeetingType type) => switch (type) {
-      MeetingType.consultation => 'Consultation',
-      MeetingType.siteVisit => 'Site visit',
-      MeetingType.measurement => 'Measurement',
-      MeetingType.handover => 'Handover',
-      MeetingType.$unknown => 'Visit',
-    };
+String _typeLabel(BuildContext context, MeetingType type) => switch (type) {
+  MeetingType.consultation => context.t('Consultation'),
+  MeetingType.siteVisit => context.t('Site visit'),
+  MeetingType.measurement => context.t('Measurement'),
+  MeetingType.handover => context.t('Handover'),
+  MeetingType.$unknown => context.t('Visit'),
+};
 
 /// A readable local time from the ISO-8601 the API sends.
 String _when(String isoTimestamp) {
@@ -312,8 +348,18 @@ String _when(String isoTimestamp) {
   if (parsed == null) return isoTimestamp;
 
   const months = [
-    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
   ];
   final hour = parsed.hour % 12 == 0 ? 12 : parsed.hour % 12;
   final minute = parsed.minute.toString().padLeft(2, '0');

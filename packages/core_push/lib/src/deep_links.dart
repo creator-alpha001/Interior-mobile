@@ -65,7 +65,9 @@ DeepLink? deepLinkFor({
   // A notification addressed to the other shell is not followed. That is a
   // server-side addressing bug, and chasing it would land somebody on a screen
   // that does not exist for them.
-  if (boundTo != null && signedInAs != null && boundTo != signedInAs) return null;
+  if (boundTo != null && signedInAs != null && boundTo != signedInAs) {
+    return null;
+  }
 
   // Bound types keep their audience; dual-audience ones take the reader's.
   final audience = boundTo ?? signedInAs;
@@ -79,36 +81,64 @@ DeepLink? deepLinkFor({
 
   return switch ((audience, entityType)) {
     // ---- the customer side ----
-    (PushAudience.customer, NotificationEntityType.lead) =>
-      DeepLink('/home/requirements/$entityId', requiresRole: audience),
-    (PushAudience.customer, NotificationEntityType.leadDomain) =>
-      DeepLink('/home/services/$entityId', requiresRole: audience),
-    (PushAudience.customer, NotificationEntityType.quote) =>
-      DeepLink('/home/services/$entityId/quotes', requiresRole: audience),
-    (PushAudience.customer, NotificationEntityType.agreement) =>
-      DeepLink('/home/agreements/$entityId', requiresRole: audience),
-    (PushAudience.customer, NotificationEntityType.project) =>
-      DeepLink('/home/projects/$entityId', requiresRole: audience),
-    (PushAudience.customer, NotificationEntityType.meeting) =>
-      DeepLink('/home/visits/$entityId', requiresRole: audience),
-    (PushAudience.customer, NotificationEntityType.message) =>
-      DeepLink('/home/services/$entityId/messages', requiresRole: audience),
+    (PushAudience.customer, NotificationEntityType.lead) => DeepLink(
+      '/home/requirements/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.customer, NotificationEntityType.leadDomain) => DeepLink(
+      '/home/services/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.customer, NotificationEntityType.quote) => DeepLink(
+      '/home/services/$entityId/quotes',
+      requiresRole: audience,
+    ),
+    (PushAudience.customer, NotificationEntityType.agreement) => DeepLink(
+      '/home/agreements/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.customer, NotificationEntityType.project) => DeepLink(
+      '/home/projects/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.customer, NotificationEntityType.meeting) => DeepLink(
+      '/home/visits/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.customer, NotificationEntityType.message) => DeepLink(
+      '/home/services/$entityId/messages',
+      requiresRole: audience,
+    ),
 
     // ---- the vendor side ----
-    (PushAudience.vendor, NotificationEntityType.leadDomain) =>
-      DeepLink('/vendor/leads/$entityId', requiresRole: audience),
-    (PushAudience.vendor, NotificationEntityType.lead) =>
-      DeepLink('/vendor/leads/$entityId', requiresRole: audience),
-    (PushAudience.vendor, NotificationEntityType.quote) =>
-      DeepLink('/vendor/leads/$entityId', requiresRole: audience),
-    (PushAudience.vendor, NotificationEntityType.meeting) =>
-      DeepLink('/vendor/visits', requiresRole: audience),
-    (PushAudience.vendor, NotificationEntityType.project) =>
-      DeepLink('/vendor/projects/$entityId', requiresRole: audience),
-    (PushAudience.vendor, NotificationEntityType.invoice) =>
-      DeepLink('/vendor/invoices', requiresRole: audience),
-    (PushAudience.vendor, NotificationEntityType.message) =>
-      DeepLink('/vendor/leads/$entityId/messages', requiresRole: audience),
+    (PushAudience.vendor, NotificationEntityType.leadDomain) => DeepLink(
+      '/vendor/leads/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.vendor, NotificationEntityType.lead) => DeepLink(
+      '/vendor/leads/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.vendor, NotificationEntityType.quote) => DeepLink(
+      '/vendor/leads/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.vendor, NotificationEntityType.meeting) => DeepLink(
+      '/vendor/visits',
+      requiresRole: audience,
+    ),
+    (PushAudience.vendor, NotificationEntityType.project) => DeepLink(
+      '/vendor/projects/$entityId',
+      requiresRole: audience,
+    ),
+    (PushAudience.vendor, NotificationEntityType.invoice) => DeepLink(
+      '/vendor/invoices',
+      requiresRole: audience,
+    ),
+    (PushAudience.vendor, NotificationEntityType.message) => DeepLink(
+      '/vendor/leads/$entityId/messages',
+      requiresRole: audience,
+    ),
 
     // An entity type this build predates, or one that does not belong to the
     // audience the type implies. Fall back rather than guess.
@@ -128,58 +158,63 @@ PushAudience? audienceFor(NotificationType type) => _audienceFor(type);
 /// `message_received` go to both sides, and are resolved by whichever shell is
 /// signed in rather than by the type.
 PushAudience? _audienceFor(NotificationType type) => switch (type) {
-      NotificationType.newLead ||
-      NotificationType.commissionDue ||
-      NotificationType.reviewReceived =>
-        PushAudience.vendor,
+  NotificationType.newLead ||
+  NotificationType.commissionDue ||
+  NotificationType.reviewReceived => PushAudience.vendor,
 
-      NotificationType.professionalAssigned ||
-      NotificationType.quoteUploaded ||
-      NotificationType.agreementReady =>
-        PushAudience.customer,
+  NotificationType.professionalAssigned ||
+  NotificationType.quoteUploaded ||
+  NotificationType.agreementReady => PushAudience.customer,
 
-      // Both sides get these, and the meaning differs. Left unbound so the
-      // signed-in shell decides.
-      NotificationType.meetingConfirmed ||
-      NotificationType.messageReceived ||
-      NotificationType.agreementSigned ||
-      NotificationType.projectStarted ||
-      NotificationType.projectCompleted ||
-      NotificationType.$unknown =>
-        null,
-    };
+  // Both sides get these, and the meaning differs. Left unbound so the
+  // signed-in shell decides.
+  NotificationType.meetingConfirmed ||
+  NotificationType.messageReceived ||
+  NotificationType.agreementSigned ||
+  NotificationType.projectStarted ||
+  NotificationType.projectCompleted ||
+  NotificationType.$unknown => null,
+};
 
 DeepLink? _fallbackFor(NotificationType type, PushAudience? audience) {
   return switch (audience) {
     PushAudience.vendor => switch (type) {
-        NotificationType.newLead =>
-          const DeepLink('/vendor/leads', requiresRole: PushAudience.vendor),
-        NotificationType.commissionDue =>
-          const DeepLink('/vendor/invoices', requiresRole: PushAudience.vendor),
-        NotificationType.reviewReceived =>
-          const DeepLink('/vendor/performance', requiresRole: PushAudience.vendor),
-        NotificationType.messageReceived => const DeepLink('/vendor/leads'),
-        NotificationType.projectStarted ||
-        NotificationType.projectCompleted ||
-        NotificationType.agreementSigned =>
-          const DeepLink('/vendor/projects'),
-        NotificationType.meetingConfirmed => const DeepLink('/vendor/visits'),
-        _ => null,
-      },
+      NotificationType.newLead => const DeepLink(
+        '/vendor/leads',
+        requiresRole: PushAudience.vendor,
+      ),
+      NotificationType.commissionDue => const DeepLink(
+        '/vendor/invoices',
+        requiresRole: PushAudience.vendor,
+      ),
+      NotificationType.reviewReceived => const DeepLink(
+        '/vendor/performance',
+        requiresRole: PushAudience.vendor,
+      ),
+      NotificationType.messageReceived => const DeepLink('/vendor/leads'),
+      NotificationType.projectStarted ||
+      NotificationType.projectCompleted ||
+      NotificationType.agreementSigned => const DeepLink('/vendor/projects'),
+      NotificationType.meetingConfirmed => const DeepLink('/vendor/visits'),
+      _ => null,
+    },
     PushAudience.customer => switch (type) {
-        NotificationType.agreementReady =>
-          const DeepLink('/home/agreements', requiresRole: PushAudience.customer),
-        NotificationType.quoteUploaded ||
-        NotificationType.professionalAssigned =>
-          const DeepLink('/home/requirements', requiresRole: PushAudience.customer),
-        NotificationType.messageReceived => const DeepLink('/home/messages'),
-        NotificationType.projectStarted ||
-        NotificationType.projectCompleted ||
-        NotificationType.agreementSigned =>
-          const DeepLink('/home/projects'),
-        NotificationType.meetingConfirmed => const DeepLink('/home/visits'),
-        _ => null,
-      },
+      NotificationType.agreementReady => const DeepLink(
+        '/home/agreements',
+        requiresRole: PushAudience.customer,
+      ),
+      NotificationType.quoteUploaded ||
+      NotificationType.professionalAssigned => const DeepLink(
+        '/home/requirements',
+        requiresRole: PushAudience.customer,
+      ),
+      NotificationType.messageReceived => const DeepLink('/home/messages'),
+      NotificationType.projectStarted ||
+      NotificationType.projectCompleted ||
+      NotificationType.agreementSigned => const DeepLink('/home/projects'),
+      NotificationType.meetingConfirmed => const DeepLink('/home/visits'),
+      _ => null,
+    },
     // Nothing better than where they are. An honest null.
     null => null,
   };

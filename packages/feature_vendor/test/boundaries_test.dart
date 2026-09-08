@@ -58,7 +58,13 @@ void main() {
 
     for (final file in _sources()) {
       final source = file.readAsStringSync();
-      for (final scheme in const ['tel:', 'sms:', 'smsto:', 'whatsapp:', 'callto:']) {
+      for (final scheme in const [
+        'tel:',
+        'sms:',
+        'smsto:',
+        'whatsapp:',
+        'callto:',
+      ]) {
         // Skip the prose in comments that explains the rule.
         final code = source
             .split('\n')

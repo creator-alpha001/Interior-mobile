@@ -44,11 +44,11 @@ class _Line {
       description.text.trim().isNotEmpty && quantityValue > 0 && rateValue > 0;
 
   QuoteLineDraft toDraft() => QuoteLineDraft(
-        description: description.text.trim(),
-        quantity: quantityValue,
-        unit: unit.text.trim(),
-        rate: rateValue,
-      );
+    description: description.text.trim(),
+    quantity: quantityValue,
+    unit: unit.text.trim(),
+    rate: rateValue,
+  );
 }
 
 class QuoteBuilderScreen extends ConsumerStatefulWidget {
@@ -112,7 +112,7 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Keep the old one'),
+              child: Text(context.t('Keep the old one')),
             ),
             FilledButton(
               onPressed: () => Navigator.of(context).pop(true),
@@ -128,7 +128,7 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
 
     try {
       await ref
-          .read(apiProvider)
+          .read(vendorApiProvider)
           .vendor
           .submitQuote(
             id: widget.lead.leadDomain.id,
@@ -158,11 +158,15 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
       // A 409 here means the version moved under us — somebody submitted from
       // another device, or a retry landed twice. Re-read rather than guess.
       final message = error.failure == ApiFailure.conflict
-          ? 'Your quote has changed since this screen opened. Close and reopen '
-              'the lead to see the current one.'
+          ? context.t(
+              'Your quote has changed since this screen opened. Close and reopen '
+              'the lead to see the current one.',
+            )
           : error.message;
 
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -173,7 +177,9 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(existing == null ? 'New quote' : 'Revise quote'),
+        title: Text(
+          existing == null ? context.t('New quote') : context.t('Revise quote'),
+        ),
       ),
       body: SafeArea(
         child: ListView(
@@ -183,12 +189,16 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
               const SizedBox(height: Space.md),
               ActionRequired(
                 title: 'This replaces quote v${existing.version}',
-                body: 'Currently ${Rupees(existing.total).formatted}. One quote '
+                body:
+                    'Currently ${Rupees(existing.total).formatted}. One quote '
                     'per job is live at a time; sending this supersedes it.',
               ),
             ],
 
-            const SectionHead('Lines', eyebrow: 'What you are pricing'),
+            SectionHead(
+              context.t('Lines'),
+              eyebrow: context.t('What you are pricing'),
+            ),
             for (final (index, line) in _lines.indexed) ...[
               _LineEditor(
                 line: line,
@@ -198,23 +208,23 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                 onRemove: _lines.length == 1
                     ? null
                     : () => setState(() {
-                          _lines.removeAt(index).dispose();
-                        }),
+                        _lines.removeAt(index).dispose();
+                      }),
               ),
               const SizedBox(height: Space.xs),
             ],
             OutlinedButton.icon(
               onPressed: () => setState(() => _lines.add(_Line())),
               icon: const Icon(Icons.add, size: TapTarget.glyph),
-              label: const Text('Add a line'),
+              label: Text(context.t('Add a line')),
             ),
 
-            const SectionHead('Total', eyebrow: 'Whole rupees'),
+            SectionHead(context.t('Total'), eyebrow: context.t('Whole rupees')),
             AanganCard(
               padding: const EdgeInsets.all(Space.cardPaddingWide),
               child: Column(
                 children: [
-                  _TotalRow(label: 'Subtotal', amount: _subtotal),
+                  _TotalRow(label: context.t('Subtotal'), amount: _subtotal),
                   const SizedBox(height: Space.xs),
                   Row(
                     children: [
@@ -228,7 +238,9 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.right,
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[0-9.]'),
+                            ),
                           ],
                           onChanged: (_) => setState(() {}),
                         ),
@@ -236,14 +248,17 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                     ],
                   ),
                   const SizedBox(height: Space.xs),
-                  _TotalRow(label: 'Tax', amount: _taxAmount),
+                  _TotalRow(label: context.t('Tax'), amount: _taxAmount),
                   const SizedBox(height: Space.sm),
                   const AanganDivider(inset: 0),
                   const SizedBox(height: Space.sm),
                   Row(
                     children: [
                       Expanded(
-                        child: Text('Total', style: context.text.titleLarge),
+                        child: Text(
+                          context.t('Total'),
+                          style: context.text.titleLarge,
+                        ),
                       ),
                       MoneyText(Rupees(_total).formatted),
                     ],
@@ -256,15 +271,19 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                       // job may genuinely cost more. But say so before sending.
                       'Above the customer’s stated ceiling of '
                       '${Rupees(widget.lead.budgetMax!).formatted}.',
-                      style: context.text.bodySmall
-                          ?.copyWith(color: context.palette.waiting),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.palette.waiting,
+                      ),
                     ),
                   ],
                 ],
               ),
             ),
 
-            const SectionHead('Terms', eyebrow: 'What you are committing to'),
+            SectionHead(
+              context.t('Terms'),
+              eyebrow: context.t('What you are committing to'),
+            ),
             AanganCard(
               padding: const EdgeInsets.all(Space.cardPaddingWide),
               child: Column(
@@ -273,7 +292,9 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                     controller: _timeline,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(labelText: 'Working days'),
+                    decoration: InputDecoration(
+                      labelText: context.t('Working days'),
+                    ),
                     onChanged: (_) => setState(() {}),
                   ),
                   const SizedBox(height: Space.sm),
@@ -281,7 +302,9 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                     controller: _warrantyMonths,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(labelText: 'Warranty (months)'),
+                    decoration: InputDecoration(
+                      labelText: context.t('Warranty (months)'),
+                    ),
                   ),
                   const SizedBox(height: Space.sm),
                   TextField(
@@ -301,8 +324,10 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                   TextField(
                     controller: _notes,
                     maxLines: 3,
-                    decoration: const InputDecoration(
-                      labelText: 'Notes for the coordinator (optional)',
+                    decoration: InputDecoration(
+                      labelText: context.t(
+                        context.t('Notes for the coordinator (optional)'),
+                      ),
                     ),
                   ),
                 ],
@@ -332,7 +357,9 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
             ),
             const SizedBox(height: Space.xs),
             Text(
-              'The coordinator reviews this before the customer sees it.',
+              context.t(
+                'The coordinator reviews this before the customer sees it.',
+              ),
               style: context.text.bodySmall?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
@@ -372,7 +399,9 @@ class _LineEditor extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: line.description,
-                  decoration: const InputDecoration(labelText: 'Description'),
+                  decoration: InputDecoration(
+                    labelText: context.t('Description'),
+                  ),
                   onChanged: (_) => onChanged(),
                 ),
               ),
@@ -380,7 +409,7 @@ class _LineEditor extends StatelessWidget {
                 IconButton(
                   onPressed: onRemove,
                   icon: const Icon(Icons.close, size: TapTarget.glyph),
-                  tooltip: 'Remove this line',
+                  tooltip: context.t('Remove this line'),
                 ),
             ],
           ),
@@ -390,8 +419,10 @@ class _LineEditor extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: line.quantity,
-                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                  decoration: const InputDecoration(labelText: 'Qty'),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: InputDecoration(labelText: context.t('Qty')),
                   onChanged: (_) => onChanged(),
                 ),
               ),
@@ -399,7 +430,10 @@ class _LineEditor extends StatelessWidget {
               Expanded(
                 child: TextField(
                   controller: line.unit,
-                  decoration: InputDecoration(labelText: 'Unit', hintText: unitHint),
+                  decoration: InputDecoration(
+                    labelText: context.t('Unit'),
+                    hintText: unitHint,
+                  ),
                   onChanged: (_) => onChanged(),
                 ),
               ),
@@ -409,7 +443,10 @@ class _LineEditor extends StatelessWidget {
                   controller: line.rate,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(labelText: 'Rate ₹'),
+                  decoration: InputDecoration(
+                    // The symbol is not part of the word.
+                    labelText: '${context.t('Rate')} ₹',
+                  ),
                   onChanged: (_) => onChanged(),
                 ),
               ),

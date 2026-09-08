@@ -117,7 +117,12 @@ void main() {
       );
 
       final pill = tester.widget<Container>(
-        find.ancestor(of: find.text('VERIFIED'), matching: find.byType(Container)).first,
+        find
+            .ancestor(
+              of: find.text('VERIFIED'),
+              matching: find.byType(Container),
+            )
+            .first,
       );
       final pillShape = pill.decoration! as BoxDecoration;
       expect(pillShape.borderRadius, Radii.pillRadius);
@@ -127,7 +132,9 @@ void main() {
   });
 
   group('touch targets', () {
-    testWidgets('controls are at least 48dp, not the renders 44', (tester) async {
+    testWidgets('controls are at least 48dp, not the renders 44', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           theme: AanganTheme.light,
@@ -171,7 +178,8 @@ void main() {
           home: Scaffold(
             body: Wrap(
               children: [
-                for (final tone in StatusTone.values) StatusPill(tone.name, tone: tone),
+                for (final tone in StatusTone.values)
+                  StatusPill(tone.name, tone: tone),
               ],
             ),
           ),

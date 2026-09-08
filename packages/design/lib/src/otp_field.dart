@@ -160,7 +160,9 @@ class _OtpFieldState extends State<OtpField> {
           const SizedBox(height: Space.xs),
           Text(
             'Enter the ${widget.length}-digit code',
-            style: context.text.bodySmall?.copyWith(color: colors.onSurfaceVariant),
+            style: context.text.bodySmall?.copyWith(
+              color: colors.onSurfaceVariant,
+            ),
           ),
         ],
       ],
@@ -169,7 +171,11 @@ class _OtpFieldState extends State<OtpField> {
 }
 
 class _Box extends StatelessWidget {
-  const _Box({required this.digit, required this.focused, required this.hasError});
+  const _Box({
+    required this.digit,
+    required this.focused,
+    required this.hasError,
+  });
 
   final String? digit;
   final bool focused;
@@ -183,8 +189,8 @@ class _Box extends StatelessWidget {
     final border = hasError
         ? palette.wrong
         : focused
-            ? colors.primary
-            : palette.inputBorder;
+        ? colors.primary
+        : palette.inputBorder;
 
     return Container(
       height: 56,

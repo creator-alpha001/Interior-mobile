@@ -38,7 +38,7 @@ class LeadsScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
               child: Row(
                 children: [
-                  Text('Leads', style: context.text.headlineLarge),
+                  Text(context.t('Leads'), style: context.text.headlineLarge),
                   const Spacer(),
                   leads.maybeWhen(
                     data: (list) => Text(
@@ -59,11 +59,12 @@ class LeadsScreen extends ConsumerWidget {
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
                 children: [
-                  for (final entry in leadFilterLabels.entries) ...[
+                  for (final option in leadFilters) ...[
                     _FilterChip(
-                      label: entry.value,
-                      selected: filter == entry.key,
-                      onTap: () => ref.read(leadFilterProvider.notifier).state = entry.key,
+                      label: leadFilterLabel(context, option),
+                      selected: filter == option,
+                      onTap: () =>
+                          ref.read(leadFilterProvider.notifier).state = option,
                     ),
                     const SizedBox(width: Space.xs),
                   ],
@@ -78,15 +79,22 @@ class LeadsScreen extends ConsumerWidget {
                 data: (list) {
                   if (list.isEmpty) {
                     return EmptyState(
-                      title: 'Nothing here',
+                      title: context.t('Nothing here'),
                       body: switch (filter) {
-                        LeadFilter.valueNew =>
+                        LeadFilter.valueNew => context.t(
                           'No new leads right now. Assignment is manual — our '
-                              'team rings you before offering one.',
-                        LeadFilter.quoting => 'No quotes outstanding.',
-                        LeadFilter.won => 'No won jobs in this period yet.',
-                        LeadFilter.lost => 'Nothing lost. Good.',
-                        _ => 'No leads have been offered to you yet.',
+                          'team rings you before offering one.',
+                        ),
+                        LeadFilter.quoting => context.t(
+                          context.t('No quotes outstanding.'),
+                        ),
+                        LeadFilter.won => context.t(
+                          context.t('No won jobs in this period yet.'),
+                        ),
+                        LeadFilter.lost => context.t('Nothing lost. Good.'),
+                        _ => context.t(
+                          context.t('No leads have been offered to you yet.'),
+                        ),
                       },
                     );
                   }
@@ -99,7 +107,8 @@ class LeadsScreen extends ConsumerWidget {
                         vertical: Space.xs,
                       ),
                       itemCount: list.length,
-                      separatorBuilder: (context, index) => const SizedBox(height: Space.sm),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: Space.sm),
                       itemBuilder: (context, i) => LeadCard(
                         lead: list[i],
                         onTap: () => onOpen?.call(list[i]),
@@ -182,7 +191,10 @@ class LeadCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // First name and initial. There is no other name to show.
-                    Text(lead.client.displayName, style: context.text.headlineSmall),
+                    Text(
+                      lead.client.displayName,
+                      style: context.text.headlineSmall,
+                    ),
                     const SizedBox(height: Space.xxs),
                     Text(
                       '${lead.client.locality} · ${lead.client.city.name}',
@@ -203,8 +215,14 @@ class LeadCard extends StatelessWidget {
             runSpacing: Space.xxs,
             children: [
               StatusPill(lead.domain.name, tone: StatusTone.neutral),
-              StatusPill(_urgencyLabel(lead.urgency), tone: _urgencyTone(lead.urgency)),
-              StatusPill(_materialLabel(lead.materialSource), tone: StatusTone.neutral),
+              StatusPill(
+                _urgencyLabel(context, lead.urgency),
+                tone: _urgencyTone(lead.urgency),
+              ),
+              StatusPill(
+                _materialLabel(context, lead.materialSource),
+                tone: StatusTone.neutral,
+              ),
             ],
           ),
 
@@ -223,14 +241,14 @@ class LeadCard extends StatelessWidget {
           Row(
             children: [
               if (lead.budgetMax != null) ...[
-                Text('Ceiling ', style: context.text.bodySmall),
+                Text(context.t('Ceiling '), style: context.text.bodySmall),
                 Text(
                   Rupees(lead.budgetMax!).short,
                   style: context.text.titleMedium,
                 ),
               ] else
                 Text(
-                  'No budget stated',
+                  context.t('No budget stated'),
                   style: context.text.bodySmall?.copyWith(
                     color: context.colors.onSurfaceVariant,
                   ),
@@ -240,7 +258,7 @@ class LeadCard extends StatelessWidget {
               // is theirs and prices it lazily.
               Text(
                 lead.competingQuotes == 0
-                    ? 'First to quote'
+                    ? context.t('First to quote')
                     : '${lead.competingQuotes} others quoting',
                 style: context.text.bodySmall?.copyWith(
                   color: lead.competingQuotes > 2
@@ -265,31 +283,39 @@ class _LeadStatus extends StatelessWidget {
   Widget build(BuildContext context) {
     // Decided server-side. A screen comparing ids against a hardcoded "who am
     // I" is a bug waiting for the day that value is wrong.
-    if (lead.won) return const StatusPill('Won', tone: StatusTone.verified);
-    if (lead.lost) return const StatusPill('Lost', tone: StatusTone.wrong);
+    if (lead.won) {
+      return StatusPill(context.t('Won'), tone: StatusTone.verified);
+    }
+    if (lead.lost) return StatusPill(context.t('Lost'), tone: StatusTone.wrong);
     if (lead.myQuote != null) {
-      return const StatusPill('Quoted', tone: StatusTone.waiting);
+      return StatusPill(context.t('Quoted'), tone: StatusTone.waiting);
     }
     if (lead.unreadMessages > 0) {
-      return StatusPill('${lead.unreadMessages} unread', tone: StatusTone.yours);
+      return StatusPill(
+        '${lead.unreadMessages} unread',
+        tone: StatusTone.yours,
+      );
     }
-    return const StatusPill('Your turn', tone: StatusTone.yours);
+    return StatusPill(context.t('Your turn'), tone: StatusTone.yours);
   }
 }
 
-String _urgencyLabel(String urgency) => switch (urgency) {
-      'immediate' => 'Immediate',
-      'within_month' => 'Within a month',
-      'exploring' => 'Exploring',
-      _ => urgency,
-    };
+String _urgencyLabel(BuildContext context, String urgency) => switch (urgency) {
+  'immediate' => context.t('Immediate'),
+  'within_month' => context.t('Within a month'),
+  'exploring' => context.t('Exploring'),
+  _ => urgency,
+};
 
 StatusTone _urgencyTone(String urgency) =>
     urgency == 'immediate' ? StatusTone.yours : StatusTone.neutral;
 
-String _materialLabel(MaterialSource source) => switch (source) {
-      MaterialSource.vendorSupplied => 'You supply material',
-      MaterialSource.customerSupplied => 'Customer supplies material',
-      MaterialSource.undecided => 'Material undecided',
-      MaterialSource.$unknown => 'Material unknown',
+String _materialLabel(BuildContext context, MaterialSource source) =>
+    switch (source) {
+      MaterialSource.vendorSupplied => context.t('You supply material'),
+      MaterialSource.customerSupplied => context.t(
+        context.t('Customer supplies material'),
+      ),
+      MaterialSource.undecided => context.t('Material undecided'),
+      MaterialSource.$unknown => context.t('Material unknown'),
     };

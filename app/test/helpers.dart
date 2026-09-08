@@ -57,7 +57,8 @@ class StubApi implements HttpClientAdapter {
 }
 
 AanganApi apiWith(StubApi stub, SessionStore session) {
-  final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))..httpClientAdapter = stub;
+  final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
+    ..httpClientAdapter = stub;
   return AanganApi.withDio(dio, session: session);
 }
 
@@ -70,8 +71,16 @@ Map<String, Object?> sessionUser({
   return {
     'actor': switch (role) {
       'client' => {'role': 'client', 'userId': 'u1', 'clientId': 'c1'},
-      'professional' => {'role': 'professional', 'userId': 'u2', 'professionalId': 'p1'},
-      'sales_agent' => {'role': 'sales_agent', 'userId': 'u3', 'salesAgentId': 's1'},
+      'professional' => {
+        'role': 'professional',
+        'userId': 'u2',
+        'professionalId': 'p1',
+      },
+      'sales_agent' => {
+        'role': 'sales_agent',
+        'userId': 'u3',
+        'salesAgentId': 's1',
+      },
       _ => {'role': 'admin', 'userId': 'u4'},
     },
     'name': name,
@@ -83,22 +92,18 @@ Map<String, Object?> sessionUser({
 Map<String, Object?> authSession({required String role, String? token}) {
   return switch (role) {
     'client' => {
-        'role': 'client',
-        'userId': 'u1',
-        'clientId': 'c1',
-        'sessionToken': ?token,
-      },
+      'role': 'client',
+      'userId': 'u1',
+      'clientId': 'c1',
+      'sessionToken': ?token,
+    },
     'professional' => {
-        'role': 'professional',
-        'userId': 'u2',
-        'professionalId': 'p1',
-        'sessionToken': ?token,
-      },
-    _ => {
-        'role': 'admin',
-        'userId': 'u4',
-        'sessionToken': ?token,
-      },
+      'role': 'professional',
+      'userId': 'u2',
+      'professionalId': 'p1',
+      'sessionToken': ?token,
+    },
+    _ => {'role': 'admin', 'userId': 'u4', 'sessionToken': ?token},
   };
 }
 
@@ -108,13 +113,13 @@ Map<String, Object?> authSession({required String role, String? token}) {
 /// the shell. It is server-computed, so the app never infers it.
 Map<String, Object?> onboarding({required bool canReceiveLeads}) {
   Map<String, Object?> step(String key, String label, bool done) => {
-        'key': key,
-        'label': label,
-        'description': 'Needed before leads reach you.',
-        'done': done,
-        'blocking': true,
-        'hint': null,
-      };
+    'key': key,
+    'label': label,
+    'description': 'Needed before leads reach you.',
+    'done': done,
+    'blocking': true,
+    'hint': null,
+  };
 
   return {
     'professionalId': 'p1',
@@ -144,32 +149,32 @@ Map<String, Object?> onboarding({required bool canReceiveLeads}) {
 
 /// A `VendorDashboard` body.
 Map<String, Object?> dashboard() => {
-      'professional': {
-        'createdAt': '2026-01-01T00:00:00.000Z',
-        'updatedAt': '2026-01-01T00:00:00.000Z',
-        'deletedAt': null,
-        'id': 'p1',
-        'userId': 'u2',
-        'companyName': 'Meher Interiors',
-        'gstNumber': null,
-        'experienceYears': 9,
-        'bio': '',
-        'avgRating': 4.6,
-        'ratingCount': 22,
-        'completedProjects': 31,
-        'languages': <String>[],
-        'verificationStatus': 'verified',
-        'avgResponseHours': 3,
-      },
-      'displayName': 'Aarohi Verma',
-      'domains': <Object>[],
-      'newLeads': 0,
-      'awaitingQuote': 0,
-      'quotesOut': 0,
-      'wonThisPeriod': 0,
-      'liveProjects': 0,
-      'visitsToday': 0,
-      'commissionDue': 0,
-      'commissionOverdue': 0,
-      'unreadMessages': 0,
-    };
+  'professional': {
+    'createdAt': '2026-01-01T00:00:00.000Z',
+    'updatedAt': '2026-01-01T00:00:00.000Z',
+    'deletedAt': null,
+    'id': 'p1',
+    'userId': 'u2',
+    'companyName': 'Meher Interiors',
+    'gstNumber': null,
+    'experienceYears': 9,
+    'bio': '',
+    'avgRating': 4.6,
+    'ratingCount': 22,
+    'completedProjects': 31,
+    'languages': <String>[],
+    'verificationStatus': 'verified',
+    'avgResponseHours': 3,
+  },
+  'displayName': 'Aarohi Verma',
+  'domains': <Object>[],
+  'newLeads': 0,
+  'awaitingQuote': 0,
+  'quotesOut': 0,
+  'wonThisPeriod': 0,
+  'liveProjects': 0,
+  'visitsToday': 0,
+  'commissionDue': 0,
+  'commissionOverdue': 0,
+  'unreadMessages': 0,
+};

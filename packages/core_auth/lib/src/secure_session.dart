@@ -46,14 +46,15 @@ abstract interface class AuthSessionStore implements SessionStore {
 }
 
 class SecureSessionStore implements AuthSessionStore {
-  SecureSessionStore({
-    FlutterSecureStorage? storage,
-    this.onLost,
-  }) : _storage = storage ??
-            const FlutterSecureStorage(
-              aOptions: AndroidOptions(encryptedSharedPreferences: true),
-              iOptions: IOSOptions(accessibility: KeychainAccessibility.first_unlock),
-            );
+  SecureSessionStore({FlutterSecureStorage? storage, this.onLost})
+    : _storage =
+          storage ??
+          const FlutterSecureStorage(
+            aOptions: AndroidOptions(encryptedSharedPreferences: true),
+            iOptions: IOSOptions(
+              accessibility: KeychainAccessibility.first_unlock,
+            ),
+          );
 
   final FlutterSecureStorage _storage;
 

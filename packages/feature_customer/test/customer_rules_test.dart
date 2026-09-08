@@ -12,14 +12,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'fixtures.dart';
 
 Finder findPill(String label) => find.byWidgetPredicate(
-      (w) => w is Text && w.semanticsLabel == label,
-      description: 'status pill "$label"',
-    );
+  (w) => w is Text && w.semanticsLabel == label,
+  description: 'status pill "$label"',
+);
 
 Future<void> _pump(WidgetTester tester, Widget child, {AanganApi? api}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [if (api != null) apiProvider.overrideWithValue(api)],
+      overrides: [if (api != null) customerApiProvider.overrideWithValue(api)],
       child: MaterialApp(theme: AanganTheme.light, home: child),
     ),
   );
@@ -57,7 +57,10 @@ void main() {
       expect(restored, isNotNull);
       expect(restored!.step, RequirementStep.verify);
       expect(restored.domainIds, ['furniture', 'painting']);
-      expect(restored.materialSource['furniture'], MaterialSource.customerSupplied);
+      expect(
+        restored.materialSource['furniture'],
+        MaterialSource.customerSupplied,
+      );
       expect(restored.description, contains('master bedroom'));
       expect(restored.photoAssetIds, ['asset-1', 'asset-2']);
       expect(restored.urgency, Urgency.withinMonth);
@@ -155,7 +158,9 @@ void main() {
             child: CustomerProjectCard(
               view: fixtureProjectView(
                 milestones: [
-                  fixtureMilestone(verification: MilestoneVerification.submitted),
+                  fixtureMilestone(
+                    verification: MilestoneVerification.submitted,
+                  ),
                 ],
               ),
             ),
@@ -173,8 +178,9 @@ void main() {
       expect(find.byType(OutlinedButton), findsNothing);
     });
 
-    testWidgets('a submitted stage reads as being checked, not done',
-        (tester) async {
+    testWidgets('a submitted stage reads as being checked, not done', (
+      tester,
+    ) async {
       await _pump(
         tester,
         Scaffold(
@@ -182,7 +188,9 @@ void main() {
             child: CustomerProjectCard(
               view: fixtureProjectView(
                 milestones: [
-                  fixtureMilestone(verification: MilestoneVerification.submitted),
+                  fixtureMilestone(
+                    verification: MilestoneVerification.submitted,
+                  ),
                 ],
               ),
             ),
@@ -196,8 +204,9 @@ void main() {
       expect(findPill('Done'), findsNothing);
     });
 
-    testWidgets('a rejected stage does not show the vendor’s criticism',
-        (tester) async {
+    testWidgets('a rejected stage does not show the vendor’s criticism', (
+      tester,
+    ) async {
       // The verifier's note is written for the professional. Shown to the
       // customer out of context it reads as a complaint about work they are
       // paying for, and they cannot act on it either way.
@@ -210,7 +219,8 @@ void main() {
                 milestones: [
                   fixtureMilestone(
                     verification: MilestoneVerification.rejected,
-                    verifierNote: 'The second photograph does not show the hinge.',
+                    verifierNote:
+                        'The second photograph does not show the hinge.',
                   ),
                 ],
               ),
@@ -227,8 +237,9 @@ void main() {
   });
 
   group('quote comparison', () {
-    testWidgets('shows the rating for this trade, and says which trade',
-        (tester) async {
+    testWidgets('shows the rating for this trade, and says which trade', (
+      tester,
+    ) async {
       // Ratings are held per trade, and the directory ranks by the rating in
       // the trade being browsed. An overall average under a trade heading is
       // the wrong number under the right label.
@@ -245,7 +256,9 @@ void main() {
       expect(find.textContaining('in Furniture Work'), findsOneWidget);
     });
 
-    testWidgets('says nothing moves until the customer chooses', (tester) async {
+    testWidgets('says nothing moves until the customer chooses', (
+      tester,
+    ) async {
       await _pump(
         tester,
         QuoteComparisonScreen(
@@ -257,7 +270,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Your turn'), findsOneWidget);
-      expect(find.textContaining('Nothing moves until you choose'), findsOneWidget);
+      expect(
+        find.textContaining('Nothing moves until you choose'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('locks the other quotes once one is chosen', (tester) async {
@@ -265,7 +281,10 @@ void main() {
         tester,
         QuoteComparisonScreen(
           service: fixtureService(
-            quotes: [fixtureQuoteView(), fixtureQuoteView(quoteId: 'q2', total: 500000)],
+            quotes: [
+              fixtureQuoteView(),
+              fixtureQuoteView(quoteId: 'q2', total: 500000),
+            ],
             selectedQuoteId: 'q1',
           ),
           requirementId: 'lead-1',

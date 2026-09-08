@@ -148,7 +148,11 @@ void main() {
     /// is a union you cannot read.
     test('an actor switch is exhaustive and names its variants', () {
       const actors = <Actor>[
-        Actor.client(role: ActorClientRole.client, userId: 'u1', clientId: 'c1'),
+        Actor.client(
+          role: ActorClientRole.client,
+          userId: 'u1',
+          clientId: 'c1',
+        ),
         Actor.professional(
           role: ActorProfessionalRole.professional,
           userId: 'u2',
@@ -192,6 +196,57 @@ void main() {
     });
   });
 
+  group('an unset optional is absent from the wire, not null', () {
+    /// This one bit for real, on the sign-in screen, against the running API.
+    ///
+    /// Every returning customer verifies a code with no name and no city, and
+    /// the generated body serialised those as `"name": null`. The API's schema
+    /// declares them as optional strings, and optional in JSON Schema means
+    /// *absent* — JSON has no `undefined`, so the only way to say "not
+    /// supplied" is to leave the key out. It answered 422, and the screen said
+    /// "Some of those values are not valid" with nothing to act on.
+    ///
+    /// `include_if_null: false` in `build.yaml` is the fix. This test is here
+    /// because that setting lives in a config file nobody reads, and losing it
+    /// would break sign-in for existing accounts only — the path least likely
+    /// to be tried first.
+    test('an omitted optional does not appear as a null', () {
+      final json = const VerifyOtpBody(
+        challengeId: '01a07f5b-5ae0-7123-98b5-6e4858533051',
+        code: '680800',
+      ).toJson();
+
+      expect(json.containsKey('name'), isFalse);
+      expect(json.containsKey('cityId'), isFalse);
+      expect(json, {
+        'challengeId': '01a07f5b-5ae0-7123-98b5-6e4858533051',
+        'code': '680800',
+      });
+    });
+
+    test('a supplied optional is still sent', () {
+      final json = const VerifyOtpBody(
+        challengeId: '01a07f5b-5ae0-7123-98b5-6e4858533051',
+        code: '680800',
+        name: 'Priya Sharma',
+      ).toJson();
+
+      expect(json['name'], 'Priya Sharma');
+      expect(json.containsKey('cityId'), isFalse);
+    });
+
+    /// Not specific to sign-in. Every request model the generator emits shares
+    /// the setting, so one more is checked to prove it is the config and not a
+    /// coincidence of that one class.
+    test('the rule belongs to the generator, not to one model', () {
+      final json = const DeleteAccountBody(
+        confirm: DeleteAccountBodyConfirm.delete,
+      ).toJson();
+
+      expect(json.containsKey('reason'), isFalse);
+    });
+  });
+
   group('this package stays free of the things it must not have', () {
     /// MOBILE.md §4.1: `core_api` depends on neither Flutter nor `design`.
     ///
@@ -203,7 +258,8 @@ void main() {
 
       for (final entity in Directory('lib').listSync(recursive: true)) {
         if (entity is! File || !entity.path.endsWith('.dart')) continue;
-        if (_code(entity).contains('package:flutter/')) offenders.add(entity.path);
+        if (_code(entity).contains('package:flutter/'))
+          offenders.add(entity.path);
       }
 
       expect(offenders, isEmpty, reason: 'core_api must not depend on Flutter');

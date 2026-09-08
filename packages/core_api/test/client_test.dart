@@ -36,13 +36,13 @@ class _StubAdapter implements HttpClientAdapter {
 }
 
 ResponseBody _json(Object body, int status) => ResponseBody.fromString(
-      jsonEncode(body),
-      status,
-      headers: {
-        Headers.contentTypeHeader: [Headers.jsonContentType],
-        'x-request-id': ['req-abc123'],
-      },
-    );
+  jsonEncode(body),
+  status,
+  headers: {
+    Headers.contentTypeHeader: [Headers.jsonContentType],
+    'x-request-id': ['req-abc123'],
+  },
+);
 
 (AanganApi, _StubAdapter, InMemorySession) _build(
   ResponseBody Function(int attempt, RequestOptions options) respond, {
@@ -58,19 +58,25 @@ ResponseBody _json(Object body, int status) => ResponseBody.fromString(
 
 void main() {
   group('headers', () {
-    test('identifies itself as mobile, so sign-in returns a bearer token', () async {
-      // Without this the API only sets a cookie, and a Flutter client that
-      // holds a cookie jar inherits every SameSite and domain question for no
-      // benefit. The header is what makes the session token a value the app
-      // owns.
-      final (api, adapter, _) = _build((_, __) => _json([], 200));
-      await api.public.listCities();
+    test(
+      'identifies itself as mobile, so sign-in returns a bearer token',
+      () async {
+        // Without this the API only sets a cookie, and a Flutter client that
+        // holds a cookie jar inherits every SameSite and domain question for no
+        // benefit. The header is what makes the session token a value the app
+        // owns.
+        final (api, adapter, _) = _build((_, __) => _json([], 200));
+        await api.public.listCities();
 
-      expect(adapter.seen.single.headers[kClientHeader], kClientValue);
-    });
+        expect(adapter.seen.single.headers[kClientHeader], kClientValue);
+      },
+    );
 
     test('sends the bearer token when there is a session', () async {
-      final (api, adapter, _) = _build((_, __) => _json([], 200), token: 'sess-token');
+      final (api, adapter, _) = _build(
+        (_, __) => _json([], 200),
+        token: 'sess-token',
+      );
       await api.public.listCities();
 
       expect(adapter.seen.single.headers['authorization'], 'Bearer sess-token');
@@ -103,7 +109,10 @@ void main() {
       await api.public.listCities();
 
       expect(adapter.seen.first.headers.containsKey('authorization'), isFalse);
-      expect(adapter.seen.last.headers['authorization'], 'Bearer arrived-later');
+      expect(
+        adapter.seen.last.headers['authorization'],
+        'Bearer arrived-later',
+      );
     });
   });
 
@@ -113,7 +122,10 @@ void main() {
       // purpose: a 403 would confirm it exists. The client must not
       // re-interpret that.
       final (api, _, __) = _build(
-        (_, __) => _json({'code': 'not_found', 'message': 'We could not find that.'}, 404),
+        (_, __) => _json({
+          'code': 'not_found',
+          'message': 'We could not find that.',
+        }, 404),
       );
 
       final error = await _capture(() => api.customer.listRequirements());
@@ -121,14 +133,17 @@ void main() {
       expect(error.message.toLowerCase(), isNot(contains('access')));
     });
 
-    test('carries the request id through, for a support conversation', () async {
-      final (api, _, __) = _build(
-        (_, __) => _json({'code': 'internal_error', 'message': 'Boom'}, 500),
-      );
+    test(
+      'carries the request id through, for a support conversation',
+      () async {
+        final (api, _, __) = _build(
+          (_, __) => _json({'code': 'internal_error', 'message': 'Boom'}, 500),
+        );
 
-      final error = await _capture(() => api.customer.listRequirements());
-      expect(error.requestId, 'req-abc123');
-    });
+        final error = await _capture(() => api.customer.listRequirements());
+        expect(error.requestId, 'req-abc123');
+      },
+    );
 
     test('a 422 keeps the field details', () async {
       final (api, _, __) = _build(
@@ -136,7 +151,10 @@ void main() {
           'code': 'invalid_request',
           'message': 'Some of those values are not valid',
           'details': [
-            {'path': 'budgetMin', 'message': 'The lower budget must not exceed the upper one'},
+            {
+              'path': 'budgetMin',
+              'message': 'The lower budget must not exceed the upper one',
+            },
           ],
         }, 422),
       );
@@ -157,7 +175,8 @@ void main() {
           },
         ),
       );
-      final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))..httpClientAdapter = adapter;
+      final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
+        ..httpClientAdapter = adapter;
       final api = AanganApi.withDio(dio);
 
       final error = await _capture(() => api.customer.listRequirements());
@@ -172,7 +191,10 @@ void main() {
       // Sessions are rows rather than JWTs precisely so that can happen. There
       // is nothing to retry: the answer is to clear and route to sign-in.
       final (api, adapter, session) = _build(
-        (_, __) => _json({'code': 'not_authenticated', 'message': 'Please sign in again.'}, 401),
+        (_, __) => _json({
+          'code': 'not_authenticated',
+          'message': 'Please sign in again.',
+        }, 401),
         token: 'stale',
       );
 
@@ -180,7 +202,11 @@ void main() {
 
       expect(error.failure, ApiFailure.notAuthenticated);
       expect(session.revocations, 1);
-      expect(adapter.seen.length, 1, reason: 'a revoked session must not be retried');
+      expect(
+        adapter.seen.length,
+        1,
+        reason: 'a revoked session must not be retried',
+      );
     });
   });
 
@@ -193,7 +219,11 @@ void main() {
       final error = await _capture(() => api.public.listCities());
 
       expect(error.failure, ApiFailure.serverError);
-      expect(adapter.seen.length, 3, reason: 'the original attempt plus two retries');
+      expect(
+        adapter.seen.length,
+        3,
+        reason: 'the original attempt plus two retries',
+      );
     });
 
     test('stops retrying as soon as one succeeds', () async {
@@ -218,18 +248,26 @@ void main() {
 
       await _capture(() => api.customer.signAgreement(id: 'agreement-1'));
 
-      expect(adapter.seen.length, 1, reason: 'a write must never be retried automatically');
+      expect(
+        adapter.seen.length,
+        1,
+        reason: 'a write must never be retried automatically',
+      );
       expect(adapter.seen.single.method, 'POST');
     });
 
-    test('does not retry a 429 — that is the opposite of what was asked', () async {
-      final (api, adapter, _) = _build(
-        (_, __) => _json({'code': 'rate_limited', 'message': 'Slow down'}, 429),
-      );
+    test(
+      'does not retry a 429 — that is the opposite of what was asked',
+      () async {
+        final (api, adapter, _) = _build(
+          (_, __) =>
+              _json({'code': 'rate_limited', 'message': 'Slow down'}, 429),
+        );
 
-      await _capture(() => api.public.listCities());
-      expect(adapter.seen.length, 1);
-    });
+        await _capture(() => api.public.listCities());
+        expect(adapter.seen.length, 1);
+      },
+    );
 
     test('does not retry a 404, which will not become true', () async {
       final (api, adapter, _) = _build(

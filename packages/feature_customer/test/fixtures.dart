@@ -49,51 +49,53 @@ const _client = ClientSummary(
 );
 
 /// Carries `domainRating`, which is the whole point on the comparison screen.
-ProfessionalSummary _professional({String id = 'p1', String name = 'Meher Interiors'}) =>
-    ProfessionalSummary(
-      id: id,
-      name: name,
-      companyName: name,
-      avatarUrl: null,
-      city: _city,
-      experienceYears: 9,
-      completedProjects: 31,
-      avgRating: 4.1,
-      ratingCount: 40,
-      languages: const [],
-      isVerified: true,
-      avgResponseHours: 3,
-      domains: const [_domain],
-      domainRating: const DomainRating(
-        domainId: 'domain-furniture',
-        avgRating: 4.6,
-        ratingCount: 22,
-      ),
-    );
+ProfessionalSummary _professional({
+  String id = 'p1',
+  String name = 'Meher Interiors',
+}) => ProfessionalSummary(
+  id: id,
+  name: name,
+  companyName: name,
+  avatarUrl: null,
+  city: _city,
+  experienceYears: 9,
+  completedProjects: 31,
+  avgRating: 4.1,
+  ratingCount: 40,
+  languages: const [],
+  isVerified: true,
+  avgResponseHours: 3,
+  domains: const [_domain],
+  domainRating: const DomainRating(
+    domainId: 'domain-furniture',
+    avgRating: 4.6,
+    ratingCount: 22,
+  ),
+);
 
 Quote _quote({String id = 'q1', int total = 450000}) => Quote(
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-01T00:00:00.000Z',
-      deletedAt: null,
-      id: id,
-      leadDomainId: 'ld-1',
-      professionalId: 'p1',
-      version: 1,
-      supersedesQuoteId: null,
-      lineItems: const [],
-      subtotal: total,
-      taxPercent: 18,
-      taxAmount: 0,
-      total: total,
-      timelineDays: 30,
-      warrantyMonths: 12,
-      warrantyDetails: '',
-      materialsSummary: '',
-      boqUrl: null,
-      quotePdfUrl: null,
-      status: QuoteStatus.submitted,
-      notes: null,
-    );
+  createdAt: '2026-01-01T00:00:00.000Z',
+  updatedAt: '2026-01-01T00:00:00.000Z',
+  deletedAt: null,
+  id: id,
+  leadDomainId: 'ld-1',
+  professionalId: 'p1',
+  version: 1,
+  supersedesQuoteId: null,
+  lineItems: const [],
+  subtotal: total,
+  taxPercent: 18,
+  taxAmount: 0,
+  total: total,
+  timelineDays: 30,
+  warrantyMonths: 12,
+  warrantyDetails: '',
+  materialsSummary: '',
+  boqUrl: null,
+  quotePdfUrl: null,
+  status: QuoteStatus.submitted,
+  notes: null,
+);
 
 QuoteView fixtureQuoteView({String quoteId = 'q1', int total = 450000}) =>
     QuoteView(
@@ -105,50 +107,49 @@ QuoteView fixtureQuoteView({String quoteId = 'q1', int total = 450000}) =>
 LeadDomainView fixtureService({
   List<QuoteView> quotes = const [],
   String? selectedQuoteId,
-}) =>
-    LeadDomainView(
-      leadDomain: LeadDomain(
-        createdAt: '2026-01-01T00:00:00.000Z',
-        updatedAt: '2026-01-01T00:00:00.000Z',
-        deletedAt: null,
-        id: 'ld-1',
-        leadId: 'lead-1',
-        domainId: 'domain-furniture',
-        materialSource: MaterialSource.vendorSupplied,
-        status: LeadDomainStatus.quoted,
-        preferredProfessionalId: null,
-        preferenceUnmetReason: null,
-        selectedProfessionalId: null,
-        selectedQuoteId: selectedQuoteId,
-      ),
-      domain: _domain,
-      assignments: const [],
-      quotes: quotes,
-      meetings: const [],
-      items: const [],
-      selectedProfessional: null,
-      unreadMessages: 0,
-    );
+}) => LeadDomainView(
+  leadDomain: LeadDomain(
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    deletedAt: null,
+    id: 'ld-1',
+    leadId: 'lead-1',
+    domainId: 'domain-furniture',
+    materialSource: MaterialSource.vendorSupplied,
+    status: LeadDomainStatus.quoted,
+    preferredProfessionalId: null,
+    preferenceUnmetReason: null,
+    selectedProfessionalId: null,
+    selectedQuoteId: selectedQuoteId,
+  ),
+  domain: _domain,
+  assignments: const [],
+  quotes: quotes,
+  meetings: const [],
+  items: const [],
+  selectedProfessional: null,
+  unreadMessages: 0,
+);
 
 ProjectMilestone fixtureMilestone({
   MilestoneVerification verification = MilestoneVerification.notStarted,
   String? verifierNote,
-}) =>
-    ProjectMilestone(
-      id: 'stage-1',
-      title: 'Carcass fitted',
-      description: 'Frame in place and levelled.',
-      completedAt: null,
-      proof: const [],
-      proofNote: null,
-      submittedAt: null,
-      verification: verification,
-      verifiedAt: null,
-      verifiedByUserId: null,
-      verifierNote: verifierNote,
-    );
+}) => ProjectMilestone(
+  id: 'stage-1',
+  title: 'Carcass fitted',
+  description: 'Frame in place and levelled.',
+  completedAt: null,
+  proof: const [],
+  proofNote: null,
+  submittedAt: null,
+  verification: verification,
+  verifiedAt: null,
+  verifiedByUserId: null,
+  verifierNote: verifierNote,
+);
 
-ProjectView fixtureProjectView({List<ProjectMilestone>? milestones}) => ProjectView(
+ProjectView fixtureProjectView({List<ProjectMilestone>? milestones}) =>
+    ProjectView(
       project: Project(
         createdAt: '2026-01-01T00:00:00.000Z',
         updatedAt: '2026-01-01T00:00:00.000Z',

@@ -20,11 +20,13 @@ Future<(AuthController, StubApi)> _pump(WidgetTester tester) async {
   final auth = AuthController(api: apiWith(api, session), session: session);
 
   await tester.pumpWidget(
-    MaterialApp(theme: AanganTheme.light, home: SignInScreen(auth: auth)),
+    MaterialApp(
+      theme: AanganTheme.light,
+      home: SignInScreen(auth: auth),
+    ),
   );
   return (auth, api);
 }
-
 
 /// Performs an interaction and lets the real async work behind it finish.
 ///
@@ -47,8 +49,9 @@ Future<void> _act(WidgetTester tester, Future<void> Function() action) async {
 
 void main() {
   group('the phone stage', () {
-    testWidgets('has no "Sign up" button, because there is no such action',
-        (tester) async {
+    testWidgets('has no "Sign up" button, because there is no such action', (
+      tester,
+    ) async {
       // Signing up and signing in are one action: an unrecognised number
       // creates a customer account. A "Sign up" button would be a second door
       // into the same room, and the web learned that people pick the wrong one.
@@ -79,12 +82,10 @@ void main() {
       // counter would eventually disagree, and when it does it is always the
       // client that is wrong and the customer who is confused.
       final (_, api) = await _pump(tester);
-      api.on(
-        'POST',
-        '/auth/otp/request',
-        {'code': 'rate_limited', 'message': 'Too many attempts.'},
-        status: 429,
-      );
+      api.on('POST', '/auth/otp/request', {
+        'code': 'rate_limited',
+        'message': 'Too many attempts.',
+      }, status: 429);
 
       await tester.enterText(find.byType(TextField), '9839012477');
       await _act(tester, () => tester.tap(find.text('Send code')));
@@ -153,7 +154,9 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           theme: AanganTheme.light,
-          home: Scaffold(body: OtpField(onCompleted: (code) => completed = code)),
+          home: Scaffold(
+            body: OtpField(onCompleted: (code) => completed = code),
+          ),
         ),
       );
 
@@ -165,41 +168,46 @@ void main() {
   });
 
   group('verifying', () {
-    testWidgets('a new number is signed in without ever being asked to sign up',
-        (tester) async {
+    testWidgets(
+      'a new number is signed in without ever being asked to sign up',
+      (tester) async {
+        final (auth, api) = await _pump(tester);
+        api.on('POST', '/auth/otp/request', {
+          'challengeId': 'ch-1',
+          'expiresInSeconds': 300,
+        });
+        api.on(
+          'POST',
+          '/auth/otp/verify',
+          authSession(role: 'client', token: 'tok-1'),
+        );
+        api.on('GET', '/me', sessionUser(role: 'client'));
+
+        await tester.enterText(find.byType(TextField), '9839012477');
+        await _act(tester, () => tester.tap(find.text('Send code')));
+
+        await _act(
+          tester,
+          () => tester.enterText(find.byType(TextField), '484220'),
+        );
+
+        expect(auth.shell, Shell.customer);
+        expect(auth.user?.name, 'Priya Sharma');
+      },
+    );
+
+    testWidgets('a wrong code is reported without losing the stage', (
+      tester,
+    ) async {
       final (auth, api) = await _pump(tester);
       api.on('POST', '/auth/otp/request', {
         'challengeId': 'ch-1',
         'expiresInSeconds': 300,
       });
-      api.on('POST', '/auth/otp/verify', authSession(role: 'client', token: 'tok-1'));
-      api.on('GET', '/me', sessionUser(role: 'client'));
-
-      await tester.enterText(find.byType(TextField), '9839012477');
-      await _act(tester, () => tester.tap(find.text('Send code')));
-
-      await _act(
-        tester,
-        () => tester.enterText(find.byType(TextField), '484220'),
-      );
-
-      expect(auth.shell, Shell.customer);
-      expect(auth.user?.name, 'Priya Sharma');
-    });
-
-    testWidgets('a wrong code is reported without losing the stage',
-        (tester) async {
-      final (auth, api) = await _pump(tester);
-      api.on('POST', '/auth/otp/request', {
-        'challengeId': 'ch-1',
-        'expiresInSeconds': 300,
-      });
-      api.on(
-        'POST',
-        '/auth/otp/verify',
-        {'code': 'invalid_code', 'message': 'That code is not right.'},
-        status: 422,
-      );
+      api.on('POST', '/auth/otp/verify', {
+        'code': 'invalid_code',
+        'message': 'That code is not right.',
+      }, status: 422);
 
       await tester.enterText(find.byType(TextField), '9839012477');
       await _act(tester, () => tester.tap(find.text('Send code')));
@@ -214,8 +222,38 @@ void main() {
       expect(auth.shell, isNot(Shell.customer));
     });
 
-    testWidgets('a professional goes to the onboarding gate, not the dashboard',
-        (tester) async {
+    testWidgets(
+      'a professional goes to the onboarding gate, not the dashboard',
+      (tester) async {
+        final (auth, api) = await _pump(tester);
+        api.on('POST', '/auth/otp/request', {
+          'challengeId': 'ch-1',
+          'expiresInSeconds': 300,
+        });
+        api.on(
+          'POST',
+          '/auth/otp/verify',
+          authSession(role: 'professional', token: 'tok-2'),
+        );
+        api.on(
+          'GET',
+          '/me',
+          sessionUser(role: 'professional', name: 'Aarohi Verma'),
+        );
+
+        await tester.enterText(find.byType(TextField), '9810000000');
+        await _act(tester, () => tester.tap(find.text('Send code')));
+
+        await _act(
+          tester,
+          () => tester.enterText(find.byType(TextField), '484220'),
+        );
+
+        expect(auth.shell, Shell.vendorOnboarding);
+      },
+    );
+
+    testWidgets('staff are refused even with a valid code', (tester) async {
       final (auth, api) = await _pump(tester);
       api.on('POST', '/auth/otp/request', {
         'challengeId': 'ch-1',
@@ -224,28 +262,8 @@ void main() {
       api.on(
         'POST',
         '/auth/otp/verify',
-        authSession(role: 'professional', token: 'tok-2'),
+        authSession(role: 'admin', token: 'tok-3'),
       );
-      api.on('GET', '/me', sessionUser(role: 'professional', name: 'Aarohi Verma'));
-
-      await tester.enterText(find.byType(TextField), '9810000000');
-      await _act(tester, () => tester.tap(find.text('Send code')));
-
-      await _act(
-        tester,
-        () => tester.enterText(find.byType(TextField), '484220'),
-      );
-
-      expect(auth.shell, Shell.vendorOnboarding);
-    });
-
-    testWidgets('staff are refused even with a valid code', (tester) async {
-      final (auth, api) = await _pump(tester);
-      api.on('POST', '/auth/otp/request', {
-        'challengeId': 'ch-1',
-        'expiresInSeconds': 300,
-      });
-      api.on('POST', '/auth/otp/verify', authSession(role: 'admin', token: 'tok-3'));
       api.on('GET', '/me', sessionUser(role: 'admin', name: 'Ops'));
 
       await tester.enterText(find.byType(TextField), '9810099999');
@@ -259,8 +277,9 @@ void main() {
       expect(auth.shell, Shell.staffRefused);
     });
 
-    testWidgets('refuses to proceed if no bearer token came back',
-        (tester) async {
+    testWidgets('refuses to proceed if no bearer token came back', (
+      tester,
+    ) async {
       // The API only returns a token when it sees `X-Client: mobile`.
       // Continuing without one would leave the app "signed in" with nothing to
       // authenticate the next request — a state that looks fine until the
@@ -286,8 +305,9 @@ void main() {
   });
 
   group('the mobile client header', () {
-    testWidgets('is sent on sign-in, which is what returns the token',
-        (tester) async {
+    testWidgets('is sent on sign-in, which is what returns the token', (
+      tester,
+    ) async {
       final (_, api) = await _pump(tester);
       api.on('POST', '/auth/otp/request', {
         'challengeId': 'ch-1',

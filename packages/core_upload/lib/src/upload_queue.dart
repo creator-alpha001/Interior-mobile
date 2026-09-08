@@ -98,37 +98,37 @@ class QueuedUpload {
   }
 
   Map<String, Object?> toJson() => {
-        'id': id,
-        'localPath': localPath,
-        'purpose': purpose.name,
-        'contentType': contentType,
-        'assetId': assetId,
-        'state': state.name,
-        'attempts': attempts,
-        'originalBytes': originalBytes,
-        'compressedBytes': compressedBytes,
-      };
+    'id': id,
+    'localPath': localPath,
+    'purpose': purpose.name,
+    'contentType': contentType,
+    'assetId': assetId,
+    'state': state.name,
+    'attempts': attempts,
+    'originalBytes': originalBytes,
+    'compressedBytes': compressedBytes,
+  };
 
   factory QueuedUpload.fromJson(Map<String, Object?> json) => QueuedUpload(
-        id: json['id']! as String,
-        localPath: json['localPath']! as String,
-        purpose: UploadPurpose.values.firstWhere(
-          (p) => p.name == json['purpose'],
-          orElse: () => UploadPurpose.milestoneProof,
-        ),
-        contentType: json['contentType']! as String,
-        assetId: json['assetId'] as String?,
-        // Anything that was mid-flight when the app died is pending again.
-        // The PUT is idempotent on the storage key, so re-sending is safe.
-        state: switch (json['state']) {
-          'done' => UploadState.done,
-          'failed' => UploadState.failed,
-          _ => UploadState.pending,
-        },
-        attempts: (json['attempts'] as num?)?.toInt() ?? 0,
-        originalBytes: (json['originalBytes'] as num?)?.toInt(),
-        compressedBytes: (json['compressedBytes'] as num?)?.toInt(),
-      );
+    id: json['id']! as String,
+    localPath: json['localPath']! as String,
+    purpose: UploadPurpose.values.firstWhere(
+      (p) => p.name == json['purpose'],
+      orElse: () => UploadPurpose.milestoneProof,
+    ),
+    contentType: json['contentType']! as String,
+    assetId: json['assetId'] as String?,
+    // Anything that was mid-flight when the app died is pending again.
+    // The PUT is idempotent on the storage key, so re-sending is safe.
+    state: switch (json['state']) {
+      'done' => UploadState.done,
+      'failed' => UploadState.failed,
+      _ => UploadState.pending,
+    },
+    attempts: (json['attempts'] as num?)?.toInt() ?? 0,
+    originalBytes: (json['originalBytes'] as num?)?.toInt(),
+    compressedBytes: (json['compressedBytes'] as num?)?.toInt(),
+  );
 }
 
 /// Compresses, tickets and PUTs — and remembers where it got to.
@@ -137,9 +137,9 @@ class UploadQueue extends ChangeNotifier {
     required AanganApi api,
     Directory? storageDirectory,
     ImageCompressor? compressor,
-  })  : _api = api,
-        _directory = storageDirectory,
-        _compress = compressor ?? const FlutterImageCompressor();
+  }) : _api = api,
+       _directory = storageDirectory,
+       _compress = compressor ?? const FlutterImageCompressor();
 
   final AanganApi _api;
   final ImageCompressor _compress;
@@ -155,8 +155,8 @@ class UploadQueue extends ChangeNotifier {
       items.where((i) => i.assetId != null).map((i) => i.assetId!).toList();
 
   bool get isSettled => items.every(
-        (i) => i.state == UploadState.done || i.state == UploadState.failed,
-      );
+    (i) => i.state == UploadState.done || i.state == UploadState.failed,
+  );
 
   /// Reads back whatever was in flight when the app last closed.
   Future<void> restore() async {
@@ -169,7 +169,8 @@ class UploadQueue extends ChangeNotifier {
         final item = QueuedUpload.fromJson(entry as Map<String, Object?>);
         // A file the OS has since cleaned out of the camera cache cannot be
         // resumed. Drop it rather than retrying forever.
-        if (item.state != UploadState.done && !File(item.localPath).existsSync()) {
+        if (item.state != UploadState.done &&
+            !File(item.localPath).existsSync()) {
           continue;
         }
         _items[item.id] = item;
@@ -183,9 +184,7 @@ class UploadQueue extends ChangeNotifier {
   Future<void> _persist() async {
     final file = await _stateFile();
     await file.parent.create(recursive: true);
-    await file.writeAsString(
-      jsonEncode(items.map((i) => i.toJson()).toList()),
-    );
+    await file.writeAsString(jsonEncode(items.map((i) => i.toJson()).toList()));
   }
 
   Future<File> _stateFile() async {
@@ -260,7 +259,9 @@ class UploadQueue extends ChangeNotifier {
     try {
       final file = File(item.localPath);
       if (!file.existsSync()) {
-        throw const FileSystemException('The photograph is no longer on the device');
+        throw const FileSystemException(
+          'The photograph is no longer on the device',
+        );
       }
 
       final bytes = await _compress.compress(item.localPath);

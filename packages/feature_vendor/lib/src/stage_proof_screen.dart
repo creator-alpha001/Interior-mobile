@@ -96,7 +96,7 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
 
     try {
       await ref
-          .read(apiProvider)
+          .read(vendorApiProvider)
           .vendor
           .submitMilestoneProof(
             id: widget.project.project.id,
@@ -114,8 +114,9 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
     } on ApiException catch (error) {
       if (!mounted) return;
       setState(() => _submitting = false);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error.message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.message)));
     }
   }
 
@@ -148,31 +149,45 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
 
             /// Rework, if ops sent it back. This is the highest-value thing on
             /// the screen when it is present, so it goes above the camera.
-            if (widget.milestone.verification == MilestoneVerification.rejected &&
+            if (widget.milestone.verification ==
+                    MilestoneVerification.rejected &&
                 widget.milestone.verifierNote != null) ...[
               const SizedBox(height: Space.lg),
               ActionRequired(
-                title: 'Sent back for rework',
+                title: context.t('Sent back for rework'),
                 body: widget.milestone.verifierNote!,
               ),
             ],
 
-            const SectionHead('Photographs', eyebrow: 'The evidence'),
+            SectionHead(
+              context.t('Photographs'),
+              eyebrow: context.t('The evidence'),
+            ),
             Row(
               children: [
                 Expanded(
                   child: FilledButton.icon(
-                    onPressed: _submitting ? null : () => _pick(ImageSource.camera),
-                    icon: const Icon(Icons.photo_camera_outlined, size: TapTarget.glyph),
-                    label: const Text('Camera'),
+                    onPressed: _submitting
+                        ? null
+                        : () => _pick(ImageSource.camera),
+                    icon: const Icon(
+                      Icons.photo_camera_outlined,
+                      size: TapTarget.glyph,
+                    ),
+                    label: Text(context.t('Camera')),
                   ),
                 ),
                 const SizedBox(width: Space.xs),
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: _submitting ? null : () => _pick(ImageSource.gallery),
-                    icon: const Icon(Icons.photo_library_outlined, size: TapTarget.glyph),
-                    label: const Text('Gallery'),
+                    onPressed: _submitting
+                        ? null
+                        : () => _pick(ImageSource.gallery),
+                    icon: const Icon(
+                      Icons.photo_library_outlined,
+                      size: TapTarget.glyph,
+                    ),
+                    label: Text(context.t('Gallery')),
                   ),
                 ),
               ],
@@ -181,8 +196,10 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
             if (uploads.isEmpty) ...[
               const SizedBox(height: Space.md),
               Text(
-                'At least one photograph is required. Ops check the work '
-                'against these before the stage counts.',
+                context.t(
+                  'At least one photograph is required. Ops check the work '
+                  'against these before the stage counts.',
+                ),
                 style: context.text.bodySmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
                 ),
@@ -207,18 +224,25 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
                 // instinct after a failure is to start again from the camera.
                 '${failed.length} did not send. They are saved on this device '
                 'and will retry — you will not have to take them again.',
-                style: context.text.bodySmall?.copyWith(color: context.palette.wrong),
+                style: context.text.bodySmall?.copyWith(
+                  color: context.palette.wrong,
+                ),
               ),
             ],
 
-            const SectionHead('What you did', eyebrow: 'For the coordinator'),
+            SectionHead(
+              context.t('What you did'),
+              eyebrow: context.t('For the coordinator'),
+            ),
             TextField(
               controller: _note,
               enabled: !_submitting,
               maxLines: 4,
-              decoration: const InputDecoration(
-                labelText: 'Note',
-                hintText: 'Carcass fitted, shutters hung, hardware pending…',
+              decoration: InputDecoration(
+                labelText: context.t('Note'),
+                hintText: context.t(
+                  context.t('Carcass fitted, shutters hung, hardware pending…'),
+                ),
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -227,7 +251,8 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: ready.isNotEmpty &&
+                onPressed:
+                    ready.isNotEmpty &&
                         pending.isEmpty &&
                         _note.text.trim().isNotEmpty &&
                         !_submitting
@@ -243,15 +268,17 @@ class _StageProofScreenState extends ConsumerState<StageProofScreen> {
                         ),
                       )
                     // Never "Mark complete". Evidence is not completion.
-                    : const Text('Submit for approval'),
+                    : Text(context.t('Submit for approval')),
               ),
             ),
             const SizedBox(height: Space.xs),
             Text(
               pending.isNotEmpty
                   ? 'Waiting for ${pending.length} photograph(s) to finish sending.'
-                  : 'Ops check the photographs against the stage. The customer’s '
+                  : context.t(
+                      'Ops check the photographs against the stage. The customer’s '
                       'progress moves when they approve, not when you submit.',
+                    ),
               style: context.text.bodySmall?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
@@ -281,21 +308,21 @@ class _UploadRow extends StatelessWidget {
 
     final (Widget badge, String detail) = switch (upload.state) {
       UploadState.done => (
-          const StatusPill('Sent', tone: StatusTone.verified),
-          _saving(upload),
-        ),
+        StatusPill(context.t('Sent'), tone: StatusTone.verified),
+        _saving(context, upload),
+      ),
       UploadState.uploading => (
-          const StatusPill('Sending', tone: StatusTone.waiting),
-          'Uploading…',
-        ),
+        StatusPill(context.t('Sending'), tone: StatusTone.waiting),
+        context.t('Uploading…'),
+      ),
       UploadState.pending => (
-          const StatusPill('Queued', tone: StatusTone.waiting),
-          'Waiting to send',
-        ),
+        StatusPill(context.t('Queued'), tone: StatusTone.waiting),
+        context.t('Waiting to send'),
+      ),
       UploadState.failed => (
-          const StatusPill('Failed', tone: StatusTone.wrong),
-          upload.error ?? 'Could not send',
-        ),
+        StatusPill(context.t('Failed'), tone: StatusTone.wrong),
+        upload.error ?? context.t('Could not send'),
+      ),
     };
 
     return AanganCard(
@@ -333,13 +360,13 @@ class _UploadRow extends StatelessWidget {
             IconButton(
               onPressed: onRetry,
               icon: const Icon(Icons.refresh, size: TapTarget.glyph),
-              tooltip: 'Try again',
+              tooltip: context.t('Try again'),
             )
           else if (upload.state != UploadState.uploading)
             IconButton(
               onPressed: onRemove,
               icon: const Icon(Icons.close, size: TapTarget.glyph),
-              tooltip: 'Remove',
+              tooltip: context.t('Remove'),
             ),
         ],
       ),
@@ -347,12 +374,18 @@ class _UploadRow extends StatelessWidget {
   }
 
   /// Vendors watch their data. Showing the saving is worth the line.
-  static String _saving(QueuedUpload upload) {
+  static String _saving(BuildContext context, QueuedUpload upload) {
     final before = upload.originalBytes;
     final after = upload.compressedBytes;
-    if (before == null || after == null || before <= after) return 'Sent';
+    if (before == null || after == null || before <= after) {
+      return context.t('Sent');
+    }
 
+    // Megabytes are the same two letters everywhere, so the unit is not copy.
     String mb(int bytes) => '${(bytes / 1048576).toStringAsFixed(1)}MB';
-    return 'Sent · ${mb(before)} → ${mb(after)}';
+    return context.t('Sent · {before} → {after}', {
+      'before': mb(before),
+      'after': mb(after),
+    });
   }
 }

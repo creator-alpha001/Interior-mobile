@@ -84,22 +84,22 @@ NotificationTarget? targetFor(Notification notification, Shell shell) {
 int? _tabFor(String location, PushAudience audience) {
   return switch (audience) {
     PushAudience.vendor => switch (location) {
-        final l when l.startsWith('/vendor/leads') => VendorTab.leads,
-        final l when l.startsWith('/vendor/projects') => VendorTab.projects,
-        final l when l.startsWith('/vendor/visits') => VendorTab.visits,
-        final l when l.startsWith('/vendor/invoices') => VendorTab.more,
-        final l when l.startsWith('/vendor/performance') => VendorTab.more,
-        _ => VendorTab.dashboard,
-      },
+      final l when l.startsWith('/vendor/leads') => VendorTab.leads,
+      final l when l.startsWith('/vendor/projects') => VendorTab.projects,
+      final l when l.startsWith('/vendor/visits') => VendorTab.visits,
+      final l when l.startsWith('/vendor/invoices') => VendorTab.more,
+      final l when l.startsWith('/vendor/performance') => VendorTab.more,
+      _ => VendorTab.dashboard,
+    },
     PushAudience.customer => switch (location) {
-        final l when l.startsWith('/home/services') && l.endsWith('/messages') =>
-          CustomerTab.messages,
-        final l when l.startsWith('/home/requirements') => CustomerTab.jobs,
-        final l when l.startsWith('/home/services') => CustomerTab.jobs,
-        final l when l.startsWith('/home/agreements') => CustomerTab.account,
-        final l when l.startsWith('/home/projects') => CustomerTab.account,
-        final l when l.startsWith('/home/visits') => CustomerTab.jobs,
-        _ => CustomerTab.home,
-      },
+      final l when l.startsWith('/home/services') && l.endsWith('/messages') =>
+        CustomerTab.messages,
+      final l when l.startsWith('/home/requirements') => CustomerTab.jobs,
+      final l when l.startsWith('/home/services') => CustomerTab.jobs,
+      final l when l.startsWith('/home/agreements') => CustomerTab.account,
+      final l when l.startsWith('/home/projects') => CustomerTab.account,
+      final l when l.startsWith('/home/visits') => CustomerTab.jobs,
+      _ => CustomerTab.home,
+    },
   };
 }

@@ -134,19 +134,22 @@ void main() {
       );
     });
 
-    test('a bound notification read by the wrong shell resolves to nothing', () {
-      // A vendor's "new lead" arriving on a customer session is a server-side
-      // addressing bug. Following it would land them somewhere that does not
-      // exist for them.
-      final link = deepLinkFor(
-        type: NotificationType.newLead,
-        entityType: NotificationEntityType.leadDomain,
-        entityId: 'ld-42',
-        signedInAs: PushAudience.customer,
-      );
+    test(
+      'a bound notification read by the wrong shell resolves to nothing',
+      () {
+        // A vendor's "new lead" arriving on a customer session is a server-side
+        // addressing bug. Following it would land them somewhere that does not
+        // exist for them.
+        final link = deepLinkFor(
+          type: NotificationType.newLead,
+          entityType: NotificationEntityType.leadDomain,
+          entityId: 'ld-42',
+          signedInAs: PushAudience.customer,
+        );
 
-      expect(link, isNull);
-    });
+        expect(link, isNull);
+      },
+    );
   });
 
   group('when there is nothing better to open', () {

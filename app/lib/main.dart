@@ -13,12 +13,15 @@ import 'package:aangan_core_auth/aangan_core_auth.dart';
 import 'package:aangan_core_push/aangan_core_push.dart';
 import 'package:aangan_core_upload/aangan_core_upload.dart';
 import 'package:aangan_design/aangan_design.dart';
+import 'package:aangan_feature_customer/aangan_feature_customer.dart';
 import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'env.dart';
+import 'language.dart';
 import 'router.dart';
 import 'version_gate.dart';
 
@@ -59,6 +62,14 @@ Future<void> main() async {
   final gate = BiometricGate();
   await gate.load();
 
+  /// Awaited, unlike the version check.
+  ///
+  /// Reading one preference is fast, and the alternative is a first frame in
+  /// English that then swaps to Hindi — which looks like a bug to the person it
+  /// matters most to.
+  final language = LanguageController();
+  await language.load();
+
   /// The forced upgrade, checked before anything else is drawn.
   ///
   /// Deliberately not awaited into a blocking splash: `check()` fails silently
@@ -70,10 +81,24 @@ Future<void> main() async {
 
   runApp(
     ProviderScope(
-      // The feature packages read the client from here rather than being handed
-      // it down a widget tree, which is what lets a test swap the transport.
-      overrides: [apiProvider.overrideWithValue(api)],
-      child: AanganApp(api: api, auth: auth, gate: gate, version: version),
+      /// Both shells, both overridden.
+      ///
+      /// The feature packages read the client from here rather than being
+      /// handed it down a widget tree, which is what lets a test swap the
+      /// transport. There is one provider per shell, and missing either leaves
+      /// that half of the app throwing on its first read — so
+      /// `providers_test.dart` asserts this list covers both.
+      overrides: [
+        customerApiProvider.overrideWithValue(api),
+        vendorApiProvider.overrideWithValue(api),
+      ],
+      child: AanganApp(
+        api: api,
+        auth: auth,
+        gate: gate,
+        version: version,
+        language: language,
+      ),
     ),
   );
 }
@@ -85,12 +110,14 @@ class AanganApp extends StatefulWidget {
     required this.auth,
     required this.gate,
     required this.version,
+    required this.language,
   });
 
   final AanganApi api;
   final AuthController auth;
   final BiometricGate gate;
   final VersionGate version;
+  final LanguageController language;
 
   @override
   State<AanganApp> createState() => _AanganAppState();
@@ -173,10 +200,34 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
+    // Rebuilt on a language change so the whole tree re-resolves its strings.
+    // The router is deliberately *not* rebuilt with it: switching language
+    // should not throw somebody back to the start of a requirement flow.
+    return AnimatedBuilder(
+      animation: widget.language,
+      builder: (context, _) => _app(context),
+    );
+  }
+
+  Widget _app(BuildContext context) {
     return MaterialApp.router(
       title: Env.flavour.appName,
       debugShowCheckedModeBanner: false,
       theme: AanganTheme.light,
+
+      /// `null` means follow the device, which is the default and the common
+      /// case. An explicit choice overrides it — see [LanguageController].
+      locale: widget.language.locale,
+      supportedLocales: aanganSupportedLocales,
+      localizationsDelegates: const [
+        AanganL10nDelegate(),
+        // Material, Cupertino and the raw widget layer each carry their own
+        // strings. All three, or the framework speaks English inside a Hindi
+        // app.
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
 
       /// Light only, deliberately and on the record — DESIGN.md §3.8.
       ///
@@ -192,27 +243,36 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
       ///
       /// Staleness is a property of the connection rather than of any one list,
       /// so it is drawn once here instead of being reimplemented per screen.
-      builder: (context, child) => AnimatedBuilder(
-        animation: widget.version,
-        builder: (context, _) {
-          /// A blocked build shows one screen and nothing else — not even
-          /// sign-in. There is no dismiss and no "later": a build below the
-          /// floor is one the platform has decided must not talk to the API.
-          if (widget.version.isBlocked) {
-            return UpgradeRequiredScreen(message: widget.version.message);
-          }
+      ///
+      /// The language scope is published here too — inside `MaterialApp`, so
+      /// `Localizations` is already above it, and above the navigator, so every
+      /// routed screen in both feature packages can find the setting without a
+      /// parameter threaded through the shells.
+      builder: (context, child) => AanganLanguageScope(
+        language: widget.language,
+        child: AnimatedBuilder(
+          animation: widget.version,
+          builder: (context, _) {
+            /// A blocked build shows one screen and nothing else — not even
+            /// sign-in. There is no dismiss and no "later": a build below the
+            /// floor is one the platform has decided must not talk to the API.
+            if (widget.version.isBlocked) {
+              return UpgradeRequiredScreen(message: widget.version.message);
+            }
 
-          return Column(
-            children: [
-              StreamBuilder<DateTime?>(
-                stream: widget.api.cache?.status.changes,
-                initialData: widget.api.cache?.status.servingSince,
-                builder: (context, snapshot) => StaleBanner(since: snapshot.data),
-              ),
-              Expanded(child: child ?? const SizedBox.shrink()),
-            ],
-          );
-        },
+            return Column(
+              children: [
+                StreamBuilder<DateTime?>(
+                  stream: widget.api.cache?.status.changes,
+                  initialData: widget.api.cache?.status.servingSince,
+                  builder: (context, snapshot) =>
+                      StaleBanner(since: snapshot.data),
+                ),
+                Expanded(child: child ?? const SizedBox.shrink()),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

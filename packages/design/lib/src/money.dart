@@ -33,6 +33,16 @@ extension type const Rupees(int paisaFree) implements int {
   }
 }
 
+/// A plain count with Indian grouping and no currency symbol.
+///
+/// Separate from [Rupees] on purpose: a carpet area of 1,000 sq.ft is grouped
+/// the same way as a price and is emphatically not money, and giving it a
+/// `Rupees` just to borrow the formatter is how a `₹` ends up beside a
+/// measurement.
+String groupedNumber(int value) => _plain.format(value);
+
+final _plain = NumberFormat.decimalPattern('en_IN');
+
 final _rupees = NumberFormat.currency(
   locale: 'en_IN',
   symbol: '₹',

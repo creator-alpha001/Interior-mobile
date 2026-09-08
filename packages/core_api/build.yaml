@@ -1,0 +1,26 @@
+# Serialisation rules for the generated client.
+#
+# `include_if_null: false` is the load-bearing line, and it is a correctness
+# fix rather than a size optimisation.
+#
+# Without it, `VerifyOtpBody(challengeId: …, code: …)` — with no name and no
+# city, which is every sign-in by an existing customer — serialises to
+#
+#     {"challengeId": "…", "code": "…", "name": null, "cityId": null}
+#
+# and the API answers 422: `Expected string, received null`. Its schema declares
+# those fields as optional strings, and optional in JSON Schema means *absent*.
+# JSON has no `undefined`, so "I am not supplying a name" can only be said by
+# leaving the key out. Sending null says something different — "the name is
+# null" — and the server is right to refuse it.
+#
+# This bit for real, in the emulator, on the sign-in screen: every returning
+# customer got "Some of those values are not valid" with nothing on screen to
+# explain it. `contract_guarantees_test.dart` now holds the rule so it cannot
+# come back the next time a model is regenerated.
+targets:
+  $default:
+    builders:
+      json_serializable:
+        options:
+          include_if_null: false

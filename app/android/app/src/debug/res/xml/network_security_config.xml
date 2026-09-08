@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Cleartext HTTP, for development only.
+
+  This file lives under `src/debug`, so it is merged into debug builds and does
+  not exist in a release APK at all. That placement is the whole safety
+  argument: release builds keep Android's default, which refuses cleartext
+  outright, and no flag or environment variable can turn that off by accident.
+
+  The exception is also scoped to two addresses rather than opened globally:
+
+    10.0.2.2   the host machine as seen from the Android emulator
+    localhost  a device or emulator with `adb reverse` set up
+
+  A blanket `cleartextTrafficPermitted="true"` on the base config would let a
+  debug build talk to any plain-HTTP server anywhere, which is how a developer
+  build ends up quietly working against something it should not.
+
+  Testing against a laptop on the same wifi needs that machine's LAN address
+  added here as well as an AANGAN_API_URL dart-define. (Spelled out rather than
+  written with its two leading dashes: XML forbids a double hyphen inside a
+  comment, and the resource compiler rejects the file outright.)
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

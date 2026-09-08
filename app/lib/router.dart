@@ -13,8 +13,7 @@ library;
 import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:aangan_core_auth/aangan_core_auth.dart';
 import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart'
-    hide apiProvider;
+import 'package:aangan_feature_customer/aangan_feature_customer.dart';
 import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
@@ -91,14 +90,16 @@ GoRouter buildRouter({
           location == Routes.staffRefused ? null : Routes.staffRefused,
 
         // The gate comes before the dashboard, not beside it.
-        Shell.vendorOnboarding => location.startsWith(Routes.vendorOnboarding)
-            ? null
-            : Routes.vendorOnboarding,
+        Shell.vendorOnboarding =>
+          location.startsWith(Routes.vendorOnboarding)
+              ? null
+              : Routes.vendorOnboarding,
 
-        Shell.vendor => location.startsWith(Routes.vendorDashboard) &&
-                !location.startsWith(Routes.vendorOnboarding)
-            ? null
-            : Routes.vendorDashboard,
+        Shell.vendor =>
+          location.startsWith(Routes.vendorDashboard) &&
+                  !location.startsWith(Routes.vendorOnboarding)
+              ? null
+              : Routes.vendorDashboard,
 
         Shell.customer =>
           location.startsWith(Routes.customerHome) ? null : Routes.customerHome,
@@ -106,7 +107,10 @@ GoRouter buildRouter({
     },
 
     routes: [
-      GoRoute(path: Routes.splash, builder: (context, state) => const _Splash()),
+      GoRoute(
+        path: Routes.splash,
+        builder: (context, state) => const _Splash(),
+      ),
       GoRoute(
         path: Routes.signIn,
         builder: (context, state) => SignInScreen(auth: auth),
@@ -130,6 +134,7 @@ GoRouter buildRouter({
           onSignOut: auth.signOut,
         ),
       ),
+
       /// Both vendor states land on the same widget.
       ///
       /// `VendorHome` reads `GET /vendor/onboarding` and decides between the
@@ -148,12 +153,13 @@ GoRouter buildRouter({
       ),
       GoRoute(
         path: Routes.deleteAccount,
-        builder: (context, state) => DeleteAccountScreen(
-          api: api,
-          onClosed: auth.signOut,
-        ),
+        builder: (context, state) =>
+            DeleteAccountScreen(api: api, onClosed: auth.signOut),
       ),
-      GoRoute(path: Routes.gallery, builder: (context, state) => const GalleryScreen()),
+      GoRoute(
+        path: Routes.gallery,
+        builder: (context, state) => const GalleryScreen(),
+      ),
     ],
   );
 }
@@ -168,10 +174,11 @@ class _Splash extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Not translated, in any locale. It is the product's name.
             Text('Aangan', style: context.text.displayLarge),
             const SizedBox(height: Space.md),
             Text(
-              'Resolving your session…',
+              context.t('Resolving your session…'),
               style: context.text.bodyMedium?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
@@ -199,21 +206,27 @@ class _Locked extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text('Aangan is locked', style: context.text.headlineLarge),
+              Text(
+                context.t('Aangan is locked'),
+                style: context.text.headlineLarge,
+              ),
               const SizedBox(height: Space.sm),
               Text(
-                'Your session is still active. Unlock to carry on.',
+                context.t('Your session is still active. Unlock to carry on.'),
                 textAlign: TextAlign.center,
                 style: context.text.bodyMedium?.copyWith(
                   color: context.colors.onSurfaceVariant,
                 ),
               ),
               const SizedBox(height: Space.lg),
-              FilledButton(onPressed: gate.unlock, child: const Text('Unlock')),
+              FilledButton(
+                onPressed: gate.unlock,
+                child: Text(context.t('Unlock')),
+              ),
               const SizedBox(height: Space.xs),
               TextButton(
                 onPressed: auth.signOut,
-                child: const Text('Sign out instead'),
+                child: Text(context.t('Sign out instead')),
               ),
             ],
           ),
@@ -238,15 +251,19 @@ class _StaffRefused extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const ActionRequired(
-                title: 'Staff sign in on the web',
-                body:
-                    'This app is for customers and professionals. Ops and admin '
-                    'work from the web panel, which has the tools this one does '
-                    'not.',
+              ActionRequired(
+                title: context.t('Staff sign in on the web'),
+                body: context.t(
+                  'This app is for customers and professionals. Ops and admin '
+                  'work from the web panel, which has the tools this one does '
+                  'not.',
+                ),
               ),
               const SizedBox(height: Space.md),
-              TextButton(onPressed: auth.signOut, child: const Text('Sign out')),
+              TextButton(
+                onPressed: auth.signOut,
+                child: Text(context.t('Sign out')),
+              ),
             ],
           ),
         ),

@@ -25,9 +25,9 @@ Future<void> _pump(
     MaterialApp(
       theme: AanganTheme.light,
       builder: (context, widget) => MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          textScaler: TextScaler.linear(textScale),
-        ),
+        data: MediaQuery.of(
+          context,
+        ).copyWith(textScaler: TextScaler.linear(textScale)),
         child: widget!,
       ),
       home: Scaffold(body: child),
@@ -42,8 +42,9 @@ void main() {
     ///
     /// DESIGN.md §3.3: the 44px control height in the reference renders is a
     /// web figure. Android wants 48dp and iOS 44pt, so 48 satisfies both.
-    testWidgets('every button clears 48dp, even on a small phone',
-        (tester) async {
+    testWidgets('every button clears 48dp, even on a small phone', (
+      tester,
+    ) async {
       await _pump(
         tester,
         Column(
@@ -71,8 +72,10 @@ void main() {
         const TextField(decoration: InputDecoration(labelText: 'Locality')),
       );
 
-      expect(tester.getSize(find.byType(TextField)).height,
-          greaterThanOrEqualTo(48.0));
+      expect(
+        tester.getSize(find.byType(TextField)).height,
+        greaterThanOrEqualTo(48.0),
+      );
     });
   });
 
@@ -109,7 +112,8 @@ void main() {
         const SingleChildScrollView(
           child: ActionRequired(
             title: 'Three quotes are ready',
-            body: 'Compare them and choose a professional. Nothing moves '
+            body:
+                'Compare them and choose a professional. Nothing moves '
                 'until you do.',
           ),
         ),
@@ -134,7 +138,9 @@ void main() {
       expect(tester.getSize(find.byType(StatusPill)).width, greaterThan(80));
     });
 
-    testWidgets('a row of buttons wraps rather than overflowing', (tester) async {
+    testWidgets('a row of buttons wraps rather than overflowing', (
+      tester,
+    ) async {
       // The failure a golden would have caught: two buttons side by side at
       // 1.3 on a 360dp phone.
       await _pump(
@@ -142,12 +148,17 @@ void main() {
         Row(
           children: [
             Expanded(
-              child: FilledButton(onPressed: () {}, child: const Text('Camera')),
+              child: FilledButton(
+                onPressed: () {},
+                child: const Text('Camera'),
+              ),
             ),
             const SizedBox(width: Space.xs),
             Expanded(
-              child:
-                  OutlinedButton(onPressed: () {}, child: const Text('Gallery')),
+              child: OutlinedButton(
+                onPressed: () {},
+                child: const Text('Gallery'),
+              ),
             ),
           ],
         ),
@@ -181,8 +192,9 @@ void main() {
       expect(text.semanticsLabel, 'Colour carries meaning');
     });
 
-    testWidgets('the code field is one field, so it is announced once',
-        (tester) async {
+    testWidgets('the code field is one field, so it is announced once', (
+      tester,
+    ) async {
       // Six boxes would be six unlabelled fields to a screen reader, which is
       // the accessibility half of the same argument that makes paste work.
       await _pump(tester, OtpField(autofocus: false, onCompleted: (_) {}));
@@ -195,15 +207,17 @@ void main() {
     ///
     /// DESIGN.md gives it 3.4:1 on limestone, which passes for a border and
     /// fails for anything readable. Body copy uses `onSurfaceVariant`.
-    testWidgets('secondary body text uses the readable ink, not the outline',
-        (tester) async {
+    testWidgets('secondary body text uses the readable ink, not the outline', (
+      tester,
+    ) async {
       await _pump(
         tester,
         Builder(
           builder: (context) => Text(
             'Meta, timestamps, captions',
-            style: context.text.bodySmall
-                ?.copyWith(color: context.colors.onSurfaceVariant),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ),
       );

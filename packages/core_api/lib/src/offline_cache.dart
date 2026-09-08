@@ -104,13 +104,15 @@ bool isCacheable(String path) {
     '/vendor/dashboard',
   ];
 
-  return readable.any((prefix) => path == prefix || path.startsWith('$prefix/'));
+  return readable.any(
+    (prefix) => path == prefix || path.startsWith('$prefix/'),
+  );
 }
 
 /// Serves the last good body when the network cannot be reached.
 class OfflineCacheInterceptor extends Interceptor {
   OfflineCacheInterceptor(this._directory, {OfflineStatus? status})
-      : status = status ?? OfflineStatus();
+    : status = status ?? OfflineStatus();
 
   final Directory _directory;
 
@@ -118,7 +120,10 @@ class OfflineCacheInterceptor extends Interceptor {
   final OfflineStatus status;
 
   @override
-  void onResponse(Response<dynamic> response, ResponseInterceptorHandler handler) {
+  void onResponse(
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     final path = response.requestOptions.path;
 
     if (response.requestOptions.method == 'GET' &&
@@ -134,7 +139,10 @@ class OfflineCacheInterceptor extends Interceptor {
   }
 
   @override
-  Future<void> onError(DioException err, ErrorInterceptorHandler handler) async {
+  Future<void> onError(
+    DioException err,
+    ErrorInterceptorHandler handler,
+  ) async {
     final options = err.requestOptions;
 
     /// Only a *network* failure falls back.
@@ -142,7 +150,8 @@ class OfflineCacheInterceptor extends Interceptor {
     /// A 404 or a 422 is the server's considered answer and replacing it with
     /// yesterday's body would be a lie. A 500 is arguably serveable, but it
     /// also means something is wrong that the person should find out about.
-    final isOffline = err.type == DioExceptionType.connectionError ||
+    final isOffline =
+        err.type == DioExceptionType.connectionError ||
         err.type == DioExceptionType.connectionTimeout ||
         err.type == DioExceptionType.receiveTimeout ||
         err.type == DioExceptionType.unknown && err.response == null;
@@ -178,10 +187,7 @@ class OfflineCacheInterceptor extends Interceptor {
     try {
       final file = _fileFor(path)..parent.createSync(recursive: true);
       file.writeAsStringSync(
-        jsonEncode({
-          'at': DateTime.now().toIso8601String(),
-          'body': body,
-        }),
+        jsonEncode({'at': DateTime.now().toIso8601String(), 'body': body}),
       );
     } on Object {
       // A full disk must not fail a request that already succeeded.

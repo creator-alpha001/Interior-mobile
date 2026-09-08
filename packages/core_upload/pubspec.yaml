@@ -1,6 +1,11 @@
 name: aangan_core_upload
 description: Ticket, compress, PUT, and a queue that survives the app closing.
 publish_to: none
+
+# Resolved from the workspace root, so every package shares one lockfile and
+# one version of dio, freezed and intl. Without this the root `workspace:` key
+# is inert and `flutter pub get` at the root refuses outright.
+resolution: workspace
 version: 0.1.0
 
 environment:

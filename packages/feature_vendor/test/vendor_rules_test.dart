@@ -22,16 +22,20 @@ import 'fixtures.dart';
 /// would therefore need 'APPROVED', which reads as a shout in a test and
 /// couples it to a styling choice. This matches what the pill *means*.
 Finder findPill(String label) => find.byWidgetPredicate(
-      (w) => w is Text && w.semanticsLabel == label,
-      description: 'status pill "$label"',
-    );
+  (w) => w is Text && w.semanticsLabel == label,
+  description: 'status pill "$label"',
+);
 
 /// A tall surface, so a long ListView builds its whole contents.
 ///
 /// The submit button sits at the bottom of the stage-proof screen, and a lazy
 /// ListView on the default 800x600 test surface simply never builds it — which
 /// looked like the button being missing.
-Future<void> _pumpTall(WidgetTester tester, Widget child, {AanganApi? api}) async {
+Future<void> _pumpTall(
+  WidgetTester tester,
+  Widget child, {
+  AanganApi? api,
+}) async {
   tester.view.physicalSize = const Size(1200, 4000);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
@@ -41,7 +45,7 @@ Future<void> _pumpTall(WidgetTester tester, Widget child, {AanganApi? api}) asyn
 Future<void> _pump(WidgetTester tester, Widget child, {AanganApi? api}) async {
   await tester.pumpWidget(
     ProviderScope(
-      overrides: [if (api != null) apiProvider.overrideWithValue(api)],
+      overrides: [if (api != null) vendorApiProvider.overrideWithValue(api)],
       child: MaterialApp(theme: AanganTheme.light, home: child),
     ),
   );
@@ -49,8 +53,9 @@ Future<void> _pump(WidgetTester tester, Widget child, {AanganApi? api}) async {
 
 void main() {
   group('the onboarding gate', () {
-    testWidgets('says the vendor is in no pool, rather than showing zeroes',
-        (tester) async {
+    testWidgets('says the vendor is in no pool, rather than showing zeroes', (
+      tester,
+    ) async {
       // The single worst first impression this app can make is a dashboard
       // reading "0 leads" — true, permanent until they act, and explaining
       // neither fact.
@@ -67,8 +72,9 @@ void main() {
   });
 
   group('stage proof', () {
-    testWidgets('the button says Submit for approval, never Mark complete',
-        (tester) async {
+    testWidgets('the button says Submit for approval, never Mark complete', (
+      tester,
+    ) async {
       // MOBILE.md §6.2: evidence is not completion, and the screen must not
       // imply it is. A stage is done when ops have checked the photographs;
       // the customer's progress bar moves on their approval, not this tap.
@@ -89,8 +95,9 @@ void main() {
       expect(find.text('Complete stage'), findsNothing);
     });
 
-    testWidgets('is disabled until there is at least one photograph',
-        (tester) async {
+    testWidgets('is disabled until there is at least one photograph', (
+      tester,
+    ) async {
       // Ops check the work against the photographs. A stage submitted with a
       // note and nothing to look at cannot be approved, so it must not be
       // sendable.
@@ -134,8 +141,9 @@ void main() {
   });
 
   group('the milestone roadmap', () {
-    testWidgets('a submitted stage is "Awaiting approval", not approved',
-        (tester) async {
+    testWidgets('a submitted stage is "Awaiting approval", not approved', (
+      tester,
+    ) async {
       // DESIGN.md §1.4, the most important piece of colour in the product:
       // submitted is ochre — waiting on somebody else — and turns sage only
       // when a person at Aangan approves it. Sage is never decorative.
@@ -146,7 +154,9 @@ void main() {
             child: ProjectCard(
               project: fixtureProject(
                 milestones: [
-                  fixtureMilestone(verification: MilestoneVerification.submitted),
+                  fixtureMilestone(
+                    verification: MilestoneVerification.submitted,
+                  ),
                 ],
               ),
               queueFor: (_) => UploadQueue(api: fixtureApi()),
@@ -169,7 +179,9 @@ void main() {
             child: ProjectCard(
               project: fixtureProject(
                 milestones: [
-                  fixtureMilestone(verification: MilestoneVerification.approved),
+                  fixtureMilestone(
+                    verification: MilestoneVerification.approved,
+                  ),
                 ],
               ),
               queueFor: (_) => UploadQueue(api: fixtureApi()),
@@ -191,7 +203,9 @@ void main() {
             child: ProjectCard(
               project: fixtureProject(
                 milestones: [
-                  fixtureMilestone(verification: MilestoneVerification.approved),
+                  fixtureMilestone(
+                    verification: MilestoneVerification.approved,
+                  ),
                 ],
               ),
               queueFor: (_) => UploadQueue(api: fixtureApi()),
@@ -208,8 +222,9 @@ void main() {
   });
 
   group('address release', () {
-    testWidgets('a sealed visit shows the locality and explains the rule',
-        (tester) async {
+    testWidgets('a sealed visit shows the locality and explains the rule', (
+      tester,
+    ) async {
       // Two distinct designs, not one with an empty line. A blank address
       // reads as a bug in the app rather than a rule of the platform.
       await _pump(
@@ -226,8 +241,9 @@ void main() {
       expect(find.text('Directions'), findsNothing);
     });
 
-    testWidgets('a released visit shows the address and a way to get there',
-        (tester) async {
+    testWidgets('a released visit shows the address and a way to get there', (
+      tester,
+    ) async {
       await _pump(
         tester,
         Scaffold(
@@ -244,7 +260,9 @@ void main() {
       expect(find.text('Directions'), findsOneWidget);
     });
 
-    testWidgets('release follows the server, not the visit status', (tester) async {
+    testWidgets('release follows the server, not the visit status', (
+      tester,
+    ) async {
       // The same customer can be sealed on one service and released on
       // another, so this is computed server-side per service and sent as a
       // null. Inferring it from `status == confirmed` would leak an address
@@ -267,11 +285,14 @@ void main() {
   });
 
   group('the lead card', () {
-    testWidgets('shows no contact detail, because there is none to show',
-        (tester) async {
+    testWidgets('shows no contact detail, because there is none to show', (
+      tester,
+    ) async {
       await _pump(
         tester,
-        Scaffold(body: SingleChildScrollView(child: LeadCard(lead: fixtureLead()))),
+        Scaffold(
+          body: SingleChildScrollView(child: LeadCard(lead: fixtureLead())),
+        ),
         api: fixtureApi(),
       );
       await tester.pumpAndSettle();

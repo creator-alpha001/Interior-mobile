@@ -197,6 +197,7 @@ export 'models/get_products_response.dart';
 export 'models/get_professionals_response.dart';
 export 'models/get_posts_response.dart';
 export 'models/sort.dart';
+export 'models/status.dart';
 export 'models/actor_admin_role.dart';
 export 'models/actor_client_role.dart';
 export 'models/actor_professional_role.dart';

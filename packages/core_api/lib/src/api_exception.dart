@@ -108,13 +108,16 @@ class ApiException implements Exception {
       return ApiException(
         failure: ApiFailure.network,
         code: 'network_error',
-        message: 'We could not reach Aangan. Check your connection and try again.',
+        message:
+            'We could not reach Aangan. Check your connection and try again.',
         requestId: requestId,
       );
     }
 
     final body = response.data;
-    final problem = body is Map<String, dynamic> ? body : const <String, dynamic>{};
+    final problem = body is Map<String, dynamic>
+        ? body
+        : const <String, dynamic>{};
     final status = response.statusCode ?? 0;
 
     return ApiException(
@@ -131,23 +134,23 @@ class ApiException implements Exception {
   }
 
   static ApiFailure _failureFor(int status) => switch (status) {
-        401 => ApiFailure.notAuthenticated,
-        403 => ApiFailure.forbidden,
-        404 => ApiFailure.notFound,
-        409 => ApiFailure.conflict,
-        422 => ApiFailure.invalidRequest,
-        429 => ApiFailure.rateLimited,
-        _ => status >= 500 ? ApiFailure.serverError : ApiFailure.invalidRequest,
-      };
+    401 => ApiFailure.notAuthenticated,
+    403 => ApiFailure.forbidden,
+    404 => ApiFailure.notFound,
+    409 => ApiFailure.conflict,
+    422 => ApiFailure.invalidRequest,
+    429 => ApiFailure.rateLimited,
+    _ => status >= 500 ? ApiFailure.serverError : ApiFailure.invalidRequest,
+  };
 
   static String _defaultMessage(int status) => switch (status) {
-        401 => 'Please sign in again.',
-        403 => 'You do not have access to that.',
-        404 => 'We could not find that.',
-        409 => 'That has changed since you loaded it. Pull to refresh.',
-        429 => 'Too many attempts. Please wait a moment.',
-        _ => 'Something went wrong on our side.',
-      };
+    401 => 'Please sign in again.',
+    403 => 'You do not have access to that.',
+    404 => 'We could not find that.',
+    409 => 'That has changed since you loaded it. Pull to refresh.',
+    429 => 'Too many attempts. Please wait a moment.',
+    _ => 'Something went wrong on our side.',
+  };
 
   /// `Retry-After` is seconds in practice here; the header also allows a date.
   static Duration? _retryAfter(Response<dynamic> response) {

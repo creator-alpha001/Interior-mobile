@@ -136,13 +136,13 @@ abstract class PublicClient {
   /// No session required.
   @GET('/products')
   Future<GetProductsResponse> listProducts({
-    @Query('cursor') dynamic cursor,
-    @Query('domain') dynamic domain,
-    @Query('category') dynamic category,
-    @Query('search') dynamic search,
-    @Query('tags') dynamic tags,
-    @Query('city') dynamic city,
-    @Query('maxPrice') dynamic maxPrice,
+    @Query('cursor') String? cursor,
+    @Query('domain') String? domain,
+    @Query('category') String? category,
+    @Query('search') String? search,
+    @Query('tags') String? tags,
+    @Query('city') String? city,
+    @Query('maxPrice') int? maxPrice,
     @Query('limit') int? limit = 24,
     @Query('sort') Sort? sort = Sort.featured,
   });
@@ -153,7 +153,7 @@ abstract class PublicClient {
   @GET('/products/{slug}')
   Future<ProductView> getProduct({
     @Path('slug') required String slug,
-    @Query('city') dynamic city,
+    @Query('city') String? city,
   });
 
   /// listRelatedProducts.
@@ -163,7 +163,7 @@ abstract class PublicClient {
   Future<List<ProductView>> listRelatedProducts({
     @Path('id') required String id,
     @Query('limit') int? limit = 4,
-    @Query('city') dynamic city,
+    @Query('city') String? city,
   });
 
   /// listCategories.
@@ -171,7 +171,7 @@ abstract class PublicClient {
   /// No session required.
   @GET('/categories')
   Future<List<ProductCategory>> listCategories({
-    @Query('domain') dynamic domain,
+    @Query('domain') String? domain,
   });
 
   /// listPackages.
@@ -179,9 +179,9 @@ abstract class PublicClient {
   /// No session required.
   @GET('/packages')
   Future<List<PackageView>> listPackages({
-    @Query('domain') dynamic domain,
-    @Query('featured') dynamic featured,
-    @Query('limit') dynamic limit,
+    @Query('domain') String? domain,
+    @Query('featured') bool? featured,
+    @Query('limit') int? limit,
   });
 
   /// getPackage.
@@ -203,11 +203,11 @@ abstract class PublicClient {
   /// No session required.
   @GET('/professionals')
   Future<GetProfessionalsResponse> listProfessionals({
-    @Query('cursor') dynamic cursor,
-    @Query('domain') dynamic domain,
-    @Query('city') dynamic city,
-    @Query('search') dynamic search,
-    @Query('verifiedOnly') dynamic verifiedOnly,
+    @Query('cursor') String? cursor,
+    @Query('domain') String? domain,
+    @Query('city') String? city,
+    @Query('search') String? search,
+    @Query('verifiedOnly') bool? verifiedOnly,
     @Query('limit') int? limit = 24,
   });
 
@@ -224,8 +224,8 @@ abstract class PublicClient {
   /// No session required.
   @GET('/portfolio')
   Future<List<PortfolioItem>> listPortfolio({
-    @Query('domain') dynamic domain,
-    @Query('limit') dynamic limit,
+    @Query('domain') String? domain,
+    @Query('limit') int? limit,
   });
 
   /// platformStats.
@@ -239,11 +239,11 @@ abstract class PublicClient {
   /// No session required.
   @GET('/posts')
   Future<GetPostsResponse> listPosts({
-    @Query('cursor') dynamic cursor,
-    @Query('category') dynamic category,
-    @Query('tag') dynamic tag,
-    @Query('domain') dynamic domain,
-    @Query('search') dynamic search,
+    @Query('cursor') String? cursor,
+    @Query('category') String? category,
+    @Query('tag') String? tag,
+    @Query('domain') String? domain,
+    @Query('search') String? search,
     @Query('limit') int? limit = 24,
   });
 
@@ -294,7 +294,7 @@ abstract class PublicClient {
   @GET('/search')
   Future<SearchResults> search({
     @Query('q') required String q,
-    @Query('city') dynamic city,
+    @Query('city') String? city,
   });
 
   /// searchSuggest.

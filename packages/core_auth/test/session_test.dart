@@ -59,7 +59,11 @@ void main() {
       );
 
       gate.onPaused();
-      expect(gate.locked, isFalse, reason: 'a gate nobody enabled must not lock');
+      expect(
+        gate.locked,
+        isFalse,
+        reason: 'a gate nobody enabled must not lock',
+      );
     });
 
     test('will not enable itself on a device with no biometric', () async {

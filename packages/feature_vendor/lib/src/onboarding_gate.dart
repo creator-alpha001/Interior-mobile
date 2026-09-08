@@ -62,17 +62,23 @@ class _Steps extends ConsumerWidget {
         children: [
           const SizedBox(height: Space.xl),
           Text(
-            'Before you receive work',
+            context.t('Before you receive work'),
             style: context.text.displayLarge,
           ),
           const SizedBox(height: Space.sm),
           Text(
             state.canReceiveLeads
-                ? 'Everything is in place. Leads will start arriving.'
+                ? context.t(
+                    context.t(
+                      'Everything is in place. Leads will start arriving.',
+                    ),
+                  )
                 // Says the quiet part out loud. A vendor who does not know they
                 // are excluded assumes the platform has no work.
-                : 'You are not in any lead pool yet. These are the steps '
+                : context.t(
+                    'You are not in any lead pool yet. These are the steps '
                     'between you and the first job.',
+                  ),
             style: context.text.bodyLarge?.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
@@ -81,7 +87,16 @@ class _Steps extends ConsumerWidget {
           if (state.blockedReason != null) ...[
             const SizedBox(height: Space.lg),
             ActionRequired(
-              title: 'What is holding things up',
+              title: context.t('What is holding things up'),
+
+              /// The server's reason, in the server's language.
+              ///
+              /// `blockedReason`, and the step labels below it, are written by
+              /// the API. Translating them means translating them there — the
+              /// app cannot do it without keeping a shadow copy of every
+              /// sentence the onboarding module can produce. Noted rather than
+              /// papered over: this is the one place a Hindi user still sees
+              /// English, and it is a server change, not a client one.
               body: state.blockedReason!,
             ),
           ],
@@ -106,7 +121,7 @@ class _Steps extends ConsumerWidget {
               width: double.infinity,
               child: FilledButton(
                 onPressed: onComplete,
-                child: const Text('Go to my dashboard'),
+                child: Text(context.t('Go to my dashboard')),
               ),
             ),
           ],
@@ -114,9 +129,22 @@ class _Steps extends ConsumerWidget {
           const SizedBox(height: Space.xl),
           Text(
             blocking.isEmpty
-                ? 'Anything still outstanding is optional, and can wait.'
-                : '${blocking.length} of these must be finished before you are '
-                    'eligible. The rest can wait.',
+                ? context.t(
+                    context.t(
+                      'Anything still outstanding is optional, and can wait.',
+                    ),
+                  )
+                : context.l10n.plural(
+                    blocking.length,
+                    context.t(
+                      '{n} of these must be finished before you are eligible. '
+                      'The rest can wait.',
+                    ),
+                    context.t(
+                      '{n} of these must be finished before you are eligible. '
+                      'The rest can wait.',
+                    ),
+                  ),
             style: context.text.bodySmall?.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
@@ -153,14 +181,17 @@ class _Progress extends StatelessWidget {
         Row(
           children: [
             Text(
-              '$done of $total complete',
+              context.t('{done} of {total} complete', {
+                'done': done,
+                'total': total,
+              }),
               style: context.text.titleMedium,
             ),
             const Spacer(),
             if (done == total)
-              const StatusPill('Ready', tone: StatusTone.verified)
+              StatusPill(context.t('Ready'), tone: StatusTone.verified)
             else
-              const StatusPill('In progress', tone: StatusTone.waiting),
+              StatusPill(context.t('In progress'), tone: StatusTone.waiting),
           ],
         ),
         const SizedBox(height: Space.xs),
@@ -206,8 +237,8 @@ class _StepRow extends StatelessWidget {
             color: step.done
                 ? palette.verified
                 : step.blocking
-                    ? palette.waiting
-                    : context.colors.outline,
+                ? palette.waiting
+                : context.colors.outline,
           ),
           const SizedBox(width: Space.sm),
           Expanded(
@@ -220,7 +251,7 @@ class _StepRow extends StatelessWidget {
                       child: Text(step.label, style: context.text.titleLarge),
                     ),
                     if (!step.done && step.blocking)
-                      const StatusPill('Required', tone: StatusTone.yours),
+                      StatusPill(context.t('Required'), tone: StatusTone.yours),
                   ],
                 ),
                 const SizedBox(height: Space.xxs),

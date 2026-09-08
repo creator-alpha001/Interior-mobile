@@ -29,15 +29,15 @@ class ProjectsScreen extends ConsumerWidget {
     final projects = ref.watch(projectsProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Progress')),
+      appBar: AppBar(title: Text(context.t('Progress'))),
       body: SafeArea(
         child: AsyncView(
           value: projects,
           onRetry: () => ref.invalidate(projectsProvider),
           data: (list) => list.isEmpty
-              ? const EmptyState(
-                  title: 'Nothing under way',
-                  body: 'Work starts once you sign an agreement.',
+              ? EmptyState(
+                  title: context.t('Nothing under way'),
+                  body: context.t('Work starts once you sign an agreement.'),
                 )
               : RefreshIndicator(
                   onRefresh: () async => ref.invalidate(projectsProvider),
@@ -46,7 +46,8 @@ class ProjectsScreen extends ConsumerWidget {
                     itemCount: list.length,
                     separatorBuilder: (context, index) =>
                         const SizedBox(height: Space.md),
-                    itemBuilder: (context, i) => CustomerProjectCard(view: list[i]),
+                    itemBuilder: (context, i) =>
+                        CustomerProjectCard(view: list[i]),
                   ),
                 ),
         ),
@@ -83,8 +84,9 @@ class CustomerProjectCard extends StatelessWidget {
                     const SizedBox(height: Space.xxs),
                     Text(
                       view.professional.companyName,
-                      style: context.text.bodySmall
-                          ?.copyWith(color: context.colors.onSurfaceVariant),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -112,15 +114,21 @@ class CustomerProjectCard extends StatelessWidget {
 
           const SizedBox(height: Space.md),
           for (final (index, milestone) in milestones.indexed)
-            _Stage(milestone: milestone, isLast: index == milestones.length - 1),
+            _Stage(
+              milestone: milestone,
+              isLast: index == milestones.length - 1,
+            ),
 
           const SizedBox(height: Space.sm),
           Text(
             // Explains why there is nothing to press, in the customer's terms.
-            'Our team checks each stage against the professional’s photographs '
-            'before it counts as done.',
-            style: context.text.bodySmall
-                ?.copyWith(color: context.colors.onSurfaceVariant),
+            context.t(
+              'Our team checks each stage against the professional’s photographs '
+              'before it counts as done.',
+            ),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
         ],
       ),
@@ -138,36 +146,40 @@ class _Stage extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.palette;
 
-    final (Color colour, IconData glyph, String label, StatusTone tone) =
-        switch (milestone.verification) {
+    final (
+      Color colour,
+      IconData glyph,
+      String label,
+      StatusTone tone,
+    ) = switch (milestone.verification) {
       MilestoneVerification.approved => (
-          palette.verified,
-          Icons.check_circle,
-          'Done',
-          StatusTone.verified,
-        ),
+        palette.verified,
+        Icons.check_circle,
+        context.t('Done'),
+        StatusTone.verified,
+      ),
       // Ochre. The professional has sent photographs and our team has not
       // checked them yet — so it is genuinely not done.
       MilestoneVerification.submitted => (
-          palette.waiting,
-          Icons.schedule,
-          'Being checked',
-          StatusTone.waiting,
-        ),
+        palette.waiting,
+        Icons.schedule,
+        context.t('Being checked'),
+        StatusTone.waiting,
+      ),
       // The customer is told it was sent back, but not why: the verifier's note
       // is written for the vendor, and reads as criticism out of context.
       MilestoneVerification.rejected => (
-          palette.waiting,
-          Icons.schedule,
-          'More work needed',
-          StatusTone.waiting,
-        ),
+        palette.waiting,
+        Icons.schedule,
+        context.t('More work needed'),
+        StatusTone.waiting,
+      ),
       MilestoneVerification.notStarted || MilestoneVerification.$unknown => (
-          context.colors.outline,
-          Icons.radio_button_unchecked,
-          'Not started',
-          StatusTone.neutral,
-        ),
+        context.colors.outline,
+        Icons.radio_button_unchecked,
+        context.t('Not started'),
+        StatusTone.neutral,
+      ),
     };
 
     return IntrinsicHeight(
@@ -197,7 +209,10 @@ class _Stage extends StatelessWidget {
                   Row(
                     children: [
                       Expanded(
-                        child: Text(milestone.title, style: context.text.titleLarge),
+                        child: Text(
+                          milestone.title,
+                          style: context.text.titleLarge,
+                        ),
                       ),
                       StatusPill(label, tone: tone),
                     ],
@@ -211,8 +226,9 @@ class _Stage extends StatelessWidget {
                     Text(
                       '${milestone.proof.length} '
                       '${milestone.proof.length == 1 ? "photograph" : "photographs"}',
-                      style: context.text.bodySmall
-                          ?.copyWith(color: context.colors.onSurfaceVariant),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ],
                   // Deliberately no button here, of any kind.

@@ -35,13 +35,17 @@ class HomeScreen extends ConsumerWidget {
             padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
             children: [
               const SizedBox(height: Space.xl),
+              // The product's name. Not translated, in any locale.
               Text('Aangan', style: context.text.displayLarge),
               const SizedBox(height: Space.sm),
               Text(
-                'Interior design, furniture, fabrication and painting — with '
-                'one person who answers.',
-                style: context.text.bodyLarge
-                    ?.copyWith(color: context.colors.onSurfaceVariant),
+                context.t(
+                  'Interior design, furniture, fabrication and painting — with '
+                  'one person who answers.',
+                ),
+                style: context.text.bodyLarge?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
 
               /// Anything waiting on the customer comes before everything else.
@@ -63,17 +67,26 @@ class HomeScreen extends ConsumerWidget {
                     padding: const EdgeInsets.only(top: Space.lg),
                     child: ActionRequired(
                       title: waiting.length == 1
-                          ? 'Quotes are ready for your ${waiting.first.domain.name.toLowerCase()}'
-                          : 'Quotes are ready for ${waiting.length} of your jobs',
-                      body: 'Compare them and choose a professional. Nothing '
-                          'moves until you do.',
+                          ? context.t('Quotes are ready for your {trade}', {
+                              'trade': waiting.first.domain.name.toLowerCase(),
+                            })
+                          : context.t('Quotes are ready for {n} of your jobs', {
+                              'n': waiting.length,
+                            }),
+                      body: context.t(
+                        'Compare them and choose a professional. Nothing '
+                        'moves until you do.',
+                      ),
                     ),
                   );
                 },
                 orElse: () => const SizedBox.shrink(),
               ),
 
-              const SectionHead('What do you need?', eyebrow: 'Four trades'),
+              SectionHead(
+                context.t('What do you need?'),
+                eyebrow: context.t('Four trades'),
+              ),
               AsyncView(
                 value: domains,
                 onRetry: () => ref.invalidate(domainsProvider),
@@ -89,8 +102,13 @@ class HomeScreen extends ConsumerWidget {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(domain.name,
-                                      style: context.text.headlineSmall),
+                                  // Trade names come from the API. They are
+                                  // data, not copy, and are translated there
+                                  // or not at all.
+                                  Text(
+                                    domain.name,
+                                    style: context.text.headlineSmall,
+                                  ),
                                   const SizedBox(height: Space.xxs),
                                   Text(
                                     domain.tagline,
@@ -119,7 +137,7 @@ class HomeScreen extends ConsumerWidget {
                 width: double.infinity,
                 child: FilledButton(
                   onPressed: onStart,
-                  child: const Text('Tell us what you need'),
+                  child: Text(context.t('Tell us what you need')),
                 ),
               ),
 
@@ -129,31 +147,42 @@ class HomeScreen extends ConsumerWidget {
               /// four things the platform genuinely does, and nothing it does
               /// not — payments are off-platform, and saying otherwise here
               /// would be the most damaging sentence in the app.
-              const SectionHead('What you get', eyebrow: 'Every job'),
+              SectionHead(
+                context.t('What you get'),
+                eyebrow: context.t('Every job'),
+              ),
               AanganCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const [
+                  children: [
                     _Promise(
-                      title: 'Verified professionals',
-                      body: 'Every one is checked by us before they can quote, '
-                          'and approved trade by trade.',
+                      title: context.t('Verified professionals'),
+                      body: context.t(
+                        'Every one is checked by us before they can quote, '
+                        'and approved trade by trade.',
+                      ),
                     ),
                     _Promise(
-                      title: 'Ratings for the actual trade',
-                      body: 'A good carpenter is not automatically a good '
-                          'painter, so they are rated separately.',
+                      title: context.t('Ratings for the actual trade'),
+                      body: context.t(
+                        'A good carpenter is not automatically a good '
+                        'painter, so they are rated separately.',
+                      ),
                     ),
                     _Promise(
-                      title: 'One person who answers',
-                      body: 'You talk to us, not to four tradespeople. We carry '
-                          'messages both ways.',
+                      title: context.t('One person who answers'),
+                      body: context.t(
+                        'You talk to us, not to four tradespeople. We carry '
+                        'messages both ways.',
+                      ),
                     ),
                     _Promise(
-                      title: 'Stages checked against photographs',
-                      body: 'Work counts as done when our team has seen '
-                          'evidence of it — not when somebody says so.',
+                      title: context.t('Stages checked against photographs'),
+                      body: context.t(
+                        'Work counts as done when our team has seen '
+                        'evidence of it — not when somebody says so.',
+                      ),
                       isLast: true,
                     ),
                   ],
@@ -201,8 +230,9 @@ class _Promise extends StatelessWidget {
                 const SizedBox(height: Space.xxs),
                 Text(
                   body,
-                  style: context.text.bodyMedium
-                      ?.copyWith(color: context.colors.onSurfaceVariant),
+                  style: context.text.bodyMedium?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),

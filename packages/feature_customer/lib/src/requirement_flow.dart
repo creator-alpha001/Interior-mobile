@@ -52,7 +52,8 @@ class RequirementFlow extends ConsumerStatefulWidget {
 }
 
 class _RequirementFlowState extends ConsumerState<RequirementFlow> {
-  late final RequirementDraftStore _store = widget.store ?? RequirementDraftStore();
+  late final RequirementDraftStore _store =
+      widget.store ?? RequirementDraftStore();
 
   RequirementDraft _draft = const RequirementDraft();
   bool _loading = true;
@@ -152,7 +153,7 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
 
     try {
       final lead = await ref
-          .read(apiProvider)
+          .read(customerApiProvider)
           .customer
           .createRequirement(body: _draft.toBody())
           .orThrow();
@@ -188,7 +189,12 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
           onPressed: _submitting ? null : _back,
           icon: const Icon(Icons.arrow_back),
         ),
-        title: Text('Step ${step.index + 1} of $total'),
+        title: Text(
+          context.t('Step {n} of {total}', {
+            'n': step.index + 1,
+            'total': total,
+          }),
+        ),
       ),
       body: SafeArea(
         child: Column(
@@ -204,32 +210,32 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
                 padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
                 children: [
                   const SizedBox(height: Space.lg),
-                  Text(step.title, style: context.text.displayLarge),
+                  Text(step.title(context), style: context.text.displayLarge),
                   const SizedBox(height: Space.md),
                   switch (step) {
                     RequirementStep.trades => _Trades(
-                        draft: _draft,
-                        onChanged: _update,
-                      ),
+                      draft: _draft,
+                      onChanged: _update,
+                    ),
                     RequirementStep.detail => _Detail(
-                        draft: _draft,
-                        controller: _description,
-                        onChanged: _update,
-                      ),
+                      draft: _draft,
+                      controller: _description,
+                      onChanged: _update,
+                    ),
                     RequirementStep.photographs => _Photographs(
-                        queue: widget.queue,
-                        onPick: _pick,
-                      ),
+                      queue: widget.queue,
+                      onPick: _pick,
+                    ),
                     RequirementStep.where => _Where(
-                        draft: _draft,
-                        locality: _locality,
-                        onChanged: _update,
-                      ),
+                      draft: _draft,
+                      locality: _locality,
+                      onChanged: _update,
+                    ),
                     RequirementStep.budget => _Budget(
-                        draft: _draft,
-                        budget: _budget,
-                        onChanged: _update,
-                      ),
+                      draft: _draft,
+                      budget: _budget,
+                      onChanged: _update,
+                    ),
                     RequirementStep.verify => _Verify(draft: _draft),
                   },
                   if (_error != null) ...[
@@ -241,10 +247,13 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
                     const SizedBox(height: Space.xs),
                     Text(
                       // The reassurance that matters at this exact moment.
-                      'Nothing you typed is lost — it is saved on this device. '
-                      'Tap below to try sending it again.',
-                      style: context.text.bodySmall
-                          ?.copyWith(color: context.colors.onSurfaceVariant),
+                      context.t(
+                        'Nothing you typed is lost — it is saved on this device. '
+                        'Tap below to try sending it again.',
+                      ),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ],
                   const SizedBox(height: Space.xxxl),
@@ -259,8 +268,8 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
                   onPressed: _submitting
                       ? null
                       : step == RequirementStep.verify
-                          ? _verifyAndSubmit
-                          : (_draft.canAdvance ? _next : null),
+                      ? _verifyAndSubmit
+                      : (_draft.canAdvance ? _next : null),
                   child: _submitting
                       ? const SizedBox(
                           height: 18,
@@ -270,7 +279,7 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
                             color: Colors.white,
                           ),
                         )
-                      : Text(_buttonLabel(step)),
+                      : Text(_buttonLabel(context, step)),
                 ),
               ),
             ),
@@ -280,17 +289,19 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
     );
   }
 
-  String _buttonLabel(RequirementStep step) {
+  String _buttonLabel(BuildContext context, RequirementStep step) {
     if (step == RequirementStep.verify) {
-      return _error == null ? 'Verify and send' : 'Try sending again';
+      return _error == null
+          ? context.t('Verify and send')
+          : context.t('Try sending again');
     }
     if (step == RequirementStep.budget && widget.isSignedIn()) {
-      return 'Send my requirement';
+      return context.t('Send my requirement');
     }
     if (step == RequirementStep.photographs && widget.queue.items.isEmpty) {
-      return 'Skip for now';
+      return context.t('Skip for now');
     }
-    return 'Continue';
+    return context.t('Continue');
   }
 
   Future<void> _pick(ImageSource source) async {
@@ -307,7 +318,10 @@ class _RequirementFlowState extends ConsumerState<RequirementFlow> {
       return;
     }
 
-    final shot = await picker.pickImage(source: ImageSource.camera, maxWidth: 3000);
+    final shot = await picker.pickImage(
+      source: ImageSource.camera,
+      maxWidth: 3000,
+    );
     if (shot == null) return;
     await widget.queue.add(
       localPath: shot.path,
@@ -334,10 +348,13 @@ class _Trades extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Pick everything you need. Each becomes its own job, with its own '
-          'quotes and its own timeline.',
-          style: context.text.bodyLarge
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          context.t(
+            'Pick everything you need. Each becomes its own job, with its own '
+            'quotes and its own timeline.',
+          ),
+          style: context.text.bodyLarge?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: Space.md),
         AsyncView(
@@ -360,7 +377,9 @@ class _Trades extends ConsumerWidget {
                       next.add(domain.id);
                       material[domain.id] = MaterialSource.undecided;
                     }
-                    onChanged(draft.copyWith(domainIds: next, materialSource: material));
+                    onChanged(
+                      draft.copyWith(domainIds: next, materialSource: material),
+                    );
                   },
                 ),
                 const SizedBox(height: Space.xs),
@@ -392,35 +411,47 @@ class _Detail extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'A rough idea is enough. Our coordinator will call and take the '
-          'detail properly.',
-          style: context.text.bodyLarge
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          context.t(
+            'A rough idea is enough. Our coordinator will call and take the '
+            'detail properly.',
+          ),
+          style: context.text.bodyLarge?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: Space.md),
         TextField(
           controller: controller,
           maxLines: 6,
-          decoration: const InputDecoration(
-            labelText: 'What needs doing',
-            hintText: 'Wardrobe for the master bedroom, floor to ceiling…',
+          decoration: InputDecoration(
+            labelText: context.t('What needs doing'),
+            hintText: context.t(
+              context.t('Wardrobe for the master bedroom, floor to ceiling…'),
+            ),
           ),
           onChanged: (value) => onChanged(draft.copyWith(description: value)),
         ),
 
-        const SectionHead('Material', eyebrow: 'Asked per job'),
+        SectionHead(context.t('Material'), eyebrow: context.t('Asked per job')),
         Text(
           // Per trade, because it genuinely differs: somebody may have their
           // own wood and not their own paint.
-          'You can supply your own material for some jobs and not others.',
-          style: context.text.bodySmall
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          context.t(
+            context.t(
+              'You can supply your own material for some jobs and not others.',
+            ),
+          ),
+          style: context.text.bodySmall?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: Space.sm),
         domains.maybeWhen(
           data: (list) => Column(
             children: [
-              for (final domain in list.where((d) => draft.domainIds.contains(d.id)))
+              for (final domain in list.where(
+                (d) => draft.domainIds.contains(d.id),
+              ))
                 Padding(
                   padding: const EdgeInsets.only(bottom: Space.xs),
                   child: AanganCard(
@@ -439,11 +470,16 @@ class _Detail extends ConsumerWidget {
                             ])
                               ChoiceChip(
                                 label: Text(switch (source) {
-                                  MaterialSource.vendorSupplied => 'They supply',
-                                  MaterialSource.customerSupplied => 'I supply',
-                                  _ => 'Not sure yet',
+                                  MaterialSource.vendorSupplied => context.t(
+                                    context.t('They supply'),
+                                  ),
+                                  MaterialSource.customerSupplied => context.t(
+                                    context.t('I supply'),
+                                  ),
+                                  _ => context.t('Not sure yet'),
                                 }),
-                                selected: draft.materialSource[domain.id] == source,
+                                selected:
+                                    draft.materialSource[domain.id] == source,
                                 onSelected: (_) => onChanged(
                                   draft.copyWith(
                                     materialSource: {
@@ -480,10 +516,13 @@ class _Photographs extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Photographs help a professional quote accurately, and mean fewer '
-          'visits before work starts. Optional, but worth it.',
-          style: context.text.bodyLarge
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          context.t(
+            'Photographs help a professional quote accurately, and mean fewer '
+            'visits before work starts. Optional, but worth it.',
+          ),
+          style: context.text.bodyLarge?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: Space.md),
         Row(
@@ -491,16 +530,22 @@ class _Photographs extends StatelessWidget {
             Expanded(
               child: FilledButton.icon(
                 onPressed: () => onPick(ImageSource.camera),
-                icon: const Icon(Icons.photo_camera_outlined, size: TapTarget.glyph),
-                label: const Text('Camera'),
+                icon: const Icon(
+                  Icons.photo_camera_outlined,
+                  size: TapTarget.glyph,
+                ),
+                label: Text(context.t('Camera')),
               ),
             ),
             const SizedBox(width: Space.xs),
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () => onPick(ImageSource.gallery),
-                icon: const Icon(Icons.photo_library_outlined, size: TapTarget.glyph),
-                label: const Text('Gallery'),
+                icon: const Icon(
+                  Icons.photo_library_outlined,
+                  size: TapTarget.glyph,
+                ),
+                label: Text(context.t('Gallery')),
               ),
             ),
           ],
@@ -528,9 +573,9 @@ class _Photographs extends StatelessWidget {
                   ),
                   StatusPill(
                     switch (upload.state) {
-                      UploadState.done => 'Added',
-                      UploadState.failed => 'Failed',
-                      _ => 'Sending',
+                      UploadState.done => context.t('Added'),
+                      UploadState.failed => context.t('Failed'),
+                      _ => context.t('Sending'),
                     },
                     tone: switch (upload.state) {
                       UploadState.done => StatusTone.verified,
@@ -546,9 +591,10 @@ class _Photographs extends StatelessWidget {
         Text(
           // Says the quiet part: you do not have an account yet, and that is
           // fine. This is the step where people expect a wall.
-          'You do not need an account to add these.',
-          style: context.text.bodySmall
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          context.t('You do not need an account to add these.'),
+          style: context.text.bodySmall?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -574,10 +620,18 @@ class _Where extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Your locality is enough for now. The full address is only shared '
-          'with a professional once you confirm a visit with them.',
-          style: context.text.bodyLarge
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          /// The address rule, stated where it is asked about.
+          ///
+          /// Release per service, only after a confirmed visit. A Hindi
+          /// rendering that blurred this into "we share your address with
+          /// professionals" would describe a different product.
+          context.t(
+            'Your locality is enough for now. The full address is only shared '
+            'with a professional once you confirm a visit with them.',
+          ),
+          style: context.text.bodyLarge?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: Space.md),
         AsyncView(
@@ -600,8 +654,11 @@ class _Where extends ConsumerWidget {
         const SizedBox(height: Space.sm),
         TextField(
           controller: locality,
-          decoration: const InputDecoration(
-            labelText: 'Locality',
+          decoration: InputDecoration(
+            labelText: context.t('Locality'),
+            // A real Lucknow locality, as an example. Not translated: it is a
+            // place name.
+            // A place name, as an example. Not copy.
             hintText: 'Gomti Nagar',
           ),
           onChanged: (value) => onChanged(draft.copyWith(locality: value)),
@@ -627,7 +684,7 @@ class _Budget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('How soon?', style: context.text.headlineSmall),
+        Text(context.t('How soon?'), style: context.text.headlineSmall),
         const SizedBox(height: Space.xs),
         for (final urgency in const [
           Urgency.immediate,
@@ -636,14 +693,14 @@ class _Budget extends StatelessWidget {
         ]) ...[
           _Selectable(
             title: switch (urgency) {
-              Urgency.immediate => 'As soon as possible',
-              Urgency.withinMonth => 'Within a month',
-              _ => 'Just exploring',
+              Urgency.immediate => context.t('As soon as possible'),
+              Urgency.withinMonth => context.t('Within a month'),
+              _ => context.t('Just exploring'),
             },
             subtitle: switch (urgency) {
-              Urgency.immediate => 'We will prioritise your call',
-              Urgency.withinMonth => 'The usual pace',
-              _ => 'No rush — get a feel for prices',
+              Urgency.immediate => context.t('We will prioritise your call'),
+              Urgency.withinMonth => context.t('The usual pace'),
+              _ => context.t('No rush — get a feel for prices'),
             },
             selected: draft.urgency == urgency,
             onTap: () => onChanged(draft.copyWith(urgency: urgency)),
@@ -651,20 +708,24 @@ class _Budget extends StatelessWidget {
           const SizedBox(height: Space.xs),
         ],
 
-        const SectionHead('Budget', eyebrow: 'Optional'),
+        SectionHead(context.t('Budget'), eyebrow: context.t('Optional')),
         Text(
-          'A ceiling helps professionals judge whether they are right for the '
-          'job. It is a signal, not a promise, and you are not held to it.',
-          style: context.text.bodySmall
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          context.t(
+            'A ceiling helps professionals judge whether they are right for the '
+            'job. It is a signal, not a promise, and you are not held to it.',
+          ),
+          style: context.text.bodySmall?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: Space.sm),
         TextField(
           controller: budget,
           keyboardType: TextInputType.number,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-          decoration: const InputDecoration(
-            labelText: 'Up to',
+          decoration: InputDecoration(
+            labelText: context.t('Up to'),
+            // The symbol, not a word.
             prefixText: '₹ ',
           ),
           onChanged: (value) {
@@ -699,10 +760,13 @@ class _Verify extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'One last thing. We will text you a code — that is how we reach you '
-          'about this job, and it sets up your account at the same time.',
-          style: context.text.bodyLarge
-              ?.copyWith(color: context.colors.onSurfaceVariant),
+          context.t(
+            'One last thing. We will text you a code — that is how we reach you '
+            'about this job, and it sets up your account at the same time.',
+          ),
+          style: context.text.bodyLarge?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: Space.lg),
         AanganCard(
@@ -710,15 +774,24 @@ class _Verify extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('What you are sending', style: context.text.labelMedium),
+              Text(
+                context.t('What you are sending'),
+                style: context.text.labelMedium,
+              ),
               const SizedBox(height: Space.xs),
-              _Summary(label: 'Jobs', value: '${draft.domainIds.length}'),
-              _Summary(label: 'Photographs', value: '${draft.photoAssetIds.length}'),
-              _Summary(label: 'Locality', value: draft.locality),
               _Summary(
-                label: 'Budget',
+                label: context.t('Jobs'),
+                value: '${draft.domainIds.length}',
+              ),
+              _Summary(
+                label: context.t('Photographs'),
+                value: '${draft.photoAssetIds.length}',
+              ),
+              _Summary(label: context.t('Locality'), value: draft.locality),
+              _Summary(
+                label: context.t('Budget'),
                 value: draft.budgetMax == null
-                    ? 'Not stated'
+                    ? context.t('Not stated')
                     : Rupees(draft.budgetMax!).formatted,
               ),
             ],
@@ -745,8 +818,9 @@ class _Summary extends StatelessWidget {
             width: 120,
             child: Text(
               label,
-              style: context.text.bodyMedium
-                  ?.copyWith(color: context.colors.onSurfaceVariant),
+              style: context.text.bodyMedium?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ),
           Expanded(child: Text(value, style: context.text.titleMedium)),
@@ -784,7 +858,9 @@ class _Selectable extends StatelessWidget {
                 : context.colors.surfaceContainerLow,
             borderRadius: Radii.panelRadius,
             border: Border.all(
-              color: selected ? context.colors.primary : context.palette.hairline,
+              color: selected
+                  ? context.colors.primary
+                  : context.palette.hairline,
             ),
           ),
           child: Row(
@@ -796,8 +872,9 @@ class _Selectable extends StatelessWidget {
                     Text(title, style: context.text.titleLarge),
                     Text(
                       subtitle,
-                      style: context.text.bodySmall
-                          ?.copyWith(color: context.colors.onSurfaceVariant),
+                      style: context.text.bodySmall?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -805,7 +882,9 @@ class _Selectable extends StatelessWidget {
               Icon(
                 selected ? Icons.check_circle : Icons.radio_button_unchecked,
                 size: TapTarget.glyph,
-                color: selected ? context.colors.primary : context.colors.outline,
+                color: selected
+                    ? context.colors.primary
+                    : context.colors.outline,
               ),
             ],
           ),

@@ -51,12 +51,19 @@ class _SignInScreenState extends State<SignInScreen> {
                   const SizedBox(height: Space.xs),
                   Text(
                     switch (state.stage) {
-                      SignInStage.phone =>
+                      SignInStage.phone => context.t(
                         'Interior design, furniture, fabrication and painting — '
-                            'with one person who answers.',
-                      SignInStage.code => 'We sent a code to ${state.mobile}.',
-                      SignInStage.profile =>
+                        'with one person who answers.',
+                      ),
+                      // A placeholder rather than interpolation: the number
+                      // does not sit in the same place in both languages.
+                      SignInStage.code => context.t(
+                        'We sent a code to {number}.',
+                        {'number': state.mobile},
+                      ),
+                      SignInStage.profile => context.t(
                         'Your number is verified. Two things and you are in.',
+                      ),
                     },
                     style: context.text.bodyLarge?.copyWith(
                       color: context.colors.onSurfaceVariant,
@@ -68,7 +75,12 @@ class _SignInScreenState extends State<SignInScreen> {
                   if (widget.auth.notice != null) ...[
                     const SizedBox(height: Space.lg),
                     ActionRequired(
-                      title: 'You were signed out',
+                      title: context.t('You were signed out'),
+
+                      /// The server's sentence, deliberately. It knows which of
+                      /// several reasons applied — expiry, revocation, a
+                      /// password change elsewhere — and a canned local string
+                      /// would flatten all of them into one.
                       body: widget.auth.notice!,
                     ),
                   ],
@@ -77,21 +89,22 @@ class _SignInScreenState extends State<SignInScreen> {
 
                   switch (state.stage) {
                     SignInStage.phone => _PhoneStage(
-                        controller: _mobile,
-                        state: state,
-                        onSubmit: (value) => widget.auth.requestCode(value),
-                      ),
+                      controller: _mobile,
+                      state: state,
+                      onSubmit: (value) => widget.auth.requestCode(value),
+                    ),
                     SignInStage.code => _CodeStage(
-                        state: state,
-                        onSubmit: widget.auth.verifyCode,
-                        onResend: () => widget.auth.requestCode(state.mobile),
-                        onChangeNumber: widget.auth.restart,
-                      ),
+                      state: state,
+                      onSubmit: widget.auth.verifyCode,
+                      onResend: () => widget.auth.requestCode(state.mobile),
+                      onChangeNumber: widget.auth.restart,
+                    ),
                     SignInStage.profile => _ProfileStage(
-                        name: _name,
-                        state: state,
-                        onSubmit: (name) => widget.auth.verifyCode('', name: name),
-                      ),
+                      name: _name,
+                      state: state,
+                      onSubmit: (name) =>
+                          widget.auth.verifyCode('', name: name),
+                    ),
                   },
 
                   const SizedBox(height: Space.xxl),
@@ -130,8 +143,10 @@ class _PhoneStage extends StatelessWidget {
             FilteringTextInputFormatter.digitsOnly,
             LengthLimitingTextInputFormatter(10),
           ],
-          decoration: const InputDecoration(
-            labelText: 'Mobile number',
+          decoration: InputDecoration(
+            labelText: context.t('Mobile number'),
+            // Neither of these is copy. The dialling code and a sample number
+            // are the same digits in every language.
             prefixText: '+91  ',
             hintText: '98765 43210',
           ),
@@ -148,17 +163,17 @@ class _PhoneStage extends StatelessWidget {
           width: double.infinity,
           child: FilledButton(
             onPressed: state.busy ? null : () => onSubmit(controller.text),
-            child: state.busy
-                ? const _Spinner()
-                : const Text('Send code'),
+            child: state.busy ? const _Spinner() : Text(context.t('Send code')),
           ),
         ),
 
         const SizedBox(height: Space.md),
         Text(
           // No "Sign up" anywhere. Saying this plainly is what replaces it.
-          'New here? Entering your number is all it takes — we will set the '
-          'account up as you go.',
+          context.t(
+            'New here? Entering your number is all it takes — we will set the '
+            'account up as you go.',
+          ),
           style: context.text.bodySmall?.copyWith(
             color: context.colors.onSurfaceVariant,
           ),
@@ -215,7 +230,13 @@ class _CodeStageState extends State<_CodeStage> {
               children: [
                 const StatusPill('dev', tone: StatusTone.neutral),
                 const SizedBox(width: Space.xs),
-                Text('Code is ${state.devCode}', style: context.text.bodyMedium),
+                // Untranslated on purpose. This can only ever render against a
+                // development API — the config refuses OTP_DEV_ECHO in
+                // production — so it is a developer's affordance, not copy.
+                Text(
+                  'Code is ${state.devCode}',
+                  style: context.text.bodyMedium,
+                ),
               ],
             ),
           ),
@@ -226,12 +247,12 @@ class _CodeStageState extends State<_CodeStage> {
           children: [
             TextButton(
               onPressed: state.busy ? null : widget.onResend,
-              child: const Text('Send again'),
+              child: Text(context.t('Send again')),
             ),
             const Spacer(),
             TextButton(
               onPressed: state.busy ? null : widget.onChangeNumber,
-              child: const Text('Change number'),
+              child: Text(context.t('Change number')),
             ),
           ],
         ),
@@ -261,7 +282,7 @@ class _ProfileStage extends StatelessWidget {
           enabled: !state.busy,
           textCapitalization: TextCapitalization.words,
           autofillHints: const [AutofillHints.name],
-          decoration: const InputDecoration(labelText: 'Your name'),
+          decoration: InputDecoration(labelText: context.t('Your name')),
         ),
         if (state.error != null) ...[
           const SizedBox(height: Space.xs),
@@ -272,7 +293,7 @@ class _ProfileStage extends StatelessWidget {
           width: double.infinity,
           child: FilledButton(
             onPressed: state.busy ? null : () => onSubmit(name.text),
-            child: state.busy ? const _Spinner() : const Text('Continue'),
+            child: state.busy ? const _Spinner() : Text(context.t('Continue')),
           ),
         ),
       ],
@@ -294,9 +315,19 @@ class _ErrorLine extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final retry = state.retryAfter;
+
+    /// `state.error` is the server's own sentence and stays as it came.
+    ///
+    /// Translating it here would mean keeping a copy of every error string the
+    /// API can produce, in sync, forever — and getting it wrong would show
+    /// somebody a *different* reason than the one that actually applied. The
+    /// wrapper around it is ours, so that part translates.
     final text = retry == null
         ? state.error ?? ''
-        : '${state.error ?? 'Too many attempts.'} Try again in ${retry.inSeconds}s.';
+        : context.t('{error} Try again in {n}s.', {
+            'error': state.error ?? context.t('Too many attempts.'),
+            'n': retry.inSeconds,
+          });
 
     return Text(
       text,

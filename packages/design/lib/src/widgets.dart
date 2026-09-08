@@ -126,7 +126,10 @@ class StatusPill extends StatelessWidget {
     final colors = context.colors;
 
     final (Color background, Color foreground) = switch (tone) {
-      StatusTone.verified => (palette.verifiedContainer, palette.onVerifiedContainer),
+      StatusTone.verified => (
+        palette.verifiedContainer,
+        palette.onVerifiedContainer,
+      ),
       StatusTone.yours => (colors.primaryContainer, colors.onPrimaryContainer),
       StatusTone.waiting => (const Color(0xFFFDF3E3), palette.waiting),
       StatusTone.wrong => (colors.errorContainer, palette.wrong),
@@ -134,8 +137,14 @@ class StatusPill extends StatelessWidget {
     };
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: Space.xs, vertical: Space.xxs),
-      decoration: BoxDecoration(color: background, borderRadius: Radii.pillRadius),
+      padding: const EdgeInsets.symmetric(
+        horizontal: Space.xs,
+        vertical: Space.xxs,
+      ),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: Radii.pillRadius,
+      ),
       child: Text(
         // Uppercased for display only. The semantics label keeps the original
         // so a screen reader says "verified", not "V-E-R-I-F-I-E-D".
@@ -158,7 +167,9 @@ class MoneyText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       formatted,
-      style: context.palette.financialNum.copyWith(color: tone ?? AanganColors.ink),
+      style: context.palette.financialNum.copyWith(
+        color: tone ?? AanganColors.ink,
+      ),
     );
   }
 }
@@ -217,17 +228,18 @@ class ActionRequired extends StatelessWidget {
         children: [
           Text(
             title,
-            style: context.text.headlineSmall?.copyWith(color: colors.onPrimaryContainer),
+            style: context.text.headlineSmall?.copyWith(
+              color: colors.onPrimaryContainer,
+            ),
           ),
           const SizedBox(height: Space.xs),
           Text(
             body,
-            style: context.text.bodyMedium?.copyWith(color: colors.onPrimaryContainer),
+            style: context.text.bodyMedium?.copyWith(
+              color: colors.onPrimaryContainer,
+            ),
           ),
-          if (action != null) ...[
-            const SizedBox(height: Space.md),
-            action!,
-          ],
+          if (action != null) ...[const SizedBox(height: Space.md), action!],
         ],
       ),
     );
@@ -259,8 +271,9 @@ class SectionHead extends StatelessWidget {
                 if (eyebrow != null) ...[
                   Text(
                     eyebrow!.toUpperCase(),
-                    style: AanganTextStyles.eyebrow
-                        .copyWith(color: context.colors.onSurfaceVariant),
+                    style: AanganTextStyles.eyebrow.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
                     semanticsLabel: eyebrow,
                   ),
                   const SizedBox(height: Space.xxs),

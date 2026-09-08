@@ -27,16 +27,19 @@ enum Flavour {
 }
 
 abstract final class Env {
-  static const _name = String.fromEnvironment('AANGAN_ENV', defaultValue: 'dev');
+  static const _name = String.fromEnvironment(
+    'AANGAN_ENV',
+    defaultValue: 'dev',
+  );
 
   /// An explicit override, for pointing a build at a laptop on the same wifi.
   static const _baseUrlOverride = String.fromEnvironment('AANGAN_API_URL');
 
   static Flavour get flavour => switch (_name) {
-        'production' => Flavour.production,
-        'staging' => Flavour.staging,
-        _ => Flavour.dev,
-      };
+    'production' => Flavour.production,
+    'staging' => Flavour.staging,
+    _ => Flavour.dev,
+  };
 
   static String get baseUrl =>
       _baseUrlOverride.isEmpty ? flavour.defaultBaseUrl : _baseUrlOverride;

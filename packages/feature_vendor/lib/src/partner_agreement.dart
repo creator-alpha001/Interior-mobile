@@ -24,10 +24,12 @@ class PartnerAgreementScreen extends ConsumerStatefulWidget {
   final PartnerTerms terms;
 
   @override
-  ConsumerState<PartnerAgreementScreen> createState() => _PartnerAgreementScreenState();
+  ConsumerState<PartnerAgreementScreen> createState() =>
+      _PartnerAgreementScreenState();
 }
 
-class _PartnerAgreementScreenState extends ConsumerState<PartnerAgreementScreen> {
+class _PartnerAgreementScreenState
+    extends ConsumerState<PartnerAgreementScreen> {
   final _ticked = <String>{};
   final _signature = TextEditingController();
   final _name = TextEditingController();
@@ -58,7 +60,7 @@ class _PartnerAgreementScreenState extends ConsumerState<PartnerAgreementScreen>
 
     try {
       await ref
-          .read(apiProvider)
+          .read(vendorApiProvider)
           .vendor
           .signPartnerAgreement(
             body: SignPartnerAgreementBody(
@@ -88,7 +90,7 @@ class _PartnerAgreementScreenState extends ConsumerState<PartnerAgreementScreen>
     final terms = widget.terms;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Partner agreement')),
+      appBar: AppBar(title: Text(context.t('Partner agreement'))),
       body: SafeArea(
         child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
@@ -121,9 +123,14 @@ class _PartnerAgreementScreenState extends ConsumerState<PartnerAgreementScreen>
               Text(section.body, style: context.text.bodyMedium),
             ],
 
-            const SectionHead('Acknowledgements', eyebrow: 'Tick each one'),
+            SectionHead(
+              context.t('Acknowledgements'),
+              eyebrow: context.t('Tick each one'),
+            ),
             Text(
-              'Each of these is confirmed separately, and recorded separately.',
+              context.t(
+                'Each of these is confirmed separately, and recorded separately.',
+              ),
               style: context.text.bodySmall?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
@@ -141,12 +148,12 @@ class _PartnerAgreementScreenState extends ConsumerState<PartnerAgreementScreen>
                   onChanged: _busy
                       ? null
                       : (on) => setState(() {
-                            if (on ?? false) {
-                              _ticked.add(clause.key);
-                            } else {
-                              _ticked.remove(clause.key);
-                            }
-                          }),
+                          if (on ?? false) {
+                            _ticked.add(clause.key);
+                          } else {
+                            _ticked.remove(clause.key);
+                          }
+                        }),
                   title: Text(clause.label, style: context.text.bodyMedium),
                   controlAffinity: ListTileControlAffinity.leading,
                   contentPadding: EdgeInsets.zero,
@@ -154,27 +161,32 @@ class _PartnerAgreementScreenState extends ConsumerState<PartnerAgreementScreen>
                 ),
               ),
 
-            const SectionHead('Signature', eyebrow: 'Typed, and stored as typed'),
+            SectionHead(
+              context.t('Signature'),
+              eyebrow: context.t('Typed, and stored as typed'),
+            ),
             TextField(
               controller: _name,
               enabled: !_busy,
               textCapitalization: TextCapitalization.words,
-              decoration: const InputDecoration(labelText: 'Signatory name'),
+              decoration: InputDecoration(
+                labelText: context.t('Signatory name'),
+              ),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: Space.sm),
             TextField(
               controller: _role,
               enabled: !_busy,
-              decoration: const InputDecoration(labelText: 'Role'),
+              decoration: InputDecoration(labelText: context.t('Role')),
               onChanged: (_) => setState(() {}),
             ),
             const SizedBox(height: Space.sm),
             TextField(
               controller: _signature,
               enabled: !_busy,
-              decoration: const InputDecoration(
-                labelText: 'Type your full name to sign',
+              decoration: InputDecoration(
+                labelText: context.t('Type your full name to sign'),
               ),
               onChanged: (_) => setState(() {}),
             ),
@@ -206,15 +218,17 @@ class _PartnerAgreementScreenState extends ConsumerState<PartnerAgreementScreen>
                       )
                     : Text(
                         _complete
-                            ? 'Sign and continue'
+                            ? context.t('Sign and continue')
                             : 'Tick all ${terms.acknowledgements.length} to continue',
                       ),
               ),
             ),
             const SizedBox(height: Space.xs),
             Text(
-              'Signing records the time, your IP and your device, so the '
-              'agreement can be evidenced later.',
+              context.t(
+                'Signing records the time, your IP and your device, so the '
+                'agreement can be evidenced later.',
+              ),
               style: context.text.bodySmall?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),

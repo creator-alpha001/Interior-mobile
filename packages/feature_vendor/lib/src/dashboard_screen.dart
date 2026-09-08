@@ -54,38 +54,78 @@ class DashboardScreen extends ConsumerWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: Space.lg),
                     child: ActionRequired(
-                      title: data.newLeads == 1
-                          ? 'One new lead'
-                          : '${data.newLeads} new leads',
-                      body: 'The first quote in often wins. These are waiting '
-                          'on you.',
+                      title: context.l10n.plural(
+                        data.newLeads,
+                        context.t('One new lead'),
+                        context.t('{n} new leads'),
+                      ),
+                      body: context.t(
+                        'The first quote in often wins. These are waiting '
+                        'on you.',
+                      ),
                       action: FilledButton(
                         onPressed: () => onOpenLeads?.call(LeadFilter.valueNew),
-                        child: const Text('Open leads'),
+                        child: Text(context.t('Open leads')),
                       ),
                     ),
                   ),
 
-                const SectionHead('Your pipeline', eyebrow: 'Right now'),
+                SectionHead(
+                  context.t('Your pipeline'),
+                  eyebrow: context.t('Right now'),
+                ),
                 _Figures(
                   rows: [
-                    ('New', data.newLeads, StatusTone.yours),
-                    ('Awaiting your quote', data.awaitingQuote, StatusTone.yours),
-                    ('Quotes out', data.quotesOut, StatusTone.waiting),
-                    ('Won this period', data.wonThisPeriod, StatusTone.verified),
+                    (context.t('New'), data.newLeads, StatusTone.yours),
+                    (
+                      context.t('Awaiting your quote'),
+                      data.awaitingQuote,
+                      StatusTone.yours,
+                    ),
+                    (
+                      context.t('Quotes out'),
+                      data.quotesOut,
+                      StatusTone.waiting,
+                    ),
+                    (
+                      context.t('Won this period'),
+                      data.wonThisPeriod,
+                      StatusTone.verified,
+                    ),
                   ],
                 ),
 
-                const SectionHead('Work in hand', eyebrow: 'Live'),
+                SectionHead(
+                  context.t('Work in hand'),
+                  eyebrow: context.t('Live'),
+                ),
                 _Figures(
                   rows: [
-                    ('Live projects', data.liveProjects, StatusTone.neutral),
-                    ('Visits today', data.visitsToday, StatusTone.neutral),
-                    ('Unread messages', data.unreadMessages, StatusTone.neutral),
+                    (
+                      context.t('Live projects'),
+                      data.liveProjects,
+                      StatusTone.neutral,
+                    ),
+                    (
+                      context.t('Visits today'),
+                      data.visitsToday,
+                      StatusTone.neutral,
+                    ),
+                    (
+                      context.t('Unread messages'),
+                      data.unreadMessages,
+                      StatusTone.neutral,
+                    ),
                   ],
                 ),
 
-                const SectionHead('Commission', eyebrow: 'Yours alone'),
+                /// Commission appears on no customer surface at all — not
+                /// because a screen hides it, but because no customer-facing
+                /// response carries the figure.
+                SectionHead(
+                  context.t('Commission'),
+                  eyebrow: context.t('Yours alone'),
+                ),
                 AanganCard(
                   padding: const EdgeInsets.all(Space.cardPaddingWide),
                   child: Column(
@@ -113,7 +153,10 @@ class DashboardScreen extends ConsumerWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text('Overdue', style: context.text.labelMedium),
+                                Text(
+                                  context.t('Overdue'),
+                                  style: context.text.labelMedium,
+                                ),
                                 const SizedBox(height: Space.xxs),
                                 MoneyText(
                                   Rupees(data.commissionOverdue).formatted,
@@ -129,10 +172,13 @@ class DashboardScreen extends ConsumerWidget {
                       if (data.commissionOverdue > 0) ...[
                         const SizedBox(height: Space.sm),
                         Text(
-                          'Overdue commission can suspend new lead assignment. '
-                          'Settle it to stay in the pool.',
-                          style: context.text.bodySmall
-                              ?.copyWith(color: context.palette.wrong),
+                          context.t(
+                            'Overdue commission can suspend new lead assignment. '
+                            'Settle it to stay in the pool.',
+                          ),
+                          style: context.text.bodySmall?.copyWith(
+                            color: context.palette.wrong,
+                          ),
                         ),
                       ],
                     ],
@@ -168,7 +214,9 @@ class _Figures extends StatelessWidget {
               ),
               child: Row(
                 children: [
-                  Expanded(child: Text(row.$1, style: context.text.titleMedium)),
+                  Expanded(
+                    child: Text(row.$1, style: context.text.titleMedium),
+                  ),
                   Text(
                     '${row.$2}',
                     // Tabular, so a column of counters does not jitter.

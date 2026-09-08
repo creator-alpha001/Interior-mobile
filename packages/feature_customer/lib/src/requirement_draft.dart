@@ -24,7 +24,8 @@ library;
 import 'dart:convert';
 
 import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:flutter/foundation.dart';
+import 'package:aangan_design/aangan_design.dart';
+import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Where the person is in the six steps.
@@ -36,14 +37,19 @@ enum RequirementStep {
   budget,
   verify;
 
-  String get title => switch (this) {
-        RequirementStep.trades => 'What do you need?',
-        RequirementStep.detail => 'Tell us roughly',
-        RequirementStep.photographs => 'Show us the space',
-        RequirementStep.where => 'Where is it?',
-        RequirementStep.budget => 'When, and how much?',
-        RequirementStep.verify => 'Verify your number',
-      };
+  /// A method taking a context rather than a getter, so the titles translate.
+  ///
+  /// This file is otherwise model code with no Flutter in it beyond
+  /// `foundation`, and the import below is the price of keeping the six step
+  /// titles next to the six steps rather than in a lookup somewhere else.
+  String title(BuildContext context) => switch (this) {
+    RequirementStep.trades => context.t('What do you need?'),
+    RequirementStep.detail => context.t('Tell us roughly'),
+    RequirementStep.photographs => context.t('Show us the space'),
+    RequirementStep.where => context.t('Where is it?'),
+    RequirementStep.budget => context.t('When, and how much?'),
+    RequirementStep.verify => context.t('Verify your number'),
+  };
 }
 
 @immutable
@@ -109,15 +115,15 @@ class RequirementDraft {
 
   /// Whether the current step has enough to move on.
   bool get canAdvance => switch (step) {
-        RequirementStep.trades => domainIds.isNotEmpty,
-        RequirementStep.detail => description.trim().length >= 10,
-        // Photographs help enormously and are not required. Blocking on them
-        // is how a form loses somebody standing in an unlit room.
-        RequirementStep.photographs => true,
-        RequirementStep.where => cityId != null && locality.trim().isNotEmpty,
-        RequirementStep.budget => urgency != null,
-        RequirementStep.verify => false,
-      };
+    RequirementStep.trades => domainIds.isNotEmpty,
+    RequirementStep.detail => description.trim().length >= 10,
+    // Photographs help enormously and are not required. Blocking on them
+    // is how a form loses somebody standing in an unlit room.
+    RequirementStep.photographs => true,
+    RequirementStep.where => cityId != null && locality.trim().isNotEmpty,
+    RequirementStep.budget => urgency != null,
+    RequirementStep.verify => false,
+  };
 
   /// Everything needed to submit. Checked before the OTP, not after.
   bool get isComplete =>
@@ -127,28 +133,28 @@ class RequirementDraft {
       urgency != null;
 
   CreateRequirementBody toBody() => CreateRequirementBody(
-        cityId: cityId!,
-        domainIds: domainIds,
-        description: description.trim(),
-        urgency: urgency!,
-        materialSource: materialSource,
-        siteAccessibilityTags: siteTags.isEmpty ? null : siteTags,
-        budgetMax: budgetMax,
-        photoIds: photoAssetIds.isEmpty ? null : photoAssetIds,
-      );
+    cityId: cityId!,
+    domainIds: domainIds,
+    description: description.trim(),
+    urgency: urgency!,
+    materialSource: materialSource,
+    siteAccessibilityTags: siteTags.isEmpty ? null : siteTags,
+    budgetMax: budgetMax,
+    photoIds: photoAssetIds.isEmpty ? null : photoAssetIds,
+  );
 
   Map<String, Object?> toJson() => {
-        'step': step.name,
-        'domainIds': domainIds,
-        'materialSource': materialSource.map((k, v) => MapEntry(k, v.name)),
-        'description': description,
-        'photoAssetIds': photoAssetIds,
-        'cityId': cityId,
-        'locality': locality,
-        'urgency': urgency?.name,
-        'budgetMax': budgetMax,
-        'siteTags': siteTags.map((t) => t.name).toList(),
-      };
+    'step': step.name,
+    'domainIds': domainIds,
+    'materialSource': materialSource.map((k, v) => MapEntry(k, v.name)),
+    'description': description,
+    'photoAssetIds': photoAssetIds,
+    'cityId': cityId,
+    'locality': locality,
+    'urgency': urgency?.name,
+    'budgetMax': budgetMax,
+    'siteTags': siteTags.map((t) => t.name).toList(),
+  };
 
   factory RequirementDraft.fromJson(Map<String, Object?> json) {
     T? byName<T extends Enum>(List<T> values, Object? name) {
@@ -160,15 +166,20 @@ class RequirementDraft {
     }
 
     return RequirementDraft(
-      step: byName(RequirementStep.values, json['step']) ?? RequirementStep.trades,
+      step:
+          byName(RequirementStep.values, json['step']) ??
+          RequirementStep.trades,
       domainIds: (json['domainIds'] as List<dynamic>? ?? []).cast<String>(),
       materialSource: {
-        for (final entry in (json['materialSource'] as Map<String, dynamic>? ?? {}).entries)
+        for (final entry
+            in (json['materialSource'] as Map<String, dynamic>? ?? {}).entries)
           entry.key:
-              byName(MaterialSource.values, entry.value) ?? MaterialSource.undecided,
+              byName(MaterialSource.values, entry.value) ??
+              MaterialSource.undecided,
       },
       description: json['description'] as String? ?? '',
-      photoAssetIds: (json['photoAssetIds'] as List<dynamic>? ?? []).cast<String>(),
+      photoAssetIds: (json['photoAssetIds'] as List<dynamic>? ?? [])
+          .cast<String>(),
       cityId: json['cityId'] as String?,
       locality: json['locality'] as String? ?? '',
       urgency: byName(Urgency.values, json['urgency']),
@@ -198,9 +209,7 @@ class RequirementDraftStore {
     if (raw == null) return null;
 
     try {
-      return RequirementDraft.fromJson(
-        jsonDecode(raw) as Map<String, Object?>,
-      );
+      return RequirementDraft.fromJson(jsonDecode(raw) as Map<String, Object?>);
     } on Object catch (error) {
       // A draft written by an older build. Losing it is bad; crashing on
       // launch because of it is worse.

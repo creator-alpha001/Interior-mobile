@@ -10,15 +10,19 @@
 /// [refreshAfterWrite] is where that lives. Every mutation goes through it.
 library;
 
+import 'package:aangan_design/aangan_design.dart';
+import 'package:flutter/widgets.dart';
 import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Supplied by the app at startup. Overridden in tests with a stubbed client.
-final apiProvider = Provider<AanganApi>(
-  (ref) => throw UnimplementedError('apiProvider must be overridden'),
+/// See the note on `customerApiProvider`: the two are named apart because
+/// sharing a name cost the customer half of the app its API client.
+final vendorApiProvider = Provider<AanganApi>(
+  (ref) => throw UnimplementedError('vendorApiProvider must be overridden'),
 );
 
-ProfessionalClient _vendor(Ref ref) => ref.watch(apiProvider).vendor;
+ProfessionalClient _vendor(Ref ref) => ref.watch(vendorApiProvider).vendor;
 
 /* ------------------------------------------------------------------ *
  * The gate
@@ -51,13 +55,28 @@ final dashboardProvider = FutureProvider<VendorDashboard>(
 /// `$unknown` is the generator's catch-all for a value this build predates. It
 /// is excluded: offering a tab whose meaning this version does not know is
 /// worse than not offering it.
-const leadFilterLabels = <LeadFilter, String>{
-  LeadFilter.all: 'All',
-  LeadFilter.valueNew: 'New',
-  LeadFilter.quoting: 'Quoting',
-  LeadFilter.won: 'Won',
-  LeadFilter.lost: 'Lost',
-};
+/// The tabs, in order. A list rather than a map now that the labels are not
+/// constants: the order is the part that has to be pinned, and the wording is
+/// looked up per build.
+const leadFilters = <LeadFilter>[
+  LeadFilter.all,
+  LeadFilter.valueNew,
+  LeadFilter.quoting,
+  LeadFilter.won,
+  LeadFilter.lost,
+];
+
+String leadFilterLabel(BuildContext context, LeadFilter filter) =>
+    switch (filter) {
+      LeadFilter.all => context.t('All'),
+      LeadFilter.valueNew => context.t('New'),
+      LeadFilter.quoting => context.t('Quoting'),
+      LeadFilter.won => context.t('Won'),
+      LeadFilter.lost => context.t('Lost'),
+      // Unreachable: `leadFilters` above does not offer it. Present because a
+      // switch over a generated enum must be exhaustive.
+      LeadFilter.$unknown => context.t('All'),
+    };
 
 final leadFilterProvider = StateProvider<LeadFilter>((ref) => LeadFilter.all);
 

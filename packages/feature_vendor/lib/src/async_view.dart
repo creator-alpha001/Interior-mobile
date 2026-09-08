@@ -64,37 +64,76 @@ class ErrorState extends StatelessWidget {
   Widget build(BuildContext context) {
     final api = error is ApiException ? error as ApiException : null;
 
+    /// Says what actually went wrong, in debug builds only.
+    ///
+    /// This screen is deliberately vague — a customer does not need a stack
+    /// trace, and "Something went wrong · Please try again" is the right thing
+    /// to *show*. But it is also the last thing that sees the error, and being
+    /// vague to the developer as well cost two long debugging sessions: an
+    /// un-overridden Riverpod provider and a decode failure both rendered as
+    /// that same sentence, with nothing anywhere to distinguish them.
+    ///
+    /// Inside `assert` so it compiles out of release entirely, and printing the
+    /// runtime type because that alone separates the three cases that matter:
+    /// an `ApiException` (the server said no), a `TypeError` (the contract
+    /// moved), or anything else (a bug on this side).
+    assert(() {
+      // Only when the error is not one the switch below has copy for.
+      // A 404 rendering as "Not found" needs no explanation; anything
+      // reaching the default arm does.
+      if (api == null) {
+        debugPrint('AsyncView error — ${error.runtimeType}: $error');
+      }
+      return true;
+    }());
+
     final (String title, String body, bool retryable) = switch (api?.failure) {
       ApiFailure.network => (
-          'No connection',
-          'We could not reach Aangan. Check your signal and try again.',
-          true,
+        context.t('No connection'),
+        context.t(
+          context.t(
+            'We could not reach Aangan. Check your signal and try again.',
+          ),
         ),
+        true,
+      ),
       ApiFailure.notFound => (
-          'Not found',
-          // Never "you do not have access": the API answers 404 for somebody
-          // else's record on purpose, and this side cannot tell which it was.
-          'We could not find that. It may have been withdrawn.',
-          false,
-        ),
+        context.t('Not found'),
+        // Never "you do not have access": the API answers 404 for somebody
+        // else's record on purpose, and this side cannot tell which it was.
+        context.t('We could not find that. It may have been withdrawn.'),
+        false,
+      ),
       ApiFailure.rateLimited => (
-          'Too many requests',
-          api?.retryAfter == null
-              ? 'Please wait a moment and try again.'
-              : 'Please try again in ${api!.retryAfter!.inSeconds} seconds.',
-          false,
-        ),
+        context.t('Too many requests'),
+        api?.retryAfter == null
+            ? context.t('Please wait a moment and try again.')
+            : context.t('Please try again in {n} seconds.', {
+                'n': api!.retryAfter!.inSeconds,
+              }),
+        false,
+      ),
       ApiFailure.conflict => (
-          'That has changed',
-          'Someone updated this while you were looking at it. Pull to refresh.',
-          true,
+        context.t('That has changed'),
+        context.t(
+          context.t(
+            'Someone updated this while you were looking at it. Pull to refresh.',
+          ),
         ),
+        true,
+      ),
       ApiFailure.serverError => (
-          'Something went wrong',
-          'The problem is on our side. Try again in a moment.',
-          true,
-        ),
-      _ => ('Something went wrong', api?.message ?? 'Please try again.', true),
+        context.t('Something went wrong'),
+        context.t('The problem is on our side. Try again in a moment.'),
+        true,
+      ),
+      // `api.message` is the server's sentence and stays as it came — see the
+      // note in sign_in.dart for why translating it here would be worse.
+      _ => (
+        context.t('Something went wrong'),
+        api?.message ?? context.t('Please try again.'),
+        true,
+      ),
     };
 
     return Center(
@@ -114,7 +153,10 @@ class ErrorState extends StatelessWidget {
             ),
             if (retryable) ...[
               const SizedBox(height: Space.md),
-              OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
+              OutlinedButton(
+                onPressed: onRetry,
+                child: Text(context.t('Try again')),
+              ),
             ],
             // The one thing worth reading out to support. The API echoes it on
             // every response, so their screenshot and a server log are the
@@ -122,7 +164,7 @@ class ErrorState extends StatelessWidget {
             if (api?.requestId != null) ...[
               const SizedBox(height: Space.md),
               Text(
-                'Reference ${api!.requestId}',
+                context.t('Reference {id}', {'id': api!.requestId}),
                 style: context.text.bodySmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
                 ),

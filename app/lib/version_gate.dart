@@ -32,8 +32,8 @@ const kBuildNumber = int.fromEnvironment('AANGAN_BUILD');
 
 class VersionGate extends ChangeNotifier {
   VersionGate({required AanganApi api, int build = kBuildNumber})
-      : _api = api,
-        _build = build;
+    : _api = api,
+      _build = build;
 
   final AanganApi _api;
   final int _build;
@@ -84,9 +84,16 @@ class UpgradeRequiredScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Update Aangan', style: context.text.displayLarge),
+                Text(
+                  context.t('Update Aangan'),
+                  style: context.text.displayLarge,
+                ),
                 const SizedBox(height: Space.sm),
                 Text(
+                  /// Not translated, and it cannot be: this is the server's
+                  /// sentence, written when somebody raised the floor, and it
+                  /// says *why* this particular build was cut off. A canned
+                  /// local string would lose the only useful part.
                   message,
                   style: context.text.bodyLarge?.copyWith(
                     color: context.colors.onSurfaceVariant,
@@ -99,13 +106,15 @@ class UpgradeRequiredScreen extends StatelessWidget {
                     // Opening the store is the only action. There is
                     // deliberately no "continue anyway".
                     onPressed: () => _openStore(context),
-                    child: const Text('Open the app store'),
+                    child: Text(context.t('Open the app store')),
                   ),
                 ),
                 const SizedBox(height: Space.md),
                 Text(
-                  'Your account and anything in progress are safe. This build '
-                  'just cannot talk to Aangan any more.',
+                  context.t(
+                    'Your account and anything in progress are safe. This build '
+                    'just cannot talk to Aangan any more.',
+                  ),
                   style: context.text.bodySmall?.copyWith(
                     color: context.colors.onSurfaceVariant,
                   ),
@@ -123,8 +132,10 @@ class UpgradeRequiredScreen extends StatelessWidget {
     // RELEASE.md. Until then, saying so is better than a dead button that
     // looks like a bug.
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Search for "Aangan" in your app store to update.'),
+      SnackBar(
+        content: Text(
+          context.t('Search for "Aangan" in your app store to update.'),
+        ),
       ),
     );
   }

@@ -38,12 +38,15 @@ class RequirementsScreen extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
               child: Row(
                 children: [
-                  Text('Your jobs', style: context.text.headlineLarge),
+                  Text(
+                    context.t('Your jobs'),
+                    style: context.text.headlineLarge,
+                  ),
                   const Spacer(),
                   if (onStartNew != null)
                     FilledButton(
                       onPressed: onStartNew,
-                      child: const Text('New'),
+                      child: Text(context.t('New')),
                     ),
                 ],
               ),
@@ -54,13 +57,16 @@ class RequirementsScreen extends ConsumerWidget {
                 value: requirements,
                 onRetry: () => ref.invalidate(requirementsProvider),
                 data: (list) => list.isEmpty
-                    ? const EmptyState(
-                        title: 'Nothing yet',
-                        body: 'Tell us what you need and we will find you three '
-                            'verified professionals.',
+                    ? EmptyState(
+                        title: context.t('Nothing yet'),
+                        body: context.t(
+                          'Tell us what you need and we will find you three '
+                          'verified professionals.',
+                        ),
                       )
                     : RefreshIndicator(
-                        onRefresh: () async => ref.invalidate(requirementsProvider),
+                        onRefresh: () async =>
+                            ref.invalidate(requirementsProvider),
                         child: ListView.separated(
                           padding: const EdgeInsets.symmetric(
                             horizontal: Space.gutter,
@@ -69,7 +75,8 @@ class RequirementsScreen extends ConsumerWidget {
                           itemCount: list.length,
                           separatorBuilder: (context, index) =>
                               const SizedBox(height: Space.md),
-                          itemBuilder: (context, i) => RequirementCard(lead: list[i]),
+                          itemBuilder: (context, i) =>
+                              RequirementCard(lead: list[i]),
                         ),
                       ),
               ),
@@ -96,12 +103,16 @@ class RequirementCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: Text(lead.lead.reference, style: context.text.titleMedium),
+                child: Text(
+                  lead.lead.reference,
+                  style: context.text.titleMedium,
+                ),
               ),
               Text(
                 lead.city.name,
-                style: context.text.bodySmall
-                    ?.copyWith(color: context.colors.onSurfaceVariant),
+                style: context.text.bodySmall?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ],
           ),
@@ -126,10 +137,13 @@ class RequirementCard extends StatelessWidget {
           if (lead.isMultiDomain) ...[
             const SizedBox(height: Space.xxs),
             Text(
-              'Each job is quoted and scheduled separately, even where the same '
-              'professional does more than one.',
-              style: context.text.bodySmall
-                  ?.copyWith(color: context.colors.onSurfaceVariant),
+              context.t(
+                'Each job is quoted and scheduled separately, even where the same '
+                'professional does more than one.',
+              ),
+              style: context.text.bodySmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ],
@@ -139,7 +153,11 @@ class RequirementCard extends StatelessWidget {
 }
 
 class ServiceRow extends StatelessWidget {
-  const ServiceRow({super.key, required this.service, required this.requirementId});
+  const ServiceRow({
+    super.key,
+    required this.service,
+    required this.requirementId,
+  });
 
   final LeadDomainView service;
   final String requirementId;
@@ -156,13 +174,13 @@ class ServiceRow extends StatelessWidget {
         onTap: quotes == 0
             ? null
             : () => Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => QuoteComparisonScreen(
-                      service: service,
-                      requirementId: requirementId,
-                    ),
+                MaterialPageRoute(
+                  builder: (_) => QuoteComparisonScreen(
+                    service: service,
+                    requirementId: requirementId,
                   ),
                 ),
+              ),
         borderRadius: Radii.smallRadius,
         child: Container(
           padding: const EdgeInsets.all(Space.cardPadding),
@@ -183,7 +201,7 @@ class ServiceRow extends StatelessWidget {
                     Text(service.domain.name, style: context.text.titleLarge),
                     const SizedBox(height: Space.xxs),
                     Text(
-                      _statusLine(service),
+                      _statusLine(context, service),
                       style: context.text.bodySmall?.copyWith(
                         color: waitingOnYou
                             ? context.colors.onPrimaryContainer
@@ -198,7 +216,10 @@ class ServiceRow extends StatelessWidget {
               else
                 _StatusPill(service: service),
               if (quotes > 0)
-                Icon(Icons.chevron_right, color: context.colors.onSurfaceVariant),
+                Icon(
+                  Icons.chevron_right,
+                  color: context.colors.onSurfaceVariant,
+                ),
             ],
           ),
         ),
@@ -206,17 +227,33 @@ class ServiceRow extends StatelessWidget {
     );
   }
 
-  static String _statusLine(LeadDomainView service) {
+  /// Takes a context so it can translate.
+  ///
+  /// The counts are placeholders rather than interpolations because the number
+  /// does not sit in the same position in Hindi, and a singular is a different
+  /// sentence rather than the same one with an `s` removed.
+  static String _statusLine(BuildContext context, LeadDomainView service) {
     if (service.leadDomain.selectedQuoteId != null) {
-      return 'You chose ${service.selectedProfessional?.companyName ?? "a professional"}';
+      final chosen = service.selectedProfessional?.companyName;
+      return chosen == null
+          ? context.t('You chose a professional')
+          : context.t('You chose {name}', {'name': chosen});
     }
     if (service.quotes.isNotEmpty) {
-      return '${service.quotes.length} quotes ready to compare';
+      return context.l10n.plural(
+        service.quotes.length,
+        context.t('{n} quote ready to compare'),
+        context.t('{n} quotes ready to compare'),
+      );
     }
     if (service.assignments.isNotEmpty) {
-      return '${service.assignments.length} professionals invited to quote';
+      return context.l10n.plural(
+        service.assignments.length,
+        context.t('{n} professional invited to quote'),
+        context.t('{n} professionals invited to quote'),
+      );
     }
-    return 'We are finding professionals for this';
+    return context.t('We are finding professionals for this');
   }
 }
 
@@ -228,18 +265,28 @@ class _StatusPill extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return switch (service.leadDomain.status) {
-      LeadDomainStatus.completed =>
-        const StatusPill('Done', tone: StatusTone.verified),
-      LeadDomainStatus.inProgress =>
-        const StatusPill('In progress', tone: StatusTone.neutral),
-      LeadDomainStatus.vendorSelected =>
-        const StatusPill('Chosen', tone: StatusTone.verified),
-      LeadDomainStatus.quoted =>
-        const StatusPill('Your turn', tone: StatusTone.yours),
-      LeadDomainStatus.cancelled =>
-        const StatusPill('Cancelled', tone: StatusTone.wrong),
+      LeadDomainStatus.completed => StatusPill(
+        context.t('Done'),
+        tone: StatusTone.verified,
+      ),
+      LeadDomainStatus.inProgress => StatusPill(
+        context.t('In progress'),
+        tone: StatusTone.neutral,
+      ),
+      LeadDomainStatus.vendorSelected => StatusPill(
+        context.t('Chosen'),
+        tone: StatusTone.verified,
+      ),
+      LeadDomainStatus.quoted => StatusPill(
+        context.t('Your turn'),
+        tone: StatusTone.yours,
+      ),
+      LeadDomainStatus.cancelled => StatusPill(
+        context.t('Cancelled'),
+        tone: StatusTone.wrong,
+      ),
       // Waiting on us, not on them.
-      _ => const StatusPill('With us', tone: StatusTone.waiting),
+      _ => StatusPill(context.t('With us'), tone: StatusTone.waiting),
     };
   }
 }

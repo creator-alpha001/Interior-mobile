@@ -8,6 +8,7 @@
 library;
 
 import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:aangan_design/aangan_design.dart';
 import 'package:aangan_core_upload/aangan_core_upload.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -122,31 +123,40 @@ class _VendorShellState extends ConsumerState<VendorShell> {
         onDestinationSelected: (index) => setState(() => _tab = index),
         // Thin outline glyphs, terracotta only on the active item — the
         // prototype's bar, carried over directly.
-        destinations: const [
+        /// Written as words in the table, uppercased here for display.
+        ///
+        /// `NavigationDestination.label` is a String rather than a widget, so
+        /// there is nowhere for the theme to do this — and unlike the status
+        /// pill there is no separate semantics label to preserve the word in.
+        ///
+        /// Calling `toUpperCase()` unconditionally is right in both languages
+        /// rather than only in one: Devanagari has no case, so Unicode maps
+        /// every one of its letters to itself. `'होम'.toUpperCase()` is `'होम'`.
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: 'DASHBOARD',
+            icon: const Icon(Icons.dashboard_outlined),
+            selectedIcon: const Icon(Icons.dashboard),
+            label: context.t('Dashboard').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.inbox_outlined),
-            selectedIcon: Icon(Icons.inbox),
-            label: 'LEADS',
+            icon: const Icon(Icons.inbox_outlined),
+            selectedIcon: const Icon(Icons.inbox),
+            label: context.t('Leads').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.construction_outlined),
-            selectedIcon: Icon(Icons.construction),
-            label: 'PROJECTS',
+            icon: const Icon(Icons.construction_outlined),
+            selectedIcon: const Icon(Icons.construction),
+            label: context.t('Projects').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.event_outlined),
-            selectedIcon: Icon(Icons.event),
-            label: 'VISITS',
+            icon: const Icon(Icons.event_outlined),
+            selectedIcon: const Icon(Icons.event),
+            label: context.t('Visits').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.more_horiz_outlined),
-            selectedIcon: Icon(Icons.more_horiz),
-            label: 'MORE',
+            icon: const Icon(Icons.more_horiz_outlined),
+            selectedIcon: const Icon(Icons.more_horiz),
+            label: context.t('More').toUpperCase(),
           ),
         ],
       ),

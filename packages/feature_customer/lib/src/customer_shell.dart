@@ -17,6 +17,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'agreements_screen.dart';
+import 'blog_screen.dart';
+import 'estimator_screen.dart';
 import 'async_view.dart';
 import 'home_screen.dart';
 import 'projects_screen.dart';
@@ -62,7 +64,7 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
   Widget build(BuildContext context) {
     final screens = [
       HomeScreen(onStart: _startRequirement),
-      const _ExploreTab(),
+      _ExploreTab(onStart: _startRequirement),
       RequirementsScreen(onStartNew: _startRequirement),
       const _MessagesTab(),
       _AccountTab(onSignOut: widget.onSignOut),
@@ -73,31 +75,41 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: _tab,
         onDestinationSelected: (index) => setState(() => _tab = index),
-        destinations: const [
+
+        /// Written as words in the table, uppercased here for display.
+        ///
+        /// `NavigationDestination.label` is a String rather than a widget, so
+        /// there is nowhere for the theme to do this — and unlike the status
+        /// pill there is no separate semantics label to preserve the word in.
+        ///
+        /// Calling `toUpperCase()` unconditionally is right in both languages
+        /// rather than only in one: Devanagari has no case, so Unicode maps
+        /// every one of its letters to itself. `'होम'.toUpperCase()` is `'होम'`.
+        destinations: [
           NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'HOME',
+            icon: const Icon(Icons.home_outlined),
+            selectedIcon: const Icon(Icons.home),
+            label: context.t('Home').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.grid_view_outlined),
-            selectedIcon: Icon(Icons.grid_view),
-            label: 'EXPLORE',
+            icon: const Icon(Icons.grid_view_outlined),
+            selectedIcon: const Icon(Icons.grid_view),
+            label: context.t('Explore').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.assignment_outlined),
-            selectedIcon: Icon(Icons.assignment),
-            label: 'JOBS',
+            icon: const Icon(Icons.assignment_outlined),
+            selectedIcon: const Icon(Icons.assignment),
+            label: context.t('Jobs').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.forum_outlined),
-            selectedIcon: Icon(Icons.forum),
-            label: 'MESSAGES',
+            icon: const Icon(Icons.forum_outlined),
+            selectedIcon: const Icon(Icons.forum),
+            label: context.t('Messages').toUpperCase(),
           ),
           NavigationDestination(
-            icon: Icon(Icons.person_outline),
-            selectedIcon: Icon(Icons.person),
-            label: 'ACCOUNT',
+            icon: const Icon(Icons.person_outline),
+            selectedIcon: const Icon(Icons.person),
+            label: context.t('Account').toUpperCase(),
           ),
         ],
       ),
@@ -111,7 +123,9 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
 /// trade the rating is for — an overall average under a trade heading would be
 /// the wrong number under the right label.
 class _ExploreTab extends ConsumerWidget {
-  const _ExploreTab();
+  const _ExploreTab({required this.onStart});
+
+  final VoidCallback onStart;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -123,9 +137,51 @@ class _ExploreTab extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: Space.md),
+
+            /// The two surfaces that need no account and no network round trip
+            /// to be useful, put where somebody browsing will find them.
+            ///
+            /// Above the directory rather than in tabs of their own: five tabs
+            /// is already the ceiling MOBILE.md §6.1 sets, and a sixth would
+            /// cost the ones that carry a job.
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
-              child: Text('Professionals', style: context.text.headlineLarge),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _Shortcut(
+                      icon: Icons.calculate_outlined,
+                      title: context.t('Rough cost'),
+                      subtitle: context.t('No account needed'),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => EstimatorScreen(onStart: onStart),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: Space.xs),
+                  Expanded(
+                    child: _Shortcut(
+                      icon: Icons.menu_book_outlined,
+                      title: context.t('Guides'),
+                      subtitle: context.t('What things cost'),
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const BlogScreen()),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: Space.lg),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+              child: Text(
+                context.t('Professionals'),
+                style: context.text.headlineLarge,
+              ),
             ),
             const SizedBox(height: Space.sm),
             Expanded(
@@ -133,9 +189,13 @@ class _ExploreTab extends ConsumerWidget {
                 value: professionals,
                 onRetry: () => ref.invalidate(professionalsProvider),
                 data: (page) => page.items.isEmpty
-                    ? const EmptyState(
-                        title: 'Nobody to show yet',
-                        body: 'Professionals appear here once they are verified.',
+                    ? EmptyState(
+                        title: context.t('Nobody to show yet'),
+                        body: context.t(
+                          context.t(
+                            'Professionals appear here once they are verified.',
+                          ),
+                        ),
                       )
                     : ListView.separated(
                         padding: const EdgeInsets.symmetric(
@@ -182,22 +242,33 @@ class ProfessionalCard extends StatelessWidget {
                 ),
               ),
               if (professional.isVerified)
-                const StatusPill('Verified', tone: StatusTone.verified),
+                StatusPill(context.t('Verified'), tone: StatusTone.verified),
             ],
           ),
           const SizedBox(height: Space.xxs),
           Text(
-            '${professional.city.name} · ${professional.experienceYears} years',
-            style: context.text.bodySmall
-                ?.copyWith(color: context.colors.onSurfaceVariant),
+            context.t('{city} · {n} years', {
+              'city': professional.city.name,
+              'n': professional.experienceYears,
+            }),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: Space.xs),
           Text(
             // Says which trade the rating is for, always.
             count == 0
-                ? 'No reviews yet'
-                : '${rating.toStringAsFixed(1)} ★ · $count reviews'
-                    '${domainRating == null ? " across all trades" : ""}',
+                ? context.t('No reviews yet')
+                : domainRating == null
+                ? context.t('{rating} ★ · {n} reviews across all trades', {
+                    'rating': rating.toStringAsFixed(1),
+                    'n': count,
+                  })
+                : context.t('{rating} ★ · {n} reviews', {
+                    'rating': rating.toStringAsFixed(1),
+                    'n': count,
+                  }),
             style: context.text.bodyMedium,
           ),
           const SizedBox(height: Space.xs),
@@ -234,15 +305,21 @@ class _MessagesTab extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Messages', style: context.text.headlineLarge),
+                  Text(
+                    context.t('Messages'),
+                    style: context.text.headlineLarge,
+                  ),
                   const SizedBox(height: Space.xxs),
                   Text(
                     // Stated plainly, as MOBILE.md §6.1 asks: one thread per
                     // service, with Aangan, and we carry messages both ways.
-                    'You talk to us, and we talk to the professionals. One '
-                    'conversation per job.',
-                    style: context.text.bodyMedium
-                        ?.copyWith(color: context.colors.onSurfaceVariant),
+                    context.t(
+                      'You talk to us, and we talk to the professionals. One '
+                      'conversation per job.',
+                    ),
+                    style: context.text.bodyMedium?.copyWith(
+                      color: context.colors.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -259,9 +336,13 @@ class _MessagesTab extends ConsumerWidget {
                   ];
 
                   if (services.isEmpty) {
-                    return const EmptyState(
-                      title: 'No conversations yet',
-                      body: 'A thread opens for each job once you submit it.',
+                    return EmptyState(
+                      title: context.t('No conversations yet'),
+                      body: context.t(
+                        context.t(
+                          'A thread opens for each job once you submit it.',
+                        ),
+                      ),
                     );
                   }
 
@@ -339,7 +420,8 @@ class ServiceThreadScreen extends ConsumerStatefulWidget {
   final String title;
 
   @override
-  ConsumerState<ServiceThreadScreen> createState() => _ServiceThreadScreenState();
+  ConsumerState<ServiceThreadScreen> createState() =>
+      _ServiceThreadScreenState();
 }
 
 class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
@@ -359,7 +441,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
     setState(() => _sending = true);
     try {
       await ref
-          .read(apiProvider)
+          .read(customerApiProvider)
           .customer
           .sendServiceMessage(
             id: widget.leadDomainId,
@@ -371,8 +453,9 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
       refreshAfterWrite(ref);
     } on ApiException catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error.message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.message)));
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -389,9 +472,12 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
           children: [
             const Text('Aangan'),
             Text(
-              'about your ${widget.title.toLowerCase()}',
-              style: context.text.bodySmall
-                  ?.copyWith(color: context.colors.onSurfaceVariant),
+              context.t('about your {trade}', {
+                'trade': widget.title.toLowerCase(),
+              }),
+              style: context.text.bodySmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
             ),
           ],
         ),
@@ -407,10 +493,13 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                 vertical: Space.xs,
               ),
               child: Text(
-                'Your coordinator reads this and passes anything relevant to '
-                'the professionals quoting for you.',
-                style: context.text.bodySmall
-                    ?.copyWith(color: context.colors.onSurfaceVariant),
+                context.t(
+                  'Your coordinator reads this and passes anything relevant to '
+                  'the professionals quoting for you.',
+                ),
+                style: context.text.bodySmall?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ),
             Expanded(
@@ -419,9 +508,9 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                 onRetry: () =>
                     ref.invalidate(serviceThreadProvider(widget.leadDomainId)),
                 data: (messages) => messages.isEmpty
-                    ? const EmptyState(
-                        title: 'Nothing yet',
-                        body: 'Ask us anything about your job.',
+                    ? EmptyState(
+                        title: context.t('Nothing yet'),
+                        body: context.t('Ask us anything about your job.'),
                       )
                     : ListView.builder(
                         reverse: true,
@@ -435,8 +524,9 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                           final mine =
                               message.senderRole == MessageSenderRole.client;
                           return Align(
-                            alignment:
-                                mine ? Alignment.centerRight : Alignment.centerLeft,
+                            alignment: mine
+                                ? Alignment.centerRight
+                                : Alignment.centerLeft,
                             child: Container(
                               margin: const EdgeInsets.only(bottom: Space.xs),
                               padding: const EdgeInsets.all(Space.sm),
@@ -446,8 +536,9 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                                     ? context.colors.surfaceContainerHighest
                                     : AanganColors.chalk,
                                 borderRadius: Radii.panelRadius,
-                                border:
-                                    Border.all(color: context.palette.hairline),
+                                border: Border.all(
+                                  color: context.palette.hairline,
+                                ),
                               ),
                               child: Column(
                                 crossAxisAlignment: mine
@@ -455,14 +546,16 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                                     : CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    mine ? 'You' : 'Aangan',
+                                    mine ? context.t('You') : 'Aangan',
                                     style: context.text.labelMedium?.copyWith(
                                       color: context.colors.onSurfaceVariant,
                                     ),
                                   ),
                                   const SizedBox(height: Space.xxs),
-                                  Text(message.body,
-                                      style: context.text.bodyMedium),
+                                  Text(
+                                    message.body,
+                                    style: context.text.bodyMedium,
+                                  ),
                                 ],
                               ),
                             ),
@@ -481,15 +574,17 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                       enabled: !_sending,
                       minLines: 1,
                       maxLines: 4,
-                      decoration:
-                          const InputDecoration(hintText: 'Message Aangan'),
+                      decoration: InputDecoration(
+                        hintText: context.t('Message Aangan'),
+                      ),
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
                   const SizedBox(width: Space.xs),
                   FilledButton(
-                    onPressed:
-                        _body.text.trim().isEmpty || _sending ? null : _send,
+                    onPressed: _body.text.trim().isEmpty || _sending
+                        ? null
+                        : _send,
                     child: const Icon(Icons.send, size: TapTarget.glyph),
                   ),
                 ],
@@ -515,26 +610,37 @@ class _AccountTab extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
           children: [
             const SizedBox(height: Space.md),
-            Text('Account', style: context.text.headlineLarge),
+            Text(context.t('Account'), style: context.text.headlineLarge),
             const SizedBox(height: Space.md),
             _Link(
-              title: 'Agreements',
-              subtitle: 'Contracts to sign, and signed',
+              title: context.t('Agreements'),
+              subtitle: context.t('Contracts to sign, and signed'),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(builder: (_) => const AgreementsScreen()),
               ),
             ),
             const SizedBox(height: Space.xs),
             _Link(
-              title: 'Progress',
-              subtitle: 'Work under way',
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ProjectsScreen()),
-              ),
+              title: context.t('Progress'),
+              subtitle: context.t('Work under way'),
+              onTap: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const ProjectsScreen())),
             ),
+
+            /// The language switcher.
+            ///
+            /// Renders nothing when there is no `AanganLanguageScope` above —
+            /// a widget test pumping this tab alone, or the gallery.
+            const SizedBox(height: Space.xs),
+            const LanguageSetting(),
+
             if (onSignOut != null) ...[
               const SizedBox(height: Space.xl),
-              OutlinedButton(onPressed: onSignOut, child: const Text('Sign out')),
+              OutlinedButton(
+                onPressed: onSignOut,
+                child: Text(context.t('Sign out')),
+              ),
             ],
             const SizedBox(height: Space.xxxl),
           ],
@@ -545,7 +651,11 @@ class _AccountTab extends ConsumerWidget {
 }
 
 class _Link extends StatelessWidget {
-  const _Link({required this.title, required this.subtitle, required this.onTap});
+  const _Link({
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
 
   final String title;
   final String subtitle;
@@ -564,13 +674,51 @@ class _Link extends StatelessWidget {
                 Text(title, style: context.text.titleLarge),
                 Text(
                   subtitle,
-                  style: context.text.bodySmall
-                      ?.copyWith(color: context.colors.onSurfaceVariant),
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
                 ),
               ],
             ),
           ),
           Icon(Icons.chevron_right, color: context.colors.onSurfaceVariant),
+        ],
+      ),
+    );
+  }
+}
+
+/// A square entry point. Two fit a 360dp row with the gutter intact.
+class _Shortcut extends StatelessWidget {
+  const _Shortcut({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AanganCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(Space.cardPadding),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, size: TapTarget.glyph, color: context.colors.primary),
+          const SizedBox(height: Space.xs),
+          Text(title, style: context.text.titleLarge),
+          Text(
+            subtitle,
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );

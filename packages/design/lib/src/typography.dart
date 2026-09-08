@@ -20,14 +20,36 @@ abstract final class AanganFonts {
   static const serif = 'Newsreader';
   static const sans = 'Manrope';
 
-  /// Neither family carries Devanagari.
+  /// Neither family carries Devanagari, and the app ships Hindi.
   ///
-  /// Left empty deliberately, and visibly. If Hindi is ever a target — and for
-  /// home services in India it will be — headings fall back silently to the
-  /// platform serif and the editorial character of the design is gone in that
-  /// locale. Pairing Noto Serif/Sans Devanagari here is the fix, and it needs
-  /// an optical check at heading sizes rather than just a working glyph.
-  static const List<String> devanagariFallback = <String>[];
+  /// Without these, every Hindi string falls through to whatever the platform
+  /// happens to have — Noto on Android, Nirmala UI on Windows, Devanagari
+  /// Sangam MN on iOS — which means the app looks like a different piece of
+  /// software in Hindi than it does in English. Naming the fallback pins it to
+  /// one pair chosen to sit with Newsreader and Manrope.
+  ///
+  /// **A name here is a request, not a guarantee.** Flutter looks for a
+  /// bundled family first and silently continues down the list, so listing a
+  /// family that is not in `pubspec.yaml` costs nothing and breaks nothing —
+  /// it just does not take effect yet. The `.ttf` files are still outstanding;
+  /// RELEASE.md tracks them alongside Newsreader and Manrope themselves, which
+  /// are equally unbundled today.
+  ///
+  /// Devanagari also sits taller than Latin: the शिरोरेखा and the vowel marks
+  /// above it want more line height than the same size in English. The scale
+  /// below is generous enough at body sizes, but the display and headline
+  /// roles need an optical check once the files land, rather than a check that
+  /// the glyphs merely appear.
+  static const List<String> serifFallback = <String>['Noto Serif Devanagari'];
+
+  static const List<String> sansFallback = <String>['Noto Sans Devanagari'];
+
+  /// Kept for callers that want "whatever renders Devanagari", regardless of
+  /// which half of the pairing they are in.
+  static const List<String> devanagariFallback = <String>[
+    ...serifFallback,
+    ...sansFallback,
+  ];
 }
 
 /// The Material text theme, in the platform's own role names.
@@ -39,24 +61,28 @@ const aanganTextTheme = TextTheme(
   // ---- Newsreader. One display line per screen, at most. ----
   displayLarge: TextStyle(
     fontFamily: AanganFonts.serif,
+    fontFamilyFallback: AanganFonts.serifFallback,
     fontSize: 38,
     height: 46 / 38,
     fontWeight: FontWeight.w400,
   ),
   headlineLarge: TextStyle(
     fontFamily: AanganFonts.serif,
+    fontFamilyFallback: AanganFonts.serifFallback,
     fontSize: 30,
     height: 38 / 30,
     fontWeight: FontWeight.w400,
   ),
   headlineMedium: TextStyle(
     fontFamily: AanganFonts.serif,
+    fontFamilyFallback: AanganFonts.serifFallback,
     fontSize: 28,
     height: 36 / 28,
     fontWeight: FontWeight.w500,
   ),
   headlineSmall: TextStyle(
     fontFamily: AanganFonts.serif,
+    fontFamilyFallback: AanganFonts.serifFallback,
     fontSize: 22,
     height: 28 / 22,
     fontWeight: FontWeight.w500,
@@ -65,36 +91,42 @@ const aanganTextTheme = TextTheme(
   // ---- Manrope. Everything else. ----
   titleLarge: TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 18,
     height: 24 / 18,
     fontWeight: FontWeight.w600,
   ),
   titleMedium: TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 16,
     height: 22 / 16,
     fontWeight: FontWeight.w600,
   ),
   bodyLarge: TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 16,
     height: 26 / 16,
     fontWeight: FontWeight.w400,
   ),
   bodyMedium: TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 14,
     height: 22 / 14,
     fontWeight: FontWeight.w400,
   ),
   bodySmall: TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 12,
     height: 18 / 12,
     fontWeight: FontWeight.w400,
   ),
   labelMedium: TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 12,
     height: 16 / 12,
     fontWeight: FontWeight.w600,
@@ -102,6 +134,7 @@ const aanganTextTheme = TextTheme(
   ),
   labelSmall: TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 10,
     height: 14 / 10,
     fontWeight: FontWeight.w700,
@@ -123,6 +156,7 @@ abstract final class AanganTextStyles {
   /// instead of `₹4,50,000` — see `Rupees.format`.
   static const financialNum = TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 24,
     height: 30 / 24,
     fontWeight: FontWeight.w500,
@@ -136,6 +170,7 @@ abstract final class AanganTextStyles {
   /// transforming the string — a screen reader should still hear the word.
   static const eyebrow = TextStyle(
     fontFamily: AanganFonts.sans,
+    fontFamilyFallback: AanganFonts.sansFallback,
     fontSize: 10,
     height: 14 / 10,
     fontWeight: FontWeight.w700,
@@ -144,7 +179,5 @@ abstract final class AanganTextStyles {
 }
 
 /// Applies the ink colour to every role in one place.
-TextTheme tintedTextTheme(TextTheme base) => base.apply(
-      bodyColor: AanganColors.ink,
-      displayColor: AanganColors.ink,
-    );
+TextTheme tintedTextTheme(TextTheme base) =>
+    base.apply(bodyColor: AanganColors.ink, displayColor: AanganColors.ink);

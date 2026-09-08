@@ -19,7 +19,11 @@ import 'async_view.dart';
 import 'providers.dart';
 
 class ThreadScreen extends ConsumerStatefulWidget {
-  const ThreadScreen({super.key, required this.leadDomainId, required this.title});
+  const ThreadScreen({
+    super.key,
+    required this.leadDomainId,
+    required this.title,
+  });
 
   final String leadDomainId;
   final String title;
@@ -45,7 +49,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
     setState(() => _sending = true);
     try {
       await ref
-          .read(apiProvider)
+          .read(vendorApiProvider)
           .vendor
           .sendVendorMessage(
             id: widget.leadDomainId,
@@ -58,8 +62,9 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
       refreshAfterWriteFrom(ref);
     } on ApiException catch (error) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(error.message)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.message)));
     } finally {
       if (mounted) setState(() => _sending = false);
     }
@@ -76,7 +81,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
           children: [
             const Text('Aangan'),
             Text(
-              'about ${widget.title}',
+              context.t('about {title}', {'title': widget.title}),
               style: context.text.bodySmall?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),
@@ -95,8 +100,10 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
                 vertical: Space.xs,
               ),
               child: Text(
-                'You are talking to Aangan, not the customer. We carry your '
-                'questions to them and bring their answers back.',
+                context.t(
+                  'You are talking to Aangan, not the customer. We carry your '
+                  'questions to them and bring their answers back.',
+                ),
                 style: context.text.bodySmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
                 ),
@@ -105,13 +112,16 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
             Expanded(
               child: AsyncView(
                 value: thread,
-                onRetry: () => ref.invalidate(threadProvider(widget.leadDomainId)),
+                onRetry: () =>
+                    ref.invalidate(threadProvider(widget.leadDomainId)),
                 data: (messages) {
                   if (messages.isEmpty) {
-                    return const EmptyState(
-                      title: 'Nothing yet',
-                      body: 'Ask the coordinator anything about the scope, the '
-                          'site or the timeline.',
+                    return EmptyState(
+                      title: context.t('Nothing yet'),
+                      body: context.t(
+                        'Ask the coordinator anything about the scope, the '
+                        'site or the timeline.',
+                      ),
                     );
                   }
 
@@ -140,16 +150,17 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
                       enabled: !_sending,
                       maxLines: 4,
                       minLines: 1,
-                      decoration: const InputDecoration(
-                        hintText: 'Message the coordinator',
+                      decoration: InputDecoration(
+                        hintText: context.t('Message the coordinator'),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
                   ),
                   const SizedBox(width: Space.xs),
                   FilledButton(
-                    onPressed:
-                        _body.text.trim().isEmpty || _sending ? null : _send,
+                    onPressed: _body.text.trim().isEmpty || _sending
+                        ? null
+                        : _send,
                     child: const Icon(Icons.send, size: TapTarget.glyph),
                   ),
                 ],
@@ -185,11 +196,12 @@ class _Bubble extends StatelessWidget {
           border: Border.all(color: context.palette.hairline),
         ),
         child: Column(
-          crossAxisAlignment:
-              mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          crossAxisAlignment: mine
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
           children: [
             Text(
-              mine ? 'You' : 'Aangan',
+              mine ? context.t('You') : 'Aangan',
               style: context.text.labelMedium?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),

@@ -5,6 +5,9 @@
 /// component gallery render every state without a server.
 library;
 
+export 'src/l10n/hi.dart';
+export 'src/l10n/l10n.dart';
+export 'src/l10n/language_scope.dart';
 export 'src/money.dart';
 export 'src/otp_field.dart';
 export 'src/stale_banner.dart';

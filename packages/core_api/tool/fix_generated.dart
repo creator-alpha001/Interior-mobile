@@ -43,7 +43,9 @@ final _variantOf = <String, String>{
 void main() {
   final generated = Directory('lib/src/generated');
   if (!generated.existsSync()) {
-    stderr.writeln('lib/src/generated does not exist — run swagger_parser first.');
+    stderr.writeln(
+      'lib/src/generated does not exist — run swagger_parser first.',
+    );
     exitCode = 1;
     return;
   }
@@ -84,7 +86,8 @@ void main() {
   // 3. Make every freezed data class abstract, and drop dangling imports.
   for (final entity in generated.listSync(recursive: true)) {
     if (entity is! File || !entity.path.endsWith('.dart')) continue;
-    if (entity.path.contains('.freezed.') || entity.path.contains('.g.')) continue;
+    if (entity.path.contains('.freezed.') || entity.path.contains('.g.'))
+      continue;
 
     final original = entity.readAsStringSync();
     var updated = original;
@@ -117,7 +120,8 @@ void main() {
 
     if (updated != original) {
       entity.writeAsStringSync(updated);
-      if (original.contains(RegExp(r'^class \w+ with', multiLine: true))) abstracted++;
+      if (original.contains(RegExp(r'^class \w+ with', multiLine: true)))
+        abstracted++;
     }
   }
 

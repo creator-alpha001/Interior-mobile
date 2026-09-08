@@ -28,7 +28,7 @@ abstract interface class Biometrics {
 
 class LocalAuthBiometrics implements Biometrics {
   LocalAuthBiometrics([LocalAuthentication? auth])
-      : _auth = auth ?? LocalAuthentication();
+    : _auth = auth ?? LocalAuthentication();
 
   final LocalAuthentication _auth;
 
@@ -65,8 +65,8 @@ class LocalAuthBiometrics implements Biometrics {
 
 class BiometricGate extends ChangeNotifier {
   BiometricGate({Biometrics? biometrics, SharedPreferences? preferences})
-      : _biometrics = biometrics ?? LocalAuthBiometrics(),
-        _preferences = preferences;
+    : _biometrics = biometrics ?? LocalAuthBiometrics(),
+      _preferences = preferences;
 
   final Biometrics _biometrics;
   SharedPreferences? _preferences;

@@ -86,7 +86,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Close your account')),
+      appBar: AppBar(title: Text(context.t('Close your account'))),
       body: SafeArea(
         child: _result == null ? _form(context) : _done(context, _result!),
       ),
@@ -98,11 +98,13 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
       padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
       children: [
         const SizedBox(height: Space.md),
-        Text('Close your account', style: context.text.displayLarge),
+        Text(context.t('Close your account'), style: context.text.displayLarge),
         const SizedBox(height: Space.sm),
         Text(
-          'This cannot be undone. Your name, number and address are removed, '
-          'and you are signed out everywhere.',
+          context.t(
+            'This cannot be undone. Your name, number and address are removed, '
+            'and you are signed out everywhere.',
+          ),
           style: context.text.bodyLarge?.copyWith(
             color: context.colors.onSurfaceVariant,
           ),
@@ -113,45 +115,58 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
         /// Somebody expecting total erasure and later finding an invoice with
         /// their agreement on it would reasonably feel misled. Better to be
         /// exact now.
-        const SectionHead('What stays', eyebrow: 'And why'),
+        SectionHead(context.t('What stays'), eyebrow: context.t('And why')),
         AanganCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Agreements, invoices and reviews are kept.',
+                context.t('Agreements, invoices and reviews are kept.'),
                 style: context.text.titleLarge,
               ),
               const SizedBox(height: Space.xs),
               Text(
-                'Each of these has a professional on the other side of it, and '
-                'they did not ask for their records to be destroyed. What is '
-                'kept no longer carries your name or your number.',
+                context.t(
+                  'Each of these has a professional on the other side of it, and '
+                  'they did not ask for their records to be destroyed. What is '
+                  'kept no longer carries your name or your number.',
+                ),
                 style: context.text.bodyMedium,
               ),
             ],
           ),
         ),
 
-        const SectionHead('Why are you leaving?', eyebrow: 'Optional'),
+        SectionHead(
+          context.t('Why are you leaving?'),
+          eyebrow: context.t('Optional'),
+        ),
         TextField(
           controller: _reason,
           enabled: !_busy,
           maxLines: 3,
-          decoration: const InputDecoration(
-            hintText: 'It helps us, and it is not required.',
+          decoration: InputDecoration(
+            hintText: context.t('It helps us, and it is not required.'),
           ),
         ),
 
-        const SectionHead('Confirm', eyebrow: 'Type it exactly'),
+        SectionHead(
+          context.t('Confirm'),
+          eyebrow: context.t('Type it exactly'),
+        ),
         TextField(
           controller: _confirm,
           enabled: !_busy,
           autocorrect: false,
           textCapitalization: TextCapitalization.characters,
-          decoration: const InputDecoration(
-            labelText: 'Type DELETE to confirm',
+          decoration: InputDecoration(
+            /// DELETE stays in English inside the Hindi string too.
+            ///
+            /// [_confirmed] matches it character for character against the
+            /// literal the contract types, so a translated word would never
+            /// enable the button.
+            labelText: context.t('Type DELETE to confirm'),
           ),
           onChanged: (_) => setState(() {}),
         ),
@@ -160,7 +175,9 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
           const SizedBox(height: Space.xs),
           Text(
             _error!,
-            style: context.text.bodySmall?.copyWith(color: context.palette.wrong),
+            style: context.text.bodySmall?.copyWith(
+              color: context.palette.wrong,
+            ),
           ),
         ],
 
@@ -183,14 +200,14 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                       color: Colors.white,
                     ),
                   )
-                : const Text('Close my account permanently'),
+                : Text(context.t('Close my account permanently')),
           ),
         ),
         const SizedBox(height: Space.xs),
         Center(
           child: TextButton(
             onPressed: _busy ? null : () => Navigator.of(context).pop(),
-            child: const Text('Keep my account'),
+            child: Text(context.t('Keep my account')),
           ),
         ),
         const SizedBox(height: Space.xxxl),
@@ -203,15 +220,20 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
       padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
       children: [
         const SizedBox(height: Space.md),
-        Text('Account closed', style: context.text.displayLarge),
+        Text(context.t('Account closed'), style: context.text.displayLarge),
         const SizedBox(height: Space.sm),
         Text(
-          'Your personal details have been removed, and your number is free to '
-          'use again if you ever come back.',
+          context.t(
+            'Your personal details have been removed, and your number is free to '
+            'use again if you ever come back.',
+          ),
           style: context.text.bodyLarge,
         ),
 
-        const SectionHead('What we kept', eyebrow: 'As explained'),
+        SectionHead(
+          context.t('What we kept'),
+          eyebrow: context.t('As explained'),
+        ),
         AanganCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
@@ -226,7 +248,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
                 ),
               const SizedBox(height: Space.xs),
               Text(
-                'These no longer carry your name or your number.',
+                context.t('These no longer carry your name or your number.'),
                 style: context.text.bodySmall?.copyWith(
                   color: context.colors.onSurfaceVariant,
                 ),
@@ -240,7 +262,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
           width: double.infinity,
           child: FilledButton(
             onPressed: widget.onClosed,
-            child: const Text('Done'),
+            child: Text(context.t('Done')),
           ),
         ),
         const SizedBox(height: Space.xxxl),

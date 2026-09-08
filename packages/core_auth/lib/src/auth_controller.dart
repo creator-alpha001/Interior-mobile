@@ -110,8 +110,8 @@ class AuthController extends ChangeNotifier {
     required AuthSessionStore session,
     this.onSignedIn,
     this.onSigningOut,
-  })  : _api = api,
-        _session = session {
+  }) : _api = api,
+       _session = session {
     _session.onLost = _handleSessionLost;
   }
 
@@ -293,11 +293,11 @@ class AuthController extends ChangeNotifier {
   /// base, so it is read per-branch. The `switch` is exhaustive, so a fifth
   /// role added to the contract would stop this compiling.
   String? _tokenOf(AuthSession session) => switch (session) {
-        AuthSessionClient(:final sessionToken) => sessionToken,
-        AuthSessionProfessional(:final sessionToken) => sessionToken,
-        AuthSessionSalesAgent(:final sessionToken) => sessionToken,
-        AuthSessionAdmin(:final sessionToken) => sessionToken,
-      };
+    AuthSessionClient(:final sessionToken) => sessionToken,
+    AuthSessionProfessional(:final sessionToken) => sessionToken,
+    AuthSessionSalesAgent(:final sessionToken) => sessionToken,
+    AuthSessionAdmin(:final sessionToken) => sessionToken,
+  };
 
   void _adopt(SessionUser me) {
     _user = me;
@@ -309,16 +309,16 @@ class AuthController extends ChangeNotifier {
 
   /// The role decides the shell. One place, resolved once.
   Shell _shellFor(Actor actor) => switch (actor) {
-        ActorClient() => Shell.customer,
+    ActorClient() => Shell.customer,
 
-        // Whether they have signed the partner agreement is a separate call —
-        // `GET /vendor/onboarding` — so the vendor lands on the gate first and
-        // the gate decides. Assuming "signed" here would show a dashboard to
-        // somebody in no pool.
-        ActorProfessional() => Shell.vendorOnboarding,
+    // Whether they have signed the partner agreement is a separate call —
+    // `GET /vendor/onboarding` — so the vendor lands on the gate first and
+    // the gate decides. Assuming "signed" here would show a dashboard to
+    // somebody in no pool.
+    ActorProfessional() => Shell.vendorOnboarding,
 
-        ActorSalesAgent() || ActorAdmin() => Shell.staffRefused,
-      };
+    ActorSalesAgent() || ActorAdmin() => Shell.staffRefused,
+  };
 
   void _set(Shell shell) {
     if (_shell == shell) return;

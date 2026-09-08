@@ -5,12 +5,23 @@ import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Supplied by the app at startup. Overridden in tests with a stubbed client.
-final apiProvider = Provider<AanganApi>(
-  (ref) => throw UnimplementedError('apiProvider must be overridden'),
+///
+/// Named for its shell rather than called `apiProvider`, because the vendor
+/// package declares one too. When both were called `apiProvider`, `main.dart`
+/// imported both packages, overrode the name that happened to win the import,
+/// and every customer screen threw `apiProvider must be overridden` — behind
+/// an error state that said only "Please try again".
+///
+/// The two stay separate on purpose: MOBILE.md §2 wants splitting into two
+/// binaries to be a build flavour rather than a rewrite, which only holds while
+/// neither feature package reaches into the other. Distinct names are what make
+/// that separation safe instead of a trap.
+final customerApiProvider = Provider<AanganApi>(
+  (ref) => throw UnimplementedError('customerApiProvider must be overridden'),
 );
 
-ClientClient _me(Ref ref) => ref.watch(apiProvider).customer;
-PublicClient _public(Ref ref) => ref.watch(apiProvider).public;
+ClientClient _me(Ref ref) => ref.watch(customerApiProvider).customer;
+PublicClient _public(Ref ref) => ref.watch(customerApiProvider).public;
 
 /* ---------------- the public surface, for browsing ---------------- */
 
@@ -63,7 +74,8 @@ final referralsProvider = FutureProvider<ReferralSummary>(
 
 /// One thread per service, and the platform is on the other side of it.
 final serviceThreadProvider = FutureProvider.family<List<Message>, String>(
-  (ref, leadDomainId) => _me(ref).listServiceMessages(id: leadDomainId).orThrow(),
+  (ref, leadDomainId) =>
+      _me(ref).listServiceMessages(id: leadDomainId).orThrow(),
 );
 
 /// Everything a write could have changed.

@@ -14,13 +14,18 @@ account, a device, or a decision.
 | | Why it blocks | Rough lead time |
 | --- | --- | --- |
 | **Newsreader and Manrope** | The app does not currently look like the design. Both are open-licence, but the `.ttf` files are not in the repository, so every screen renders in Roboto — and no screenshot is worth taking until they land | An afternoon |
+| **Noto Serif / Sans Devanagari** | The app ships Hindi. Without these it renders in whatever Devanagari the platform happens to have, so it looks like different software in the two languages. `AanganFonts.serifFallback` already names them; only the files are missing | The same afternoon |
 | **A Firebase project** | Push is inert without one. Not release-blocking on its own: notifications still go out by SMS | Days |
 | **An R2 bucket** | Photographs work against the API's local driver, which production refuses. Stage proof is the vendor's core action | Days |
 | **DLT registration** | Nobody can sign in without SMS. The longest lead time of the three | Days to weeks |
 | **Apple and Google developer accounts** | Nothing can be submitted | Days, plus Apple's verification |
 
 Fonts first. Everything visual is blocked behind them, including the screenshots
-the listings need and the golden tests M12 could not write.
+the listings need and the golden tests M12 could not write. All four are
+open-licence and none needs a decision — they need somebody to download them
+into `app/fonts/` and add the `flutter: fonts:` block. Nothing in the code
+changes: the families are already named, and Flutter falls through to the
+platform until the files exist.
 
 ---
 
@@ -108,6 +113,30 @@ write.
 
 Primary **Lifestyle**, secondary **House & Home**. Not Business: the buyer is a
 homeowner.
+
+---
+
+## Languages
+
+The app ships **English and Hindi**, and follows the device unless somebody
+chooses otherwise — `Account → Language`, or the vendor's `More` tab. Every
+string in both shells is translated; `app/test/l10n_test.dart` fails the build
+on one that is not, and on a translation no screen asks for any more.
+
+Two things stay English on purpose and should not read as gaps:
+
+- **Anything the server wrote.** Error messages, the onboarding step labels and
+  `blockedReason` come from the API as prose. Translating them client-side would
+  mean keeping a shadow copy of every sentence the API can produce, and getting
+  it out of step would show somebody a *different* reason than the one that
+  applied. It is a server change when it happens.
+- **`Aangan`, `OTP`, `GST`, `DELETE`.** The product's name, three loanwords
+  nobody translates in speech, and one typed confirmation matched against a
+  literal in the contract.
+
+Screenshots are needed in both languages once the fonts land — Devanagari sits
+taller than Latin, and the display sizes want an optical check rather than a
+check that the glyphs appear at all.
 
 ---
 
@@ -219,7 +248,8 @@ When it is added:
 
 Ordered by what unblocks the most.
 
-- [ ] Bundle Newsreader and Manrope, then take the golden baselines M12 could not
+- [ ] Bundle Newsreader, Manrope and the two Noto Devanagari faces, then take
+      the golden baselines M12 could not — in both languages
 - [ ] Apple and Google developer accounts
 - [ ] DLT registration for MSG91
 - [ ] R2 bucket, and `STORAGE_DRIVER=r2`

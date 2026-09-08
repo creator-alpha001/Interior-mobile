@@ -153,31 +153,33 @@ void main() {
   });
 
   group('signing out', () {
-    test('drops everything, because a dashboard is one person’s pipeline',
-        () async {
-      final adapter = _FlakyAdapter([
-        {'id': 'd1'},
-      ]);
-      final cache = OfflineCacheInterceptor(dir);
-      final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
-        ..httpClientAdapter = adapter
-        ..interceptors.add(cache);
+    test(
+      'drops everything, because a dashboard is one person’s pipeline',
+      () async {
+        final adapter = _FlakyAdapter([
+          {'id': 'd1'},
+        ]);
+        final cache = OfflineCacheInterceptor(dir);
+        final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
+          ..httpClientAdapter = adapter
+          ..interceptors.add(cache);
 
-      await dio.get<dynamic>('/vendor/dashboard');
-      expect(dir.listSync().whereType<File>(), isNotEmpty);
+        await dio.get<dynamic>('/vendor/dashboard');
+        expect(dir.listSync().whereType<File>(), isNotEmpty);
 
-      cache.clear();
+        cache.clear();
 
-      // The next person to sign in on this handset must not see the last one's
-      // figures.
-      expect(dir.listSync().whereType<File>(), isEmpty);
+        // The next person to sign in on this handset must not see the last one's
+        // figures.
+        expect(dir.listSync().whereType<File>(), isEmpty);
 
-      adapter.offline = true;
-      expect(
-        () => dio.get<dynamic>('/vendor/dashboard'),
-        throwsA(isA<DioException>()),
-      );
-    });
+        adapter.offline = true;
+        expect(
+          () => dio.get<dynamic>('/vendor/dashboard'),
+          throwsA(isA<DioException>()),
+        );
+      },
+    );
   });
 
   group('writes are never queued', () {

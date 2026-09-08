@@ -58,8 +58,10 @@ void main() {
       // gate that locks people out because the *server* is down is a worse
       // outage than the bug it guards against.
       final api = StubApi()
-        ..on('GET', '/app/version', {'code': 'internal_error', 'message': 'down'},
-            status: 500);
+        ..on('GET', '/app/version', {
+          'code': 'internal_error',
+          'message': 'down',
+        }, status: 500);
 
       final gate = VersionGate(api: apiWith(api, const NoSession()), build: 1);
       await gate.check();
@@ -141,7 +143,10 @@ void main() {
         find.text('Agreements, invoices and reviews are kept.'),
         findsOneWidget,
       );
-      expect(find.textContaining('professional on the other side'), findsOneWidget);
+      expect(
+        find.textContaining('professional on the other side'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('reports what the server actually retained', (tester) async {
