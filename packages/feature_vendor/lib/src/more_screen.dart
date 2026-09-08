@@ -316,10 +316,101 @@ class PerformanceScreen extends ConsumerWidget {
                   ],
                 ),
               ),
+
+              /// What the rating above is made of.
+              ///
+              /// The web puts these on `/partner/profile`; they sit here
+              /// instead, beside the number they produce. A rating with no
+              /// reviews under it is a score somebody cannot argue with or
+              /// learn from.
+              SectionHead(
+                context.t('Reviews'),
+                eyebrow: context.t('Left per job, per trade'),
+              ),
+              if (data.reviews.isEmpty)
+                EmptyState(
+                  title: context.t('No reviews yet'),
+                  body: context.t(
+                    'A customer leaves one per job, so each trade you deliver '
+                    'is rated on its own.',
+                  ),
+                )
+              else
+                for (final entry in data.reviews) ...[
+                  _ReviewCard(entry: entry),
+                  const SizedBox(height: Space.xs),
+                ],
+
               const SizedBox(height: Space.xxxl),
             ],
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// One customer's verdict, with the trade it was left for.
+class _ReviewCard extends StatelessWidget {
+  const _ReviewCard({required this.entry});
+
+  final VendorReview entry;
+
+  @override
+  Widget build(BuildContext context) {
+    final review = entry.review;
+
+    return AanganCard(
+      padding: const EdgeInsets.all(Space.cardPaddingWide),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text('${review.rating} ★', style: context.text.titleLarge),
+              const SizedBox(width: Space.xs),
+              Expanded(
+                child: Text(
+                  // The customer's name as the API gives it. A vendor who has
+                  // done the job knows who they are; nothing new is released
+                  // here.
+                  entry.clientName,
+                  style: context.text.bodyMedium?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              StatusPill(entry.domain.name, tone: StatusTone.neutral),
+            ],
+          ),
+          if (review.comment.isNotEmpty) ...[
+            const SizedBox(height: Space.xs),
+            Text(review.comment, style: context.text.bodyMedium),
+          ],
+
+          /// The three sub-scores, when the customer gave them.
+          ///
+          /// They are optional on the contract and often absent, so the row
+          /// appears only when there is something in it rather than as three
+          /// dashes.
+          if (review.qualityRating != null) ...[
+            const SizedBox(height: Space.xs),
+            Text(
+              context.t(
+                'Quality {quality}/5 · Timeliness {timeliness}/5 · '
+                'Professionalism {professionalism}/5',
+                {
+                  'quality': review.qualityRating,
+                  'timeliness': review.timelinessRating,
+                  'professionalism': review.professionalismRating,
+                },
+              ),
+              style: context.text.bodySmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }

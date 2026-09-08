@@ -354,8 +354,12 @@ void main() {
     final untranslated =
         hindi.entries
             .where((e) => e.key == e.value)
-            // Written the same in both languages on purpose.
-            .where((e) => e.key != 'हिन्दी')
+            // Written the same in both languages on purpose: the language's
+            // own name, and a tax registration whose acronym is used in Latin
+            // script in Hindi too — `hi_about.dart` already writes it that way
+            // in a full sentence, and one screen spelling it जीएसटी while
+            // another says GST is worse than either choice.
+            .where((e) => e.key != 'हिन्दी' && e.key != 'GST')
             .map((e) => e.key)
             .toList()
           ..sort();

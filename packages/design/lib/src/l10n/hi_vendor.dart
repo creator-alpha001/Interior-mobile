@@ -266,8 +266,6 @@ const hiVendor = <String, String>{
 
   /// Said plainly, because a vendor who cannot find the pencil will assume
   /// the app is broken rather than that the feature is absent.
-  'To change any of this, message your coordinator. Editing from the app is not built yet.':
-      'इनमें कुछ भी बदलवाने के लिए अपने को-ऑर्डिनेटर को संदेश भेजिए। ऐप से बदलाव की सुविधा अभी नहीं बनी है।',
   // ---- strings that never reached context.t(), and so were never asked for
   //      until the scan in l10n_test.dart started looking for them ----
 
@@ -324,4 +322,23 @@ const hiVendor = <String, String>{
       '{n} तस्वीर भेजी जा रही है, इंतज़ार कीजिए।',
   'Waiting for {n} photographs to finish sending.':
       '{n} तस्वीरें भेजी जा रही हैं, इंतज़ार कीजिए।',
+  // ---- reviews, under the rating they produce ----
+  'Left per job, per trade': 'हर काम की, अलग-अलग',
+  'A customer leaves one per job, so each trade you deliver is rated on its own.':
+      'ग्राहक हर काम के लिए अलग समीक्षा देता है, इसलिए आपके किए हर काम की रेटिंग अपनी होती है।',
+  'Quality {quality}/5 · Timeliness {timeliness}/5 · Professionalism {professionalism}/5':
+      'काम {quality}/5 · समय {timeliness}/5 · पेशेवर रवैया {professionalism}/5',
+
+  // ---- business details ----
+  'Business details': 'कारोबार का ब्यौरा',
+  'What we hold on file': 'हमारे रिकॉर्ड में क्या है',
+  'Contact': 'संपर्क',
+  'GST': 'GST',
+  'Not registered': 'रजिस्टर्ड नहीं',
+  'Languages': 'भाषाएँ',
+
+  /// Not "not built yet". Editing is not self-service on the web either, and
+  /// saying otherwise would describe a mobile shortfall that does not exist.
+  'To change any of this, message your coordinator. Your public record is edited by our team, the same way trade approval is — never from an app.':
+      'इनमें कुछ भी बदलवाने के लिए अपने को-ऑर्डिनेटर को संदेश भेजिए। आपका सार्वजनिक रिकॉर्ड हमारी टीम बदलती है, ठीक वैसे ही जैसे काम की मंज़ूरी — किसी ऐप से नहीं।',
 };

@@ -213,17 +213,37 @@ class VendorProfileScreen extends ConsumerWidget {
                 ),
               ),
 
-              /// Editing is not here yet, and the screen says so rather than
-              /// letting somebody hunt for a pencil that does not exist. The
-              /// web can edit; this cannot, and that is the remaining gap on
-              /// the vendor side.
+              SectionHead(
+                context.t('Business details'),
+                eyebrow: context.t('What we hold on file'),
+              ),
+              _Fact(label: context.t('Contact'), value: data.displayName),
+              _Fact(
+                label: context.t('GST'),
+                value:
+                    data.professional.gstNumber ?? context.t('Not registered'),
+              ),
+              if (data.professional.languages.isNotEmpty)
+                _Fact(
+                  label: context.t('Languages'),
+                  value: data.professional.languages.join(', '),
+                ),
+
+              /// Editing is not self-service anywhere — not here and not on
+              /// the web, which has no form for it and no endpoint behind one.
+              ///
+              /// This is the same rule as trade approval: what a customer sees
+              /// about a professional is changed by a person at Aangan, not by
+              /// the professional. Saying "not built yet" would have described
+              /// a mobile shortfall that does not exist.
               const SizedBox(height: Space.lg),
               AanganCard(
                 nested: true,
                 child: Text(
                   context.t(
-                    'To change any of this, message your coordinator. Editing '
-                    'from the app is not built yet.',
+                    'To change any of this, message your coordinator. Your '
+                    'public record is edited by our team, the same way trade '
+                    'approval is — never from an app.',
                   ),
                   style: context.text.bodySmall,
                 ),
