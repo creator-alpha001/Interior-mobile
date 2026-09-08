@@ -257,4 +257,33 @@ const hiCustomer = <String, String>{
   '{n} lines': '{n} मदें',
   'No approved work in this trade yet. Try another, or tell us what you need.':
       'इस काम का कोई मंज़ूर किया गया नमूना अभी नहीं है। कोई और देखिए, या हमें बताइए कि आपको क्या चाहिए।',
+  // ---- the home dashboard: the customer's own work, above what we sell ----
+  'Your work': 'आपका काम',
+  'Still moving': 'जो अभी चल रहा है',
+
+  /// The one state where the customer is the one holding the job up. Peach,
+  /// and worded as an instruction rather than as a status.
+  'Choose a quote': 'कोटेशन चुनिए',
+  '{n} new message': '{n} नया संदेश',
+  '{n} new messages': '{n} नए संदेश',
+
+  /// Said from the customer's side. `vendor_selected` is a database word;
+  /// "professional chosen" is what actually happened.
+  'Finding professionals': 'कारीगर ढूँढ़े जा रहे हैं',
+  'Visits being arranged': 'विज़िट तय की जा रही हैं',
+  'Professional chosen': 'कारीगर चुन लिया गया',
+  'Work started': 'काम शुरू हो गया',
+
+  '{n} agreement ready to sign': '{n} एग्रीमेंट हस्ताक्षर के लिए तैयार',
+  '{n} agreements ready to sign': '{n} एग्रीमेंट हस्ताक्षर के लिए तैयार',
+  'One per professional, not per job': 'हर कारीगर का एक, हर काम का नहीं',
+  '{n} job under way': '{n} काम चल रहा है',
+  '{n} jobs under way': '{n} काम चल रहे हैं',
+  'Stage by stage, with photographs': 'चरण दर चरण, तस्वीरों के साथ',
+
+  // ---- and when there is nothing ----
+  'Nothing under way yet': 'अभी कुछ शुरू नहीं हुआ',
+  'Tell us what you need and we will bring you three written quotes for each trade. Free, and you are not committed to any of them.':
+      'हमें बताइए कि आपको क्या चाहिए, और हम हर काम के लिए तीन लिखित कोटेशन ला देंगे। मुफ़्त, और किसी को चुनना ज़रूरी नहीं।',
+  'Get quotes': 'कोटेशन मँगाइए',
 };

@@ -6,22 +6,38 @@
 /// actually true here rather than with escrow promises.
 library;
 
+import 'package:aangan_core_api/aangan_core_api.dart';
 import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'agreements_screen.dart';
 import 'async_view.dart';
+import 'projects_screen.dart';
 import 'providers.dart';
 
 class HomeScreen extends ConsumerWidget {
-  const HomeScreen({super.key, required this.onStart});
+  const HomeScreen({
+    super.key,
+    required this.onStart,
+    required this.onOpenJobs,
+  });
 
   final VoidCallback onStart;
+
+  /// Switches to the Jobs tab.
+  ///
+  /// Owned by the shell, because the tab index is. Without it the panel that
+  /// says "quotes are ready" was a statement with nowhere to go — the reader
+  /// had to be told, then find the tab themselves.
+  final VoidCallback onOpenJobs;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final domains = ref.watch(domainsProvider);
     final requirements = ref.watch(requirementsProvider);
+    final agreements = ref.watch(agreementsProvider);
+    final projects = ref.watch(projectsProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -29,7 +45,9 @@ class HomeScreen extends ConsumerWidget {
           onRefresh: () async {
             ref
               ..invalidate(domainsProvider)
-              ..invalidate(requirementsProvider);
+              ..invalidate(requirementsProvider)
+              ..invalidate(agreementsProvider)
+              ..invalidate(projectsProvider);
           },
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
@@ -77,10 +95,31 @@ class HomeScreen extends ConsumerWidget {
                         'Compare them and choose a professional. Nothing '
                         'moves until you do.',
                       ),
+                      action: FilledButton(
+                        onPressed: onOpenJobs,
+                        child: Text(context.t('Compare quotes')),
+                      ),
                     ),
                   );
                 },
                 orElse: () => const SizedBox.shrink(),
+              ),
+
+              /// **The customer's own work, above everything we want to sell
+              /// them.**
+              ///
+              /// §6.1 asks for an editorial home rather than a tile grid, and
+              /// this keeps that — it is a short list of rows, not a grid of
+              /// metrics. But a signed-in customer with a job under way did
+              /// not come here to read the four trades again, and until now
+              /// the only route to their own work was to know which tab it
+              /// was under.
+              _YourWork(
+                requirements: requirements,
+                agreements: agreements,
+                projects: projects,
+                onOpenJobs: onOpenJobs,
+                onStart: onStart,
               ),
 
               /// The banner strip.
@@ -414,6 +453,238 @@ class _Stat extends StatelessWidget {
               color: context.colors.onSurfaceVariant,
             ),
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Everything of the customer's that is still moving, and a way into each.
+///
+/// Three sources, because the platform splits the journey across three: a
+/// requirement while it is being quoted, an agreement at the moment it is
+/// signed, and a project once work starts. A customer does not think of those
+/// as three things, so they are listed together.
+class _YourWork extends StatelessWidget {
+  const _YourWork({
+    required this.requirements,
+    required this.agreements,
+    required this.projects,
+    required this.onOpenJobs,
+    required this.onStart,
+  });
+
+  final AsyncValue<List<LeadView>> requirements;
+  final AsyncValue<List<AgreementView>> agreements;
+  final AsyncValue<List<ProjectView>> projects;
+  final VoidCallback onOpenJobs;
+  final VoidCallback onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    /// Only what has actually loaded. A failed read shows nothing rather than
+    /// an error box — the rest of this screen is still worth reading, and the
+    /// Jobs tab reports the failure properly when somebody goes looking.
+    final live = requirements.maybeWhen(
+      data: (list) => [
+        for (final lead in list)
+          if (lead.domains.any(_isLive)) lead,
+      ],
+      orElse: () => const <LeadView>[],
+    );
+    final toSign = agreements.maybeWhen(
+      data: (list) =>
+          list.where((a) => a.agreement.status == AgreementStatus.sent).length,
+      orElse: () => 0,
+    );
+    final running = projects.maybeWhen(
+      data: (list) =>
+          list.where((p) => p.project.status == ProjectStatus.ongoing).length,
+      orElse: () => 0,
+    );
+
+    /// Nothing at all, and we know it — `data` came back empty rather than
+    /// failing. That distinction matters: telling somebody they have no jobs
+    /// because the request 500'd would be a lie with a button on it.
+    final knownEmpty =
+        requirements.hasValue && live.isEmpty && toSign == 0 && running == 0;
+
+    if (knownEmpty) {
+      return Padding(
+        padding: const EdgeInsets.only(top: Space.lg),
+        child: AanganCard(
+          padding: const EdgeInsets.all(Space.cardPaddingWide),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.t('Nothing under way yet'),
+                style: context.text.headlineSmall,
+              ),
+              const SizedBox(height: Space.xxs),
+              Text(
+                context.t(
+                  'Tell us what you need and we will bring you three written '
+                  'quotes for each trade. Free, and you are not committed to '
+                  'any of them.',
+                ),
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: Space.md),
+              SizedBox(
+                width: double.infinity,
+                child: FilledButton(
+                  onPressed: onStart,
+                  child: Text(context.t('Get quotes')),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (live.isEmpty && toSign == 0 && running == 0) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHead(context.t('Your work'), eyebrow: context.t('Still moving')),
+        for (final lead in live) ...[
+          _WorkRow(
+            title: lead.domainNames.join(' · '),
+            subtitle: lead.lead.reference,
+            status: _statusFor(context, lead),
+            tone: _toneFor(lead),
+            onTap: onOpenJobs,
+          ),
+          const SizedBox(height: Space.xs),
+        ],
+        if (toSign > 0) ...[
+          _WorkRow(
+            title: context.l10n.plural(
+              toSign,
+              '{n} agreement ready to sign',
+              '{n} agreements ready to sign',
+            ),
+            subtitle: context.t('One per professional, not per job'),
+            status: context.t('Your turn'),
+            tone: StatusTone.yours,
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const AgreementsScreen())),
+          ),
+          const SizedBox(height: Space.xs),
+        ],
+        if (running > 0) ...[
+          _WorkRow(
+            title: context.l10n.plural(
+              running,
+              '{n} job under way',
+              '{n} jobs under way',
+            ),
+            subtitle: context.t('Stage by stage, with photographs'),
+            status: context.t('In progress'),
+            tone: StatusTone.waiting,
+            onTap: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const ProjectsScreen())),
+          ),
+          const SizedBox(height: Space.xs),
+        ],
+      ],
+    );
+  }
+
+  /// A service still going somewhere. Completed and cancelled are neither.
+  static bool _isLive(LeadDomainView service) =>
+      service.leadDomain.status != LeadDomainStatus.completed &&
+      service.leadDomain.status != LeadDomainStatus.cancelled;
+
+  /// Quotes to choose outrank everything else, because they are the only
+  /// state where the customer is the one holding the job up.
+  static bool _waitingOnCustomer(LeadView lead) => lead.domains.any(
+    (s) => s.quotes.isNotEmpty && s.leadDomain.selectedQuoteId == null,
+  );
+
+  static StatusTone _toneFor(LeadView lead) =>
+      _waitingOnCustomer(lead) ? StatusTone.yours : StatusTone.waiting;
+
+  static String _statusFor(BuildContext context, LeadView lead) {
+    if (_waitingOnCustomer(lead)) return context.t('Choose a quote');
+
+    final unread = lead.domains.fold<int>(
+      0,
+      (sum, s) => sum + s.unreadMessages,
+    );
+    if (unread > 0) {
+      return context.l10n.plural(unread, '{n} new message', '{n} new messages');
+    }
+
+    /// Said from the customer's side rather than in the API's vocabulary.
+    /// "vendor_selected" is a database word; "professional chosen" is what
+    /// happened.
+    final statuses = lead.domains
+        .where(_isLive)
+        .map((s) => s.leadDomain.status);
+    if (statuses.every((s) => s == LeadDomainStatus.inProgress)) {
+      return context.t('Work started');
+    }
+    if (statuses.any((s) => s == LeadDomainStatus.vendorSelected)) {
+      return context.t('Professional chosen');
+    }
+    if (statuses.any((s) => s == LeadDomainStatus.assigned)) {
+      return context.t('Visits being arranged');
+    }
+    return context.t('Finding professionals');
+  }
+}
+
+/// One line of the dashboard: what it is, where it stands, and a way in.
+class _WorkRow extends StatelessWidget {
+  const _WorkRow({
+    required this.title,
+    required this.subtitle,
+    required this.status,
+    required this.tone,
+    required this.onTap,
+  });
+
+  final String title;
+  final String subtitle;
+  final String status;
+  final StatusTone tone;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return AanganCard(
+      onTap: onTap,
+      padding: const EdgeInsets.all(Space.cardPaddingWide),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: context.text.headlineSmall),
+                const SizedBox(height: Space.xxs),
+                Text(
+                  subtitle,
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: Space.xs),
+                StatusPill(status, tone: tone),
+              ],
+            ),
+          ),
+          Icon(Icons.chevron_right, color: context.colors.onSurfaceVariant),
         ],
       ),
     );

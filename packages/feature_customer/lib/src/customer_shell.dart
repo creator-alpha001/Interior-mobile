@@ -69,7 +69,10 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
   @override
   Widget build(BuildContext context) {
     final screens = [
-      HomeScreen(onStart: _startRequirement),
+      HomeScreen(
+        onStart: _startRequirement,
+        onOpenJobs: () => setState(() => _tab = 2),
+      ),
       _ExploreTab(onStart: _startRequirement),
       RequirementsScreen(onStartNew: _startRequirement),
       const _MessagesTab(),
