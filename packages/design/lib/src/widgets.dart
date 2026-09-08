@@ -326,3 +326,65 @@ class FrostedHeader extends StatelessWidget implements PreferredSizeWidget {
     );
   }
 }
+
+/// One labelled row of filter chips, scrolling sideways.
+///
+/// Not pills: the pill radius is reserved for status, and a control shaped
+/// like a status chip reads as a verdict rather than as something to press.
+class FilterRow extends StatelessWidget {
+  const FilterRow({
+    super.key,
+    required this.label,
+    required this.allLabel,
+    required this.selected,
+    required this.options,
+    required this.onSelect,
+  });
+
+  final String label;
+  final String allLabel;
+
+  /// The value currently set, or null for "no filter".
+  final String? selected;
+
+  /// `(value, label)`. Empty while the list behind it is still loading, which
+  /// leaves the row as "All" alone rather than as a gap that jumps.
+  final List<(String, String)> options;
+
+  final ValueChanged<String?> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: TapTarget.minimum,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+        children: [
+          Center(
+            child: Text(
+              label.toUpperCase(),
+              style: context.text.labelSmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ),
+          const SizedBox(width: Space.xs),
+          ChoiceChip(
+            label: Text(allLabel),
+            selected: selected == null,
+            onSelected: (_) => onSelect(null),
+          ),
+          for (final (value, name) in options) ...[
+            const SizedBox(width: Space.xs),
+            ChoiceChip(
+              label: Text(name),
+              selected: selected == value,
+              onSelected: (_) => onSelect(value),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}

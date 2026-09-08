@@ -138,10 +138,22 @@ class _ExploreTab extends ConsumerWidget {
     final professionals = ref.watch(professionalsProvider);
     final filters = ref.watch(professionalFiltersProvider);
 
+    /// **One scroll view, not a fixed header with a scrolling sliver.**
+    ///
+    /// This was a `Column` of fixed children ending in `Expanded(ListView)`,
+    /// which meant the search field, five shortcuts, heading and two filter
+    /// rows held their full height on every screen size and the directory —
+    /// the actual content — got whatever was left. On a 1080×2400 emulator
+    /// that was about a card and a half, with the one above it clipped mid-air
+    /// against the filters. On anything shorter it would have been worse.
+    ///
+    /// Everything scrolls together now. The shortcuts scroll away and the
+    /// professionals get the whole screen, which is the right priority: the
+    /// menu is read once, the directory is browsed.
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+          padding: EdgeInsets.zero,
           children: [
             const SizedBox(height: Space.md),
 
@@ -266,7 +278,7 @@ class _ExploreTab extends ConsumerWidget {
             /// return `domainRating`, so a card under "Carpentry" shows the
             /// carpentry rating rather than a blended average that flatters a
             /// painter who has never built a wardrobe.
-            _FilterRow(
+            FilterRow(
               label: context.t('Trade'),
               allLabel: context.t('All'),
               selected: filters.domainSlug,
@@ -285,7 +297,7 @@ class _ExploreTab extends ConsumerWidget {
                   ),
             ),
             const SizedBox(height: Space.xxs),
-            _FilterRow(
+            FilterRow(
               label: context.t('City'),
               allLabel: context.t('All cities'),
               selected: filters.cityId,
@@ -305,105 +317,50 @@ class _ExploreTab extends ConsumerWidget {
             ),
 
             const SizedBox(height: Space.sm),
-            Expanded(
-              child: AsyncView(
-                value: professionals,
-                onRetry: () => ref.invalidate(professionalsProvider),
-                data: (page) => page.items.isEmpty
-                    ? EmptyState(
-                        title: context.t('Nobody to show yet'),
-                        // Two reasons for an empty list, and they call for
-                        // different things from the reader. Saying "once they
-                        // are verified" under a filter somebody just set would
-                        // blame the pool for their own narrowing.
-                        body:
-                            filters.domainSlug != null || filters.cityId != null
-                            ? context.t(
-                                'Nobody matches this trade and city yet. We '
-                                'source and verify professionals for new areas '
-                                'continuously — tell us what you need anyway.',
-                              )
-                            : context.t(
-                                'Professionals appear here once they are '
-                                'verified.',
-                              ),
-                      )
-                    : ListView.separated(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: Space.gutter,
-                          vertical: Space.xs,
-                        ),
-                        itemCount: page.items.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(height: Space.sm),
-                        itemBuilder: (context, i) =>
-                            ProfessionalCard(professional: page.items[i]),
+
+            /// Built in one pass rather than lazily, because the request asks
+            /// for 48 and the outer list is what scrolls now. A nested
+            /// scrollable here is what produced the sliver this screen used to
+            /// be.
+            AsyncView(
+              value: professionals,
+              onRetry: () => ref.invalidate(professionalsProvider),
+              data: (page) => page.items.isEmpty
+                  ? EmptyState(
+                      title: context.t('Nobody to show yet'),
+                      // Two reasons for an empty list, and they call for
+                      // different things from the reader. Saying "once they
+                      // are verified" under a filter somebody just set would
+                      // blame the pool for their own narrowing.
+                      body: filters.domainSlug != null || filters.cityId != null
+                          ? context.t(
+                              'Nobody matches this trade and city yet. We '
+                              'source and verify professionals for new areas '
+                              'continuously — tell us what you need anyway.',
+                            )
+                          : context.t(
+                              'Professionals appear here once they are '
+                              'verified.',
+                            ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Space.gutter,
+                        vertical: Space.xs,
                       ),
-              ),
+                      child: Column(
+                        children: [
+                          for (final professional in page.items) ...[
+                            ProfessionalCard(professional: professional),
+                            const SizedBox(height: Space.sm),
+                          ],
+                        ],
+                      ),
+                    ),
             ),
+            const SizedBox(height: Space.xxxl),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// One labelled row of filter chips, scrolling sideways.
-///
-/// Not pills: the pill radius is reserved for status, and a control shaped
-/// like a status chip reads as a verdict rather than as something to press.
-class _FilterRow extends StatelessWidget {
-  const _FilterRow({
-    required this.label,
-    required this.allLabel,
-    required this.selected,
-    required this.options,
-    required this.onSelect,
-  });
-
-  final String label;
-  final String allLabel;
-
-  /// The value currently set, or null for "no filter".
-  final String? selected;
-
-  /// `(value, label)`. Empty while the list behind it is still loading, which
-  /// leaves the row as "All" alone rather than as a gap that jumps.
-  final List<(String, String)> options;
-
-  final ValueChanged<String?> onSelect;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: TapTarget.minimum,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
-        children: [
-          Center(
-            child: Text(
-              label.toUpperCase(),
-              style: context.text.labelSmall?.copyWith(
-                color: context.colors.onSurfaceVariant,
-              ),
-            ),
-          ),
-          const SizedBox(width: Space.xs),
-          ChoiceChip(
-            label: Text(allLabel),
-            selected: selected == null,
-            onSelected: (_) => onSelect(null),
-          ),
-          for (final (value, name) in options) ...[
-            const SizedBox(width: Space.xs),
-            ChoiceChip(
-              label: Text(name),
-              selected: selected == value,
-              onSelected: (_) => onSelect(value),
-            ),
-          ],
-        ],
       ),
     );
   }

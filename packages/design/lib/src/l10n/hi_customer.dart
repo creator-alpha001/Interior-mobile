@@ -255,4 +255,6 @@ const hiCustomer = <String, String>{
   '{approved} of {total}': '{total} में से {approved}',
   '{n} line': '{n} मद',
   '{n} lines': '{n} मदें',
+  'No approved work in this trade yet. Try another, or tell us what you need.':
+      'इस काम का कोई मंज़ूर किया गया नमूना अभी नहीं है। कोई और देखिए, या हमें बताइए कि आपको क्या चाहिए।',
 };

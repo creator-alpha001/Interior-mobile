@@ -258,30 +258,72 @@ class _PortfolioCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final media = [
+      for (final asset in item.media)
+        MediaItem(url: asset.url, caption: asset.caption ?? item.title),
+    ];
+
+    /// **The work first, full width.**
+    ///
+    /// This used to be a title, a description and a `MediaStrip` — 128×96
+    /// thumbnails in a horizontal rail. That component is right where a
+    /// photograph is *evidence* attached to something else: several proof
+    /// shots inside a stage card. It is wrong here, where the photograph is
+    /// the entire point, and it left every card a wide empty rectangle with
+    /// one small tile marooned at the bottom left.
+    ///
+    /// The web's `/our-work` leads with the image at full width. So does this.
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.sm),
       child: AanganCard(
-        padding: const EdgeInsets.all(Space.cardPaddingWide),
+        padding: EdgeInsets.zero,
+        onTap: media.isEmpty
+            ? null
+            : () => showMediaViewer(context, items: media),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(item.title, style: context.text.titleLarge),
-            if (item.description.isNotEmpty) ...[
-              const SizedBox(height: Space.xxs),
-              Text(item.description, style: context.text.bodyMedium),
-            ],
-            if (item.media.isNotEmpty) ...[
-              const SizedBox(height: Space.sm),
-              MediaStrip(
-                items: [
-                  for (final asset in item.media)
-                    MediaItem(
-                      url: asset.url,
-                      caption: asset.caption ?? item.title,
+            if (media.isNotEmpty)
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(Radii.panel),
+                ),
+                child: AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: AanganMedia(
+                    src: media.first.url,
+                    alt: media.first.caption,
+                    rounded: false,
+                  ),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.all(Space.cardPaddingWide),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(item.title, style: context.text.titleLarge),
+                  if (item.description.isNotEmpty) ...[
+                    const SizedBox(height: Space.xxs),
+                    Text(
+                      item.description,
+                      style: context.text.bodyMedium?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
                     ),
+                  ],
+
+                  /// The rest of the set, when there is one.
+                  ///
+                  /// The strip earns its place here — these are secondary to
+                  /// the photograph above, which is exactly what it is for.
+                  if (media.length > 1) ...[
+                    const SizedBox(height: Space.sm),
+                    MediaStrip(items: media),
+                  ],
                 ],
               ),
-            ],
+            ),
           ],
         ),
       ),
@@ -330,47 +372,89 @@ class _ReviewCard extends StatelessWidget {
 }
 
 /// The web's `/our-work`: everybody's approved portfolio, in one place.
-class OurWorkScreen extends ConsumerWidget {
+class OurWorkScreen extends ConsumerStatefulWidget {
   const OurWorkScreen({super.key, this.domainSlug});
 
+  /// The trade to open on, when something routed here with one in mind.
   final String? domainSlug;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final portfolio = ref.watch(portfolioProvider(domainSlug));
+  ConsumerState<OurWorkScreen> createState() => _OurWorkScreenState();
+}
+
+class _OurWorkScreenState extends ConsumerState<OurWorkScreen> {
+  late String? _domainSlug = widget.domainSlug;
+
+  @override
+  Widget build(BuildContext context) {
+    final portfolio = ref.watch(portfolioProvider(_domainSlug));
 
     return Scaffold(
       appBar: AppBar(title: Text(context.t('Our work'))),
       body: SafeArea(
-        child: AsyncView(
-          value: portfolio,
-          onRetry: () => ref.invalidate(portfolioProvider(domainSlug)),
-          data: (items) => items.isEmpty
-              ? EmptyState(
-                  title: context.t('Nothing published yet'),
-                  body: context.t(
-                    'Work appears here once our team has approved it for a '
-                    'public profile.',
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            const SizedBox(height: Space.sm),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+              child: Text(
+                context.t(
+                  'Jobs already finished, photographed on site. Every one was '
+                  'checked by our team before it appeared here.',
+                ),
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
+              ),
+            ),
+            const SizedBox(height: Space.sm),
+
+            /// The web says why this filter is here, and it is worth repeating:
+            /// a painter's work should not be judged against a fabricator's.
+            FilterRow(
+              label: context.t('Trade'),
+              allLabel: context.t('All'),
+              selected: _domainSlug,
+              options: ref
+                  .watch(domainsProvider)
+                  .maybeWhen(
+                    data: (list) => [for (final d in list) (d.slug, d.name)],
+                    orElse: () => const <(String, String)>[],
                   ),
-                )
-              : ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
-                  children: [
-                    const SizedBox(height: Space.sm),
-                    Text(
-                      context.t(
-                        'Jobs already finished, photographed on site. Every '
-                        'one was checked by our team before it appeared here.',
+              onSelect: (slug) => setState(() => _domainSlug = slug),
+            ),
+            const SizedBox(height: Space.sm),
+
+            AsyncView(
+              value: portfolio,
+              onRetry: () => ref.invalidate(portfolioProvider(_domainSlug)),
+              data: (items) => items.isEmpty
+                  ? EmptyState(
+                      title: context.t('Nothing published yet'),
+                      body: _domainSlug == null
+                          ? context.t(
+                              'Work appears here once our team has approved '
+                              'it for a public profile.',
+                            )
+                          : context.t(
+                              'No approved work in this trade yet. Try '
+                              'another, or tell us what you need.',
+                            ),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: Space.gutter,
                       ),
-                      style: context.text.bodyMedium?.copyWith(
-                        color: context.colors.onSurfaceVariant,
+                      child: Column(
+                        children: [
+                          for (final item in items) _PortfolioCard(item: item),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: Space.md),
-                    for (final item in items) _PortfolioCard(item: item),
-                    const SizedBox(height: Space.xxxl),
-                  ],
-                ),
+            ),
+            const SizedBox(height: Space.xxxl),
+          ],
         ),
       ),
     );
