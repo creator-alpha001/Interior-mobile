@@ -16,6 +16,7 @@ import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'account_screens.dart';
 import 'agreements_screen.dart';
 import 'blog_screen.dart';
 import 'catalogue.dart';
@@ -705,6 +706,31 @@ class _AccountTab extends ConsumerWidget {
               onTap: () => Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (_) => const ProjectsScreen())),
+            ),
+
+            const SizedBox(height: Space.xs),
+            _Link(
+              title: context.t('Notifications'),
+              subtitle: context.t('What we have told you'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+              ),
+            ),
+            const SizedBox(height: Space.xs),
+            _Link(
+              title: context.t('Invite a friend'),
+              subtitle: context.t('Your code, and what it has earned'),
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const ReferralsScreen()),
+              ),
+            ),
+            const SizedBox(height: Space.xs),
+            _Link(
+              title: context.t('Help'),
+              subtitle: context.t('Ask us anything, a person answers'),
+              onTap: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const SupportScreen())),
             ),
 
             /// The language switcher.

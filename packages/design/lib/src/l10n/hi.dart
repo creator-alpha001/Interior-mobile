@@ -17,6 +17,7 @@
 ///   - Trade names as they come from the API, which are data rather than copy.
 library;
 
+import 'hi_account.dart';
 import 'hi_app.dart';
 import 'hi_catalogue.dart';
 import 'hi_common.dart';
@@ -24,6 +25,7 @@ import 'hi_customer.dart';
 import 'hi_guides.dart';
 import 'hi_vendor.dart';
 
+export 'hi_account.dart';
 export 'hi_app.dart';
 export 'hi_catalogue.dart';
 export 'hi_common.dart';
@@ -38,6 +40,7 @@ export 'hi_vendor.dart';
 /// the hardest kind of translation bug to see.
 const hindi = <String, String>{
   ...hiCommon,
+  ...hiAccount,
   ...hiApp,
   ...hiCatalogue,
   ...hiCustomer,

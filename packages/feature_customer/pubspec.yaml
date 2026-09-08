@@ -30,6 +30,12 @@ dependencies:
   # The draft survives the app closing. See requirement_flow.dart.
   shared_preferences: ^2.3.5
 
+  # The referral share sheet. MOBILE.md 6.1 asks for one, and the OS sheet is
+  # the right answer rather than a list of buttons: whichever app somebody
+  # actually talks to their friends in is already in it, and on this audience's
+  # phones that is very often WhatsApp.
+  share_plus: ^10.1.4
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

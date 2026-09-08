@@ -218,6 +218,7 @@ void main() {
     // hardest kind of translation bug to see.
     final counted =
         hiCommon.length +
+        hiAccount.length +
         hiApp.length +
         hiCatalogue.length +
         hiCustomer.length +
