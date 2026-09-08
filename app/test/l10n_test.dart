@@ -219,6 +219,7 @@ void main() {
     final counted =
         hiCommon.length +
         hiApp.length +
+        hiCatalogue.length +
         hiCustomer.length +
         hiGuides.length +
         hiVendor.length;

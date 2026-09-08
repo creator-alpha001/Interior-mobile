@@ -18,6 +18,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'agreements_screen.dart';
 import 'blog_screen.dart';
+import 'catalogue.dart';
+import 'professional_screen.dart';
 import 'estimator_screen.dart';
 import 'async_view.dart';
 import 'home_screen.dart';
@@ -138,38 +140,74 @@ class _ExploreTab extends ConsumerWidget {
           children: [
             const SizedBox(height: Space.md),
 
-            /// The two surfaces that need no account and no network round trip
-            /// to be useful, put where somebody browsing will find them.
+            /// Everything browsable that is not the directory below.
             ///
-            /// Above the directory rather than in tabs of their own: five tabs
-            /// is already the ceiling MOBILE.md §6.1 sets, and a sixth would
-            /// cost the ones that carry a job.
+            /// In a grid here rather than in tabs of their own: five tabs is
+            /// the ceiling MOBILE.md §6.1 sets, and a sixth would cost one that
+            /// carries a job. Explore is where the web's whole `/catalogue`,
+            /// `/our-work`, `/blog` and `/estimate` branch lands.
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
-              child: Row(
+              child: Column(
                 children: [
-                  Expanded(
-                    child: _Shortcut(
-                      icon: Icons.calculate_outlined,
-                      title: context.t('Rough cost'),
-                      subtitle: context.t('No account needed'),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => EstimatorScreen(onStart: onStart),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _Shortcut(
+                          icon: Icons.grid_view_outlined,
+                          title: context.t('Catalogue'),
+                          subtitle: context.t('What we make'),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const CatalogueScreen(),
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
-                  const SizedBox(width: Space.xs),
-                  Expanded(
-                    child: _Shortcut(
-                      icon: Icons.menu_book_outlined,
-                      title: context.t('Guides'),
-                      subtitle: context.t('What things cost'),
-                      onTap: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) => const BlogScreen()),
+                      const SizedBox(width: Space.xs),
+                      Expanded(
+                        child: _Shortcut(
+                          icon: Icons.photo_library_outlined,
+                          title: context.t('Our work'),
+                          subtitle: context.t('Jobs already done'),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const OurWorkScreen(),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
+                  ),
+                  const SizedBox(height: Space.xs),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _Shortcut(
+                          icon: Icons.calculate_outlined,
+                          title: context.t('Rough cost'),
+                          subtitle: context.t('No account needed'),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => EstimatorScreen(onStart: onStart),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: Space.xs),
+                      Expanded(
+                        child: _Shortcut(
+                          icon: Icons.menu_book_outlined,
+                          title: context.t('Guides'),
+                          subtitle: context.t('What things cost'),
+                          onTap: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const BlogScreen(),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -230,6 +268,13 @@ class ProfessionalCard extends StatelessWidget {
 
     return AanganCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
+      // The directory used to be a dead end: a list of names with nothing
+      // behind them, while `getProfessional` was reachable from nowhere.
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => ProfessionalScreen(id: professional.id),
+        ),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
