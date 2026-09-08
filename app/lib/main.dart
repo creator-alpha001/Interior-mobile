@@ -30,13 +30,28 @@ Future<void> main() async {
 
   final session = SecureSessionStore();
 
-  // The read cache lives beside the upload queue, in support rather than
-  // documents: it is derived data, and the OS may reclaim it.
-  final support = await getApplicationSupportDirectory();
+  /// The read cache lives beside the upload queue, in support rather than
+  /// documents: it is derived data, and the OS may reclaim it.
+  ///
+  /// **Its absence must never stop the app starting.** This line used to be an
+  /// unguarded `await`, so anything that made the directory unavailable —
+  /// a full disk, a restricted profile, a plugin that failed to register —
+  /// threw before `runApp` and left a blank screen with the reason only in a
+  /// console nobody was watching. The cache is an optimisation: without it
+  /// every read goes to the network, which is the behaviour on a first launch
+  /// anyway.
+  Directory? cacheDirectory;
+  try {
+    final support = await getApplicationSupportDirectory();
+    cacheDirectory = Directory('${support.path}/read-cache');
+  } on Object catch (error) {
+    debugPrint('no read cache — serving every read from the network: $error');
+  }
+
   final api = AanganApi(
     ApiConfig(baseUrl: Env.baseUrl),
     session: session,
-    cacheDirectory: Directory('${support.path}/read-cache'),
+    cacheDirectory: cacheDirectory,
   );
 
   /// Push, behind a driver.

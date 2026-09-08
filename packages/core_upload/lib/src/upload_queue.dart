@@ -159,11 +159,17 @@ class UploadQueue extends ChangeNotifier {
   );
 
   /// Reads back whatever was in flight when the app last closed.
+  ///
+  /// `_stateFile()` is inside the `try`, and that placement is the point. It
+  /// used to sit outside, so the guard caught a corrupt file and missed the
+  /// likelier failure — no support directory at all, which throws from
+  /// `getApplicationSupportDirectory()` and escaped as an unhandled error from
+  /// an unawaited `..restore()` in `main`.
   Future<void> restore() async {
-    final file = await _stateFile();
-    if (!file.existsSync()) return;
-
     try {
+      final file = await _stateFile();
+      if (!file.existsSync()) return;
+
       final raw = jsonDecode(file.readAsStringSync()) as List<dynamic>;
       for (final entry in raw) {
         final item = QueuedUpload.fromJson(entry as Map<String, Object?>);
@@ -181,10 +187,24 @@ class UploadQueue extends ChangeNotifier {
     }
   }
 
+  /// Writes the queue to disk, and does not throw if it cannot.
+  ///
+  /// Losing the on-disk copy costs the promise that a submission survives the
+  /// process being killed. Throwing from here would cost the upload itself,
+  /// which is in memory and working — so a failure degrades the guarantee
+  /// rather than the operation, and says so.
   Future<void> _persist() async {
-    final file = await _stateFile();
-    await file.parent.create(recursive: true);
-    await file.writeAsString(jsonEncode(items.map((i) => i.toJson()).toList()));
+    try {
+      final file = await _stateFile();
+      await file.parent.create(recursive: true);
+      await file.writeAsString(
+        jsonEncode(items.map((i) => i.toJson()).toList()),
+      );
+    } on Object catch (error) {
+      debugPrint(
+        'upload queue not persisted — it will not survive a kill: $error',
+      );
+    }
   }
 
   Future<File> _stateFile() async {
