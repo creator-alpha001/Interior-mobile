@@ -13,9 +13,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class SignInScreen extends StatefulWidget {
-  const SignInScreen({super.key, required this.auth});
+  const SignInScreen({super.key, required this.auth, this.dismissible = false});
 
   final AuthController auth;
+
+  /// Pushed over the app rather than standing in for it.
+  ///
+  /// The router used to be the only way here: signed out meant this screen and
+  /// nothing else. Now most of the app is readable without an account, so this
+  /// is also raised *from* somewhere — the Jobs tab, the last step of the
+  /// requirement form, the Account tab's own button — and has to close itself
+  /// and give the caller back control.
+  ///
+  /// It closes on success, and it closes on a back press. There is no third
+  /// outcome: whoever raised it asks the controller who is signed in.
+  final bool dismissible;
 
   @override
   State<SignInScreen> createState() => _SignInScreenState();
@@ -32,14 +44,35 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
+  /// Closes itself once a session exists.
+  ///
+  /// Done from a post-frame callback rather than inside `build`, because
+  /// popping a route during a build is what produces "setState() or
+  /// markNeedsBuild() called during build".
+  void _closeOnSuccess() {
+    if (!widget.dismissible) return;
+    if (widget.auth.shell == Shell.signedOut) return;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final navigator = Navigator.of(context);
+      if (navigator.canPop()) navigator.pop();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
       animation: widget.auth,
       builder: (context, _) {
         final state = widget.auth.signIn;
+        _closeOnSuccess();
 
         return Scaffold(
+          /// Only when raised over something. As the signed-out root there is
+          /// nothing behind it to go back to, and an inert arrow reads as a
+          /// broken screen.
+          appBar: widget.dismissible ? AppBar() : null,
           body: SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),

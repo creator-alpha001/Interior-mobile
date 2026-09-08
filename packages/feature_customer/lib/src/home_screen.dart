@@ -21,7 +21,16 @@ class HomeScreen extends ConsumerWidget {
     super.key,
     required this.onStart,
     required this.onOpenJobs,
+    this.onSignIn,
   });
+
+  /// Non-null exactly when nobody is signed in.
+  ///
+  /// The home screen is public — every read above the dashboard is an
+  /// anonymous one — so this is an offer rather than a gate. It sits where the
+  /// dashboard would be, because that is the space a returning customer's own
+  /// work occupies and the point is that they can get it back.
+  final Future<bool> Function()? onSignIn;
 
   final VoidCallback onStart;
 
@@ -114,13 +123,58 @@ class HomeScreen extends ConsumerWidget {
               /// not come here to read the four trades again, and until now
               /// the only route to their own work was to know which tab it
               /// was under.
-              _YourWork(
-                requirements: requirements,
-                agreements: agreements,
-                projects: projects,
-                onOpenJobs: onOpenJobs,
-                onStart: onStart,
-              ),
+              if (onSignIn != null)
+                Padding(
+                  padding: const EdgeInsets.only(top: Space.lg),
+                  child: AanganCard(
+                    padding: const EdgeInsets.all(Space.cardPaddingWide),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          context.t('Already asked us for something?'),
+                          style: context.text.headlineSmall,
+                        ),
+                        const SizedBox(height: Space.xxs),
+                        Text(
+                          context.t(
+                            'Sign in with the number you gave us and your '
+                            'jobs, quotes and messages come back.',
+                          ),
+                          style: context.text.bodyMedium?.copyWith(
+                            color: context.colors.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: Space.md),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton(
+                                onPressed: onSignIn,
+                                child: Text(context.t('Sign in')),
+                              ),
+                            ),
+                            const SizedBox(width: Space.xs),
+                            Expanded(
+                              child: OutlinedButton(
+                                onPressed: onStart,
+                                child: Text(context.t('Get quotes')),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                )
+              else
+                _YourWork(
+                  requirements: requirements,
+                  agreements: agreements,
+                  projects: projects,
+                  onOpenJobs: onOpenJobs,
+                  onStart: onStart,
+                ),
 
               /// The banner strip.
               ///

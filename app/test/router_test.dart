@@ -25,6 +25,20 @@ Future<(AuthController, StubApi)> _pump(
   void Function(StubApi)? stub,
 }) async {
   final api = StubApi();
+
+  /// The public reads every customer screen makes.
+  ///
+  /// Stubbed for *all* cases, not only the signed-in ones, because signed out
+  /// now lands on the same shell — that is the change these tests exist to
+  /// hold. Left empty: this file is about where the router sends people, not
+  /// about what the catalogue renders.
+  api
+    ..on('GET', '/domains', <Object>[])
+    ..on('GET', '/cities', <Object>[])
+    ..on('GET', '/banners', <Object>[])
+    ..on('GET', '/testimonials', <Object>[])
+    ..on('GET', '/catalogue/counts', <Object>[]);
+
   stub?.call(api);
 
   final session = InMemoryAuthSession(token);
@@ -105,18 +119,36 @@ void main() {
     expect(find.text('Resolving your session…'), findsOneWidget);
   });
 
-  testWidgets('no token means the sign-in screen, without asking /me', (
-    tester,
-  ) async {
+  testWidgets('no token opens the app, not a sign-in wall', (tester) async {
+    /// **The rule this file used to assert the opposite of.**
+    ///
+    /// It read: no token means the sign-in screen. That made an account the
+    /// price of admission — no catalogue, no packages, no professionals, no
+    /// blog, no estimator and no requirement form, though the API serves every
+    /// one of those to an anonymous caller and the web site does exactly that.
+    ///
+    /// It also contradicted §6.3, which designs the requirement flow so
+    /// verification comes *last*, because "asking for an account first is how
+    /// a form loses the people who opened it".
     final (_, api) = await _pump(tester);
 
-    expect(find.text('Send code'), findsOneWidget);
+    expect(find.text('Send code'), findsNothing);
+    expect(find.text('Aangan'), findsWidgets);
     expect(
       api.seen.where((r) => r.path == '/me'),
       isEmpty,
       reason:
           'there is no session to resolve, so /me is not worth a round trip',
     );
+  });
+
+  testWidgets('signed out, the app offers a way in rather than demanding one', (
+    tester,
+  ) async {
+    await _pump(tester);
+
+    // On the home screen, where the person's own work would otherwise be.
+    expect(find.text('Sign in'), findsWidgets);
   });
 
   testWidgets('a customer token lands on the customer shell', (tester) async {

@@ -286,4 +286,29 @@ const hiCustomer = <String, String>{
   'Tell us what you need and we will bring you three written quotes for each trade. Free, and you are not committed to any of them.':
       'हमें बताइए कि आपको क्या चाहिए, और हम हर काम के लिए तीन लिखित कोटेशन ला देंगे। मुफ़्त, और किसी को चुनना ज़रूरी नहीं।',
   'Get quotes': 'कोटेशन मँगाइए',
+  // ---- signing in, offered where it is needed rather than at the door ----
+  'Sign in': 'साइन इन',
+
+  /// The whole promise of the sign-in model, in one line. There is no
+  /// password to forget, which is the objection this answers.
+  'Your number is your account. We send a code — there is no password to remember.':
+      'आपका नंबर ही आपका खाता है। हम एक कोड भेजते हैं — याद रखने के लिए कोई पासवर्ड नहीं।',
+
+  'Already asked us for something?': 'पहले से हमें कुछ बताया हुआ है?',
+  'Sign in with the number you gave us and your jobs, quotes and messages come back.':
+      'जो नंबर आपने हमें दिया था, उसी से साइन इन कीजिए — आपके काम, कोटेशन और संदेश वापस आ जाएँगे।',
+
+  'Your jobs live here': 'आपके काम यहाँ रहते हैं',
+  'Sign in to see the quotes on your jobs, the visits we have arranged, and where each one has got to.':
+      'अपने कामों के कोटेशन, तय की गई विज़िट और हर काम कहाँ तक पहुँचा है — देखने के लिए साइन इन कीजिए।',
+
+  'One conversation per job': 'हर काम की एक बातचीत',
+  'You talk to us and we talk to the professionals. Sign in to see your threads.':
+      'आप हमसे बात करते हैं, हम कारीगरों से। अपनी बातचीत देखने के लिए साइन इन कीजिए।',
+
+  /// Said next to the sign-in button, because for most people who land here
+  /// the other button is the right one — and it is true: the form runs to the
+  /// end without an account.
+  'No account needed to start — we ask for your number at the end, to send the quotes to.':
+      'शुरू करने के लिए खाता ज़रूरी नहीं — नंबर हम आख़िर में पूछते हैं, ताकि कोटेशन भेज सकें।',
 };

@@ -82,7 +82,42 @@ GoRouter buildRouter({
         // sign-in screen at somebody who is already signed in.
         Shell.resolving => location == Routes.splash ? null : Routes.splash,
 
-        Shell.signedOut => location == Routes.signIn ? null : Routes.signIn,
+        /// **Signed out is not a wall.**
+        ///
+        /// This used to be `location == signIn ? null : signIn`, which meant
+        /// an account was the price of admission: no catalogue, no packages,
+        /// no professionals, no blog, no estimator, and no requirement form —
+        /// though the API serves all of that to an anonymous caller and the
+        /// web site does exactly that.
+        ///
+        /// It also contradicted the app's own centrepiece. §6.3 designs the
+        /// requirement flow so verification is *last*: "Asking for an account
+        /// first is how a form loses the people who opened it." The shell was
+        /// asking first.
+        ///
+        /// So the customer shell is the signed-out home, and `/sign-in` stays
+        /// a real route that anything can push. What needs a session asks for
+        /// one where it is needed, and says why.
+        /// Two different signed-out states, and they are not interchangeable.
+        ///
+        /// **Never signed in** — let them in. The catalogue, packages,
+        /// professionals, blog, estimator and the requirement form are all
+        /// anonymous reads, and the web serves every one of them that way.
+        ///
+        /// **Signed out unexpectedly** — a suspension, a revoked row, a
+        /// session the server no longer honours — show the sign-in screen,
+        /// because it is the only surface that carries the reason. Dropping
+        /// somebody into the public app mid-job with no explanation is exactly
+        /// the failure `notice` exists to prevent: sessions are rows rather
+        /// than JWTs so that a suspension lands on the screen somebody is
+        /// looking at.
+        Shell.signedOut =>
+          auth.notice != null
+              ? (location == Routes.signIn ? null : Routes.signIn)
+              : (location.startsWith(Routes.customerHome) ||
+                        location == Routes.signIn
+                    ? null
+                    : Routes.customerHome),
 
         // Staff have no mobile surface. Say so, and say where to go instead —
         // silently refusing a valid password is how a support ticket starts.
@@ -127,10 +162,11 @@ GoRouter buildRouter({
         path: Routes.customerHome,
         builder: (context, state) => CustomerShell(
           queue: requirementQueue,
+          authChanges: auth,
           isSignedIn: () => auth.shell == Shell.customer,
           // The requirement flow can reach step 6 with no session at all —
           // that is the point of it. Verification happens here, and only then.
-          verify: (context) async => auth.shell == Shell.customer,
+          verify: (context) => presentSignIn(context, auth),
           onSignOut: auth.signOut,
         ),
       ),
@@ -162,6 +198,31 @@ GoRouter buildRouter({
       ),
     ],
   );
+}
+
+/// Raises the sign-in screen over whatever is on top, and reports the outcome.
+///
+/// The one way into a session from inside the app. Every trigger goes through
+/// it — the Jobs tab, the Account tab's button, the last step of the
+/// requirement form — so there is one screen and one answer to "am I signed in
+/// now", rather than each caller inventing its own.
+///
+/// Returns immediately when a session already exists, so a caller can guard
+/// with it unconditionally.
+Future<bool> presentSignIn(BuildContext context, AuthController auth) async {
+  if (auth.shell != Shell.signedOut) return true;
+
+  await Navigator.of(context, rootNavigator: true).push(
+    MaterialPageRoute<void>(
+      fullscreenDialog: true,
+      builder: (_) => SignInScreen(auth: auth, dismissible: true),
+    ),
+  );
+
+  /// Asked of the controller rather than tracked through the route's result.
+  /// A pop can come from the back button, a successful verification, or the
+  /// system, and only the controller knows which of those left a session.
+  return auth.shell != Shell.signedOut;
 }
 
 class _Splash extends StatelessWidget {

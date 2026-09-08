@@ -36,14 +36,31 @@ class CustomerShell extends ConsumerStatefulWidget {
   const CustomerShell({
     super.key,
     required this.queue,
+    required this.authChanges,
     required this.isSignedIn,
     required this.verify,
     this.onSignOut,
   });
 
   final UploadQueue queue;
+
+  /// Fires when somebody signs in or out.
+  ///
+  /// A `Listenable` rather than the controller itself, so this package still
+  /// depends on nothing but the API client and the design system. What it
+  /// needs is "tell me when this changed"; who changed it is the app's
+  /// business.
+  final Listenable authChanges;
+
   final bool Function() isSignedIn;
+
+  /// Raises the sign-in screen and reports whether a session now exists.
+  ///
+  /// Named for the requirement flow, which has always used it to verify at the
+  /// last step. Every other surface that needs an account now uses the same
+  /// one, so there is one sign-in screen and one answer.
   final VerifyNumber verify;
+
   final VoidCallback? onSignOut;
 
   @override
@@ -66,17 +83,66 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
     if (mounted) setState(() => _tab = 2);
   }
 
+  /// Raises sign-in, and rebuilds this shell if it worked.
+  ///
+  /// `authChanges` already rebuilds it, but the await is what lets a caller
+  /// carry on with whatever they were doing.
+  Future<bool> _signIn() async {
+    final signedIn = await widget.verify(context);
+    if (mounted) setState(() {});
+    return signedIn;
+  }
+
   @override
   Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: widget.authChanges,
+      builder: (context, _) => _build(context),
+    );
+  }
+
+  Widget _build(BuildContext context) {
+    final signedIn = widget.isSignedIn();
+
+    /// Two tabs are a person's own record and nothing else, so signed out
+    /// there is nothing to render but the reason. Home and Explore are public
+    /// — the API serves both to an anonymous caller — and Account carries the
+    /// sign-in button along with the pages anybody can read.
     final screens = [
       HomeScreen(
         onStart: _startRequirement,
         onOpenJobs: () => setState(() => _tab = 2),
+        onSignIn: signedIn ? null : _signIn,
       ),
       _ExploreTab(onStart: _startRequirement),
-      RequirementsScreen(onStartNew: _startRequirement),
-      const _MessagesTab(),
-      _AccountTab(onSignOut: widget.onSignOut),
+      if (signedIn)
+        RequirementsScreen(onStartNew: _startRequirement)
+      else
+        _SignInWall(
+          title: context.t('Your jobs live here'),
+          body: context.t(
+            'Sign in to see the quotes on your jobs, the visits we have '
+            'arranged, and where each one has got to.',
+          ),
+          onSignIn: _signIn,
+          onStart: _startRequirement,
+        ),
+      if (signedIn)
+        const _MessagesTab()
+      else
+        _SignInWall(
+          title: context.t('One conversation per job'),
+          body: context.t(
+            'You talk to us and we talk to the professionals. Sign in to see '
+            'your threads.',
+          ),
+          onSignIn: _signIn,
+          onStart: _startRequirement,
+        ),
+      _AccountTab(
+        onSignOut: widget.onSignOut,
+        onSignIn: signedIn ? null : _signIn,
+      ),
     ];
 
     return Scaffold(
@@ -121,6 +187,82 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
             label: context.t('Account').toUpperCase(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// What a tab shows when it is entirely somebody's own record.
+///
+/// Not an error and not an empty state: there is nothing wrong and nothing
+/// missing, the app simply does not know who is asking yet. It says what is
+/// behind the door before asking anybody to open it, and offers the other way
+/// in — somebody with no account and no jobs wants the form, not a password.
+class _SignInWall extends StatelessWidget {
+  const _SignInWall({
+    required this.title,
+    required this.body,
+    required this.onSignIn,
+    required this.onStart,
+  });
+
+  final String title;
+  final String body;
+  final Future<bool> Function() onSignIn;
+  final VoidCallback onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: context.text.displayLarge),
+                const SizedBox(height: Space.sm),
+                Text(
+                  body,
+                  style: context.text.bodyLarge?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: Space.lg),
+                SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                    onPressed: onSignIn,
+                    child: Text(context.t('Sign in')),
+                  ),
+                ),
+                const SizedBox(height: Space.xs),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: onStart,
+                    child: Text(context.t('Tell us what you need')),
+                  ),
+                ),
+                const SizedBox(height: Space.sm),
+
+                /// The thing that makes the second button the right one for
+                /// most people who land here, and it is true: the form runs to
+                /// the end without an account and verifies at the last step.
+                Text(
+                  context.t(
+                    'No account needed to start — we ask for your number at '
+                    'the end, to send the quotes to.',
+                  ),
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -757,12 +899,20 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
 }
 
 class _AccountTab extends ConsumerWidget {
-  const _AccountTab({this.onSignOut});
+  const _AccountTab({this.onSignOut, this.onSignIn});
 
   final VoidCallback? onSignOut;
 
+  /// Non-null exactly when nobody is signed in.
+  ///
+  /// This is the "login button" in the ordinary sense — always in the same
+  /// place, always reachable, and never in anybody's way.
+  final Future<bool> Function()? onSignIn;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final signedIn = onSignIn == null;
+
     return Scaffold(
       body: SafeArea(
         child: ListView(
@@ -771,46 +921,96 @@ class _AccountTab extends ConsumerWidget {
             const SizedBox(height: Space.md),
             Text(context.t('Account'), style: context.text.headlineLarge),
             const SizedBox(height: Space.md),
-            _Link(
-              title: context.t('Agreements'),
-              subtitle: context.t('Contracts to sign, and signed'),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const AgreementsScreen()),
-              ),
-            ),
-            const SizedBox(height: Space.xs),
-            _Link(
-              title: context.t('Progress'),
-              subtitle: context.t('Work under way'),
-              onTap: () => Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const ProjectsScreen())),
-            ),
 
-            const SizedBox(height: Space.xs),
-            _Link(
-              title: context.t('Notifications'),
-              subtitle: context.t('What we have told you'),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const NotificationsScreen()),
+            /// Signed out, this is the only thing above the public pages.
+            ///
+            /// The five links below it are one person's own record, and a row
+            /// that opens a screen saying "please try again" is worse than no
+            /// row: it looks broken rather than locked.
+            if (!signedIn) ...[
+              AanganCard(
+                padding: const EdgeInsets.all(Space.cardPaddingWide),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      context.t('Sign in'),
+                      style: context.text.headlineSmall,
+                    ),
+                    const SizedBox(height: Space.xxs),
+                    Text(
+                      context.t(
+                        'Your number is your account. We send a code — there '
+                        'is no password to remember.',
+                      ),
+                      style: context.text.bodyMedium?.copyWith(
+                        color: context.colors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: Space.md),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: onSignIn,
+                        child: Text(context.t('Sign in')),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: Space.xs),
-            _Link(
-              title: context.t('Invite a friend'),
-              subtitle: context.t('Your code, and what it has earned'),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ReferralsScreen()),
+              const SizedBox(height: Space.md),
+            ],
+
+            /// Five links, one guard.
+            ///
+            /// Every one of these opens a screen built entirely from `/me/*`,
+            /// so signed out they lead to "Please try again" — which reads as
+            /// broken rather than locked. Written as a single block precisely
+            /// because the first attempt guarded the first and the last and
+            /// left Progress, Notifications and Invite a friend showing.
+            if (signedIn) ...[
+              _Link(
+                title: context.t('Agreements'),
+                subtitle: context.t('Contracts to sign, and signed'),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const AgreementsScreen()),
+                ),
               ),
-            ),
-            const SizedBox(height: Space.xs),
-            _Link(
-              title: context.t('Help'),
-              subtitle: context.t('Ask us anything, a person answers'),
-              onTap: () => Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const SupportScreen())),
-            ),
+              const SizedBox(height: Space.xs),
+              _Link(
+                title: context.t('Progress'),
+                subtitle: context.t('Work under way'),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ProjectsScreen()),
+                ),
+              ),
+              const SizedBox(height: Space.xs),
+              _Link(
+                title: context.t('Notifications'),
+                subtitle: context.t('What we have told you'),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const NotificationsScreen(),
+                  ),
+                ),
+              ),
+              const SizedBox(height: Space.xs),
+              _Link(
+                title: context.t('Invite a friend'),
+                subtitle: context.t('Your code, and what it has earned'),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const ReferralsScreen()),
+                ),
+              ),
+              const SizedBox(height: Space.xs),
+              _Link(
+                title: context.t('Help'),
+                subtitle: context.t('Ask us anything, a person answers'),
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SupportScreen()),
+                ),
+              ),
+            ],
 
             const SizedBox(height: Space.xs),
             _Link(
