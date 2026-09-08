@@ -167,6 +167,19 @@ void main() {
       );
     });
 
+    testWidgets('carries its cover, which the list deliberately does not', (
+      tester,
+    ) async {
+      // The asymmetry is the point: one cover on a post somebody chose to
+      // open costs one request; twenty in a list costs twenty.
+      await _pump(
+        tester,
+        const PostScreen(slug: 'modular-kitchen-cost-lucknow'),
+      );
+
+      expect(find.byType(AanganMedia), findsOneWidget);
+    });
+
     testWidgets('makes its pitch once, at the end', (tester) async {
       await _pump(
         tester,

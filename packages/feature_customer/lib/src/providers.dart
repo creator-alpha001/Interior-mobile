@@ -2,6 +2,7 @@
 library;
 
 import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Supplied by the app at startup. Overridden in tests with a stubbed client.
@@ -33,9 +34,53 @@ final citiesProvider = FutureProvider<List<City>>(
   (ref) => _public(ref).listCities().orThrow(),
 );
 
-final professionalsProvider = FutureProvider<GetProfessionalsResponse>(
-  (ref) => _public(ref).listProfessionals().orThrow(),
+/// What the directory is currently showing.
+///
+/// Trade and city, as the web's `/professionals?domain=&city=` carries them in
+/// the query string. Two fields rather than two providers, so setting both in
+/// one gesture is one fetch.
+@immutable
+class ProfessionalFilters {
+  const ProfessionalFilters({this.domainSlug, this.cityId});
+
+  final String? domainSlug;
+  final String? cityId;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ProfessionalFilters &&
+      other.domainSlug == domainSlug &&
+      other.cityId == cityId;
+
+  @override
+  int get hashCode => Object.hash(domainSlug, cityId);
+}
+
+final professionalFiltersProvider = StateProvider<ProfessionalFilters>(
+  (ref) => const ProfessionalFilters(),
 );
+
+/// The directory, filtered as the web filters it.
+///
+/// `domain` is what makes `ProfessionalSummary.domainRating` come back
+/// populated, which is the whole argument for the filter existing: with no
+/// trade selected the card can only show an average across every trade, and an
+/// average across every trade is the wrong number to rank a carpenter by.
+///
+/// `verifiedOnly` matches the web and the empty state this screen already
+/// wrote — an unverified professional is in no pool and belongs in no list a
+/// customer reads.
+final professionalsProvider = FutureProvider<GetProfessionalsResponse>((ref) {
+  final filters = ref.watch(professionalFiltersProvider);
+  return _public(ref)
+      .listProfessionals(
+        domain: filters.domainSlug,
+        city: filters.cityId,
+        verifiedOnly: true,
+        limit: 48,
+      )
+      .orThrow();
+});
 
 final bannersProvider = FutureProvider<List<Banner>>(
   (ref) => _public(ref).listBanners().orThrow(),

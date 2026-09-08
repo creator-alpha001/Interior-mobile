@@ -243,4 +243,12 @@ const hiCustomer = <String, String>{
       'एग्रीमेंट पर हस्ताक्षर होते ही काम शुरू होता है।',
   'Our team checks each stage against the professional’s photographs before it counts as done.':
       'हर चरण को पूरा गिनने से पहले हमारी टीम कारीगर की तस्वीरों से उसकी जाँच करती है।',
+  // ---- the professionals directory's filters ----
+  'Trade': 'काम',
+  'All cities': 'सभी शहर',
+
+  /// Said when a filter emptied the list, not when the pool is empty — the
+  /// two need different things from the reader.
+  'Nobody matches this trade and city yet. We source and verify professionals for new areas continuously — tell us what you need anyway.':
+      'इस काम और शहर के लिए अभी कोई नहीं मिला। नए इलाक़ों के लिए हम लगातार कारीगर ढूँढ़ते और जाँचते रहते हैं — आप फिर भी बताइए कि आपको क्या चाहिए।',
 };

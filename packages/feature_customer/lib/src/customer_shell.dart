@@ -136,6 +136,7 @@ class _ExploreTab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final professionals = ref.watch(professionalsProvider);
+    final filters = ref.watch(professionalFiltersProvider);
 
     return Scaffold(
       body: SafeArea(
@@ -257,6 +258,52 @@ class _ExploreTab extends ConsumerWidget {
                 style: context.text.headlineLarge,
               ),
             ),
+            const SizedBox(height: Space.xs),
+
+            /// Trade, then city — the two the web carries in its query string.
+            ///
+            /// The trade filter is not cosmetic. It is what makes the API
+            /// return `domainRating`, so a card under "Carpentry" shows the
+            /// carpentry rating rather than a blended average that flatters a
+            /// painter who has never built a wardrobe.
+            _FilterRow(
+              label: context.t('Trade'),
+              allLabel: context.t('All'),
+              selected: filters.domainSlug,
+              options: ref
+                  .watch(domainsProvider)
+                  .maybeWhen(
+                    data: (list) => [for (final d in list) (d.slug, d.name)],
+                    orElse: () => const <(String, String)>[],
+                  ),
+              onSelect: (slug) =>
+                  ref
+                      .read(professionalFiltersProvider.notifier)
+                      .state = ProfessionalFilters(
+                    domainSlug: slug,
+                    cityId: filters.cityId,
+                  ),
+            ),
+            const SizedBox(height: Space.xxs),
+            _FilterRow(
+              label: context.t('City'),
+              allLabel: context.t('All cities'),
+              selected: filters.cityId,
+              options: ref
+                  .watch(citiesProvider)
+                  .maybeWhen(
+                    data: (list) => [for (final c in list) (c.id, c.name)],
+                    orElse: () => const <(String, String)>[],
+                  ),
+              onSelect: (id) =>
+                  ref
+                      .read(professionalFiltersProvider.notifier)
+                      .state = ProfessionalFilters(
+                    domainSlug: filters.domainSlug,
+                    cityId: id,
+                  ),
+            ),
+
             const SizedBox(height: Space.sm),
             Expanded(
               child: AsyncView(
@@ -265,11 +312,21 @@ class _ExploreTab extends ConsumerWidget {
                 data: (page) => page.items.isEmpty
                     ? EmptyState(
                         title: context.t('Nobody to show yet'),
-                        body: context.t(
-                          context.t(
-                            'Professionals appear here once they are verified.',
-                          ),
-                        ),
+                        // Two reasons for an empty list, and they call for
+                        // different things from the reader. Saying "once they
+                        // are verified" under a filter somebody just set would
+                        // blame the pool for their own narrowing.
+                        body:
+                            filters.domainSlug != null || filters.cityId != null
+                            ? context.t(
+                                'Nobody matches this trade and city yet. We '
+                                'source and verify professionals for new areas '
+                                'continuously — tell us what you need anyway.',
+                              )
+                            : context.t(
+                                'Professionals appear here once they are '
+                                'verified.',
+                              ),
                       )
                     : ListView.separated(
                         padding: const EdgeInsets.symmetric(
@@ -286,6 +343,67 @@ class _ExploreTab extends ConsumerWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// One labelled row of filter chips, scrolling sideways.
+///
+/// Not pills: the pill radius is reserved for status, and a control shaped
+/// like a status chip reads as a verdict rather than as something to press.
+class _FilterRow extends StatelessWidget {
+  const _FilterRow({
+    required this.label,
+    required this.allLabel,
+    required this.selected,
+    required this.options,
+    required this.onSelect,
+  });
+
+  final String label;
+  final String allLabel;
+
+  /// The value currently set, or null for "no filter".
+  final String? selected;
+
+  /// `(value, label)`. Empty while the list behind it is still loading, which
+  /// leaves the row as "All" alone rather than as a gap that jumps.
+  final List<(String, String)> options;
+
+  final ValueChanged<String?> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: TapTarget.minimum,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+        children: [
+          Center(
+            child: Text(
+              label.toUpperCase(),
+              style: context.text.labelSmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ),
+          const SizedBox(width: Space.xs),
+          ChoiceChip(
+            label: Text(allLabel),
+            selected: selected == null,
+            onSelected: (_) => onSelect(null),
+          ),
+          for (final (value, name) in options) ...[
+            const SizedBox(width: Space.xs),
+            ChoiceChip(
+              label: Text(name),
+              selected: selected == value,
+              onSelected: (_) => onSelect(value),
+            ),
+          ],
+        ],
       ),
     );
   }
