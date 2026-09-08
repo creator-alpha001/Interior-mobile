@@ -278,6 +278,26 @@ class _MilestoneRow extends StatelessWidget {
                       ),
                     ),
                   ],
+
+                  /// What was actually sent.
+                  ///
+                  /// A vendor arguing a rejection needs to see the
+                  /// photographs the verifier saw, and until now the app that
+                  /// took them showed them back to nobody. It matters most on
+                  /// the rejected path, which is exactly where the note above
+                  /// is a criticism of pictures the reader cannot look at.
+                  if (milestone.proof.isNotEmpty) ...[
+                    const SizedBox(height: Space.xs),
+                    MediaStrip(
+                      items: [
+                        for (final asset in milestone.proof)
+                          MediaItem(
+                            url: asset.url,
+                            caption: asset.caption ?? milestone.title,
+                          ),
+                      ],
+                    ),
+                  ],
                   if (canSubmit) ...[
                     const SizedBox(height: Space.xs),
                     OutlinedButton(

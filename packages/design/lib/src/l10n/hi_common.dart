@@ -20,6 +20,8 @@ const hiCommon = <String, String>{
   'Description': 'ब्यौरा',
   'Note': 'नोट',
   'Photographs': 'तस्वीरें',
+  // The photo viewer's counter.
+  '{n} of {total}': '{total} में से {n}',
 
   // ---- the error states, from async_view ----
   ///

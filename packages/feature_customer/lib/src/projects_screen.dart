@@ -221,14 +221,23 @@ class _Stage extends StatelessWidget {
                     const SizedBox(height: Space.xxs),
                     Text(milestone.proofNote!, style: context.text.bodyMedium),
                   ],
+
+                  /// The evidence itself, not a count of it.
+                  ///
+                  /// This said "3 photographs" where the photographs should
+                  /// have been. The platform's claim is that a stage is done
+                  /// when somebody has looked at the proof, and a customer
+                  /// cannot look at a number.
                   if (milestone.proof.isNotEmpty) ...[
                     const SizedBox(height: Space.xs),
-                    Text(
-                      '${milestone.proof.length} '
-                      '${milestone.proof.length == 1 ? "photograph" : "photographs"}',
-                      style: context.text.bodySmall?.copyWith(
-                        color: context.colors.onSurfaceVariant,
-                      ),
+                    MediaStrip(
+                      items: [
+                        for (final asset in milestone.proof)
+                          MediaItem(
+                            url: asset.url,
+                            caption: asset.caption ?? milestone.title,
+                          ),
+                      ],
                     ),
                   ],
                   // Deliberately no button here, of any kind.

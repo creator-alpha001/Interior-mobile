@@ -19,6 +19,15 @@ dependencies:
   # a format string, and getting it wrong ships "₹450,000".
   intl: ^0.20.2
 
+  # Catalogue and portfolio imagery, cached on disk.
+  #
+  # Named in MOBILE.md 4.2 from the beginning and absent from every pubspec
+  # until now, which is why the app had no Image widget anywhere in it. The
+  # caching is the point rather than a nicety: a professional's portfolio is
+  # eight photographs, and re-fetching them on every scroll is the difference
+  # between a list that moves and one that stutters on a 3G connection.
+  cached_network_image: ^3.4.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

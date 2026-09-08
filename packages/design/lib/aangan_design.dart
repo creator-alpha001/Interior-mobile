@@ -8,6 +8,8 @@ library;
 export 'src/l10n/hi.dart';
 export 'src/l10n/l10n.dart';
 export 'src/l10n/language_scope.dart';
+export 'src/media.dart';
+export 'src/media_strip.dart';
 export 'src/money.dart';
 export 'src/otp_field.dart';
 export 'src/stale_banner.dart';

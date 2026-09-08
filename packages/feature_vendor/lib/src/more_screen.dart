@@ -351,6 +351,24 @@ class PortfolioScreen extends ConsumerWidget {
                             item.description,
                             style: context.text.bodyMedium,
                           ),
+
+                          /// The work itself.
+                          ///
+                          /// A portfolio without pictures is a list of job
+                          /// titles, and a customer choosing between three
+                          /// professionals has nothing to choose on.
+                          if (item.media.isNotEmpty) ...[
+                            const SizedBox(height: Space.sm),
+                            MediaStrip(
+                              items: [
+                                for (final asset in item.media)
+                                  MediaItem(
+                                    url: asset.url,
+                                    caption: asset.caption ?? item.title,
+                                  ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     );
