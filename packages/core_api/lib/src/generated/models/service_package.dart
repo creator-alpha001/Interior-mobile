@@ -31,6 +31,7 @@ abstract class ServicePackage with _$ServicePackage {
     required bool isActive,
     required String? badge,
   }) = _ServicePackage;
-  
-  factory ServicePackage.fromJson(Map<String, Object?> json) => _$ServicePackageFromJson(json);
+
+  factory ServicePackage.fromJson(Map<String, Object?> json) =>
+      _$ServicePackageFromJson(json);
 }

@@ -27,6 +27,6 @@ abstract class Domain with _$Domain {
     required int sortOrder,
     required DomainLabels labels,
   }) = _Domain;
-  
+
   factory Domain.fromJson(Map<String, Object?> json) => _$DomainFromJson(json);
 }

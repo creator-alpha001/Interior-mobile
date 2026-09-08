@@ -15,6 +15,7 @@ abstract class ApiProblem with _$ApiProblem {
     required String message,
     dynamic details,
   }) = _ApiProblem;
-  
-  factory ApiProblem.fromJson(Map<String, Object?> json) => _$ApiProblemFromJson(json);
+
+  factory ApiProblem.fromJson(Map<String, Object?> json) =>
+      _$ApiProblemFromJson(json);
 }

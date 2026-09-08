@@ -41,6 +41,7 @@ abstract class ProfessionalProfile with _$ProfessionalProfile {
     required List<ReviewView> reviews,
     DomainRating? domainRating,
   }) = _ProfessionalProfile;
-  
-  factory ProfessionalProfile.fromJson(Map<String, Object?> json) => _$ProfessionalProfileFromJson(json);
+
+  factory ProfessionalProfile.fromJson(Map<String, Object?> json) =>
+      _$ProfessionalProfileFromJson(json);
 }

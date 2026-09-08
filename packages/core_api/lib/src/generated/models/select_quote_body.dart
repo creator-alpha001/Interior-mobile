@@ -9,9 +9,8 @@ part 'select_quote_body.g.dart';
 
 @Freezed()
 abstract class SelectQuoteBody with _$SelectQuoteBody {
-  const factory SelectQuoteBody({
-    required String quoteId,
-  }) = _SelectQuoteBody;
-  
-  factory SelectQuoteBody.fromJson(Map<String, Object?> json) => _$SelectQuoteBodyFromJson(json);
+  const factory SelectQuoteBody({required String quoteId}) = _SelectQuoteBody;
+
+  factory SelectQuoteBody.fromJson(Map<String, Object?> json) =>
+      _$SelectQuoteBodyFromJson(json);
 }

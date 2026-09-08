@@ -14,6 +14,7 @@ abstract class OtpChallenge with _$OtpChallenge {
     required int expiresInSeconds,
     String? devCode,
   }) = _OtpChallenge;
-  
-  factory OtpChallenge.fromJson(Map<String, Object?> json) => _$OtpChallengeFromJson(json);
+
+  factory OtpChallenge.fromJson(Map<String, Object?> json) =>
+      _$OtpChallengeFromJson(json);
 }

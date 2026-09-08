@@ -25,6 +25,7 @@ abstract class CommissionInvoice with _$CommissionInvoice {
     required String? paidDate,
     required String? adjustmentNote,
   }) = _CommissionInvoice;
-  
-  factory CommissionInvoice.fromJson(Map<String, Object?> json) => _$CommissionInvoiceFromJson(json);
+
+  factory CommissionInvoice.fromJson(Map<String, Object?> json) =>
+      _$CommissionInvoiceFromJson(json);
 }

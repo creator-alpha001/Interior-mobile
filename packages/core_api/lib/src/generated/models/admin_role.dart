@@ -20,6 +20,7 @@ abstract class AdminRole with _$AdminRole {
     required String description,
     required List<PermissionKey> permissions,
   }) = _AdminRole;
-  
-  factory AdminRole.fromJson(Map<String, Object?> json) => _$AdminRoleFromJson(json);
+
+  factory AdminRole.fromJson(Map<String, Object?> json) =>
+      _$AdminRoleFromJson(json);
 }

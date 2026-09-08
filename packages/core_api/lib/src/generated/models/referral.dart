@@ -21,6 +21,7 @@ abstract class Referral with _$Referral {
     required ReferralRewardStatus rewardStatus,
     required int rewardAmount,
   }) = _Referral;
-  
-  factory Referral.fromJson(Map<String, Object?> json) => _$ReferralFromJson(json);
+
+  factory Referral.fromJson(Map<String, Object?> json) =>
+      _$ReferralFromJson(json);
 }

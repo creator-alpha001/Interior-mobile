@@ -18,6 +18,7 @@ abstract class VendorPerformance with _$VendorPerformance {
     required int totalRevenue,
     required List<VendorReview> reviews,
   }) = _VendorPerformance;
-  
-  factory VendorPerformance.fromJson(Map<String, Object?> json) => _$VendorPerformanceFromJson(json);
+
+  factory VendorPerformance.fromJson(Map<String, Object?> json) =>
+      _$VendorPerformanceFromJson(json);
 }

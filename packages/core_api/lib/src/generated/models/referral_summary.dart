@@ -20,6 +20,7 @@ abstract class ReferralSummary with _$ReferralSummary {
     required int rewardPerReferral,
     required List<ReferralEntry> referrals,
   }) = _ReferralSummary;
-  
-  factory ReferralSummary.fromJson(Map<String, Object?> json) => _$ReferralSummaryFromJson(json);
+
+  factory ReferralSummary.fromJson(Map<String, Object?> json) =>
+      _$ReferralSummaryFromJson(json);
 }

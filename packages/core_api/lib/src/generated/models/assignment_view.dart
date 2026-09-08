@@ -16,6 +16,7 @@ abstract class AssignmentView with _$AssignmentView {
     required LeadDomainAssignment assignment,
     required ProfessionalSummary professional,
   }) = _AssignmentView;
-  
-  factory AssignmentView.fromJson(Map<String, Object?> json) => _$AssignmentViewFromJson(json);
+
+  factory AssignmentView.fromJson(Map<String, Object?> json) =>
+      _$AssignmentViewFromJson(json);
 }

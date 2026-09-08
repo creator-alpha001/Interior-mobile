@@ -26,6 +26,7 @@ abstract class VendorDashboard with _$VendorDashboard {
     required int commissionOverdue,
     required int unreadMessages,
   }) = _VendorDashboard;
-  
-  factory VendorDashboard.fromJson(Map<String, Object?> json) => _$VendorDashboardFromJson(json);
+
+  factory VendorDashboard.fromJson(Map<String, Object?> json) =>
+      _$VendorDashboardFromJson(json);
 }

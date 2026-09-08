@@ -38,6 +38,7 @@ abstract class VendorLeadCard with _$VendorLeadCard {
     required bool won,
     required bool lost,
   }) = _VendorLeadCard;
-  
-  factory VendorLeadCard.fromJson(Map<String, Object?> json) => _$VendorLeadCardFromJson(json);
+
+  factory VendorLeadCard.fromJson(Map<String, Object?> json) =>
+      _$VendorLeadCardFromJson(json);
 }

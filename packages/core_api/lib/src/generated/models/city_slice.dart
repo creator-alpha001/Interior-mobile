@@ -14,6 +14,7 @@ abstract class CitySlice with _$CitySlice {
     required int leads,
     required int revenue,
   }) = _CitySlice;
-  
-  factory CitySlice.fromJson(Map<String, Object?> json) => _$CitySliceFromJson(json);
+
+  factory CitySlice.fromJson(Map<String, Object?> json) =>
+      _$CitySliceFromJson(json);
 }

@@ -14,6 +14,7 @@ abstract class PackageLine with _$PackageLine {
     required num quantity,
     required String? productId,
   }) = _PackageLine;
-  
-  factory PackageLine.fromJson(Map<String, Object?> json) => _$PackageLineFromJson(json);
+
+  factory PackageLine.fromJson(Map<String, Object?> json) =>
+      _$PackageLineFromJson(json);
 }

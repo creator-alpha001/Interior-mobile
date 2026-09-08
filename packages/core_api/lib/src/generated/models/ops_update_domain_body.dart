@@ -12,15 +12,14 @@ part 'ops_update_domain_body.g.dart';
 @Freezed()
 abstract class OpsUpdateDomainBody with _$OpsUpdateDomainBody {
   const factory OpsUpdateDomainBody({
-    @Default('')
-    String tagline,
-    @Default('')
-    String description,
+    @Default('') String tagline,
+    @Default('') String description,
     String? name,
     int? defaultCommissionPercent,
     DomainLabelsInput? labels,
     bool? isActive,
   }) = _OpsUpdateDomainBody;
-  
-  factory OpsUpdateDomainBody.fromJson(Map<String, Object?> json) => _$OpsUpdateDomainBodyFromJson(json);
+
+  factory OpsUpdateDomainBody.fromJson(Map<String, Object?> json) =>
+      _$OpsUpdateDomainBodyFromJson(json);
 }

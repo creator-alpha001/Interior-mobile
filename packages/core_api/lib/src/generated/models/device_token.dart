@@ -20,6 +20,7 @@ abstract class DeviceToken with _$DeviceToken {
     required String token,
     required DeviceTokenPlatform platform,
   }) = _DeviceToken;
-  
-  factory DeviceToken.fromJson(Map<String, Object?> json) => _$DeviceTokenFromJson(json);
+
+  factory DeviceToken.fromJson(Map<String, Object?> json) =>
+      _$DeviceTokenFromJson(json);
 }

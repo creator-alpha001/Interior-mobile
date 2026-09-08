@@ -17,6 +17,7 @@ abstract class SessionUser with _$SessionUser {
     required String mobile,
     required String? avatarUrl,
   }) = _SessionUser;
-  
-  factory SessionUser.fromJson(Map<String, Object?> json) => _$SessionUserFromJson(json);
+
+  factory SessionUser.fromJson(Map<String, Object?> json) =>
+      _$SessionUserFromJson(json);
 }

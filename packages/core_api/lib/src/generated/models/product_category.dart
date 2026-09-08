@@ -23,6 +23,7 @@ abstract class ProductCategory with _$ProductCategory {
     required int sortOrder,
     required bool isActive,
   }) = _ProductCategory;
-  
-  factory ProductCategory.fromJson(Map<String, Object?> json) => _$ProductCategoryFromJson(json);
+
+  factory ProductCategory.fromJson(Map<String, Object?> json) =>
+      _$ProductCategoryFromJson(json);
 }

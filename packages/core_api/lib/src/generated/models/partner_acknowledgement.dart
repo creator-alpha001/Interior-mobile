@@ -13,6 +13,7 @@ abstract class PartnerAcknowledgement with _$PartnerAcknowledgement {
     required String key,
     required String label,
   }) = _PartnerAcknowledgement;
-  
-  factory PartnerAcknowledgement.fromJson(Map<String, Object?> json) => _$PartnerAcknowledgementFromJson(json);
+
+  factory PartnerAcknowledgement.fromJson(Map<String, Object?> json) =>
+      _$PartnerAcknowledgementFromJson(json);
 }

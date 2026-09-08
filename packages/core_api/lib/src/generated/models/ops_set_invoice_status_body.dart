@@ -15,6 +15,7 @@ abstract class OpsSetInvoiceStatusBody with _$OpsSetInvoiceStatusBody {
     required InvoiceStatus status,
     String? note,
   }) = _OpsSetInvoiceStatusBody;
-  
-  factory OpsSetInvoiceStatusBody.fromJson(Map<String, Object?> json) => _$OpsSetInvoiceStatusBodyFromJson(json);
+
+  factory OpsSetInvoiceStatusBody.fromJson(Map<String, Object?> json) =>
+      _$OpsSetInvoiceStatusBodyFromJson(json);
 }

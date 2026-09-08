@@ -15,6 +15,7 @@ abstract class DeleteAccountBody with _$DeleteAccountBody {
     required DeleteAccountBodyConfirm confirm,
     String? reason,
   }) = _DeleteAccountBody;
-  
-  factory DeleteAccountBody.fromJson(Map<String, Object?> json) => _$DeleteAccountBodyFromJson(json);
+
+  factory DeleteAccountBody.fromJson(Map<String, Object?> json) =>
+      _$DeleteAccountBodyFromJson(json);
 }

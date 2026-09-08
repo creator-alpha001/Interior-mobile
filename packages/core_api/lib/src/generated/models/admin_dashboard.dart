@@ -18,6 +18,7 @@ abstract class AdminDashboard with _$AdminDashboard {
     required List<DomainSlice> byDomain,
     required List<CitySlice> byCity,
   }) = _AdminDashboard;
-  
-  factory AdminDashboard.fromJson(Map<String, Object?> json) => _$AdminDashboardFromJson(json);
+
+  factory AdminDashboard.fromJson(Map<String, Object?> json) =>
+      _$AdminDashboardFromJson(json);
 }

@@ -21,6 +21,7 @@ abstract class RelayView with _$RelayView {
     required bool clientAwaitingReply,
     required List<RelayThread> vendorThreads,
   }) = _RelayView;
-  
-  factory RelayView.fromJson(Map<String, Object?> json) => _$RelayViewFromJson(json);
+
+  factory RelayView.fromJson(Map<String, Object?> json) =>
+      _$RelayViewFromJson(json);
 }

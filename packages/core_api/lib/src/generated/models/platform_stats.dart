@@ -15,6 +15,7 @@ abstract class PlatformStats with _$PlatformStats {
     required int cities,
     required num avgRating,
   }) = _PlatformStats;
-  
-  factory PlatformStats.fromJson(Map<String, Object?> json) => _$PlatformStatsFromJson(json);
+
+  factory PlatformStats.fromJson(Map<String, Object?> json) =>
+      _$PlatformStatsFromJson(json);
 }

@@ -25,6 +25,7 @@ abstract class ProjectMilestone with _$ProjectMilestone {
     required String? verifiedByUserId,
     required String? verifierNote,
   }) = _ProjectMilestone;
-  
-  factory ProjectMilestone.fromJson(Map<String, Object?> json) => _$ProjectMilestoneFromJson(json);
+
+  factory ProjectMilestone.fromJson(Map<String, Object?> json) =>
+      _$ProjectMilestoneFromJson(json);
 }

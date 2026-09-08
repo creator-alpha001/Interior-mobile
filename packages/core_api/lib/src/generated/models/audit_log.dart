@@ -18,6 +18,7 @@ abstract class AuditLog with _$AuditLog {
     required String summary,
     required String createdAt,
   }) = _AuditLog;
-  
-  factory AuditLog.fromJson(Map<String, Object?> json) => _$AuditLogFromJson(json);
+
+  factory AuditLog.fromJson(Map<String, Object?> json) =>
+      _$AuditLogFromJson(json);
 }

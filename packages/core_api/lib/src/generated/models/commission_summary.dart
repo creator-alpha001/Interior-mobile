@@ -18,6 +18,7 @@ abstract class CommissionSummary with _$CommissionSummary {
     required int dueSoonCount,
     required List<CommissionFocusRow> rows,
   }) = _CommissionSummary;
-  
-  factory CommissionSummary.fromJson(Map<String, Object?> json) => _$CommissionSummaryFromJson(json);
+
+  factory CommissionSummary.fromJson(Map<String, Object?> json) =>
+      _$CommissionSummaryFromJson(json);
 }

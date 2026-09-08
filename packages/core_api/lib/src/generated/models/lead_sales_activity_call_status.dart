@@ -16,28 +16,31 @@ enum LeadSalesActivityCallStatus {
   callbackRequested('callback_requested'),
   @JsonValue('not_interested')
   notInterested('not_interested'),
+
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);
 
   const LeadSalesActivityCallStatus(this.json);
 
-  factory LeadSalesActivityCallStatus.fromJson(String json) => values.firstWhere(
-        (e) => e.json == json,
-        orElse: () => $unknown,
-      );
+  factory LeadSalesActivityCallStatus.fromJson(String json) =>
+      values.firstWhere((e) => e.json == json, orElse: () => $unknown);
 
   final String? json;
   String toJson() {
     final value = json;
     if (value == null) {
-      throw StateError('Cannot convert enum value with null JSON representation to String. '
-          'This usually happens for \$unknown or @JsonValue(null) entries.');
+      throw StateError(
+        'Cannot convert enum value with null JSON representation to String. '
+        'This usually happens for \$unknown or @JsonValue(null) entries.',
+      );
     }
     return value as String;
   }
 
   @override
   String toString() => json?.toString() ?? super.toString();
+
   /// Returns all defined enum values excluding the $unknown value.
-  static List<LeadSalesActivityCallStatus> get $valuesDefined => values.where((value) => value != $unknown).toList();
+  static List<LeadSalesActivityCallStatus> get $valuesDefined =>
+      values.where((value) => value != $unknown).toList();
 }

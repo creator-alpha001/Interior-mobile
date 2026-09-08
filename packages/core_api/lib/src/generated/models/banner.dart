@@ -24,6 +24,6 @@ abstract class Banner with _$Banner {
     required bool isActive,
     required int sortOrder,
   }) = _Banner;
-  
+
   factory Banner.fromJson(Map<String, Object?> json) => _$BannerFromJson(json);
 }

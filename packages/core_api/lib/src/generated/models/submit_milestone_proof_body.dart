@@ -13,6 +13,7 @@ abstract class SubmitMilestoneProofBody with _$SubmitMilestoneProofBody {
     required String note,
     required List<String> proof,
   }) = _SubmitMilestoneProofBody;
-  
-  factory SubmitMilestoneProofBody.fromJson(Map<String, Object?> json) => _$SubmitMilestoneProofBodyFromJson(json);
+
+  factory SubmitMilestoneProofBody.fromJson(Map<String, Object?> json) =>
+      _$SubmitMilestoneProofBodyFromJson(json);
 }

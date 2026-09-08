@@ -22,6 +22,7 @@ abstract class SearchResults with _$SearchResults {
     required List<ProfessionalSummary> professionals,
     required List<BlogPostView> posts,
   }) = _SearchResults;
-  
-  factory SearchResults.fromJson(Map<String, Object?> json) => _$SearchResultsFromJson(json);
+
+  factory SearchResults.fromJson(Map<String, Object?> json) =>
+      _$SearchResultsFromJson(json);
 }

@@ -18,6 +18,7 @@ abstract class BlogCategory with _$BlogCategory {
     required String slug,
     required String description,
   }) = _BlogCategory;
-  
-  factory BlogCategory.fromJson(Map<String, Object?> json) => _$BlogCategoryFromJson(json);
+
+  factory BlogCategory.fromJson(Map<String, Object?> json) =>
+      _$BlogCategoryFromJson(json);
 }

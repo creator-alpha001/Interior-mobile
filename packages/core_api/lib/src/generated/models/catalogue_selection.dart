@@ -19,6 +19,7 @@ abstract class CatalogueSelection with _$CatalogueSelection {
     int? indicativePrice,
     String? notes,
   }) = _CatalogueSelection;
-  
-  factory CatalogueSelection.fromJson(Map<String, Object?> json) => _$CatalogueSelectionFromJson(json);
+
+  factory CatalogueSelection.fromJson(Map<String, Object?> json) =>
+      _$CatalogueSelectionFromJson(json);
 }

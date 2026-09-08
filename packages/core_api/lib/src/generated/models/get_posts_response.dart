@@ -16,6 +16,7 @@ abstract class GetPostsResponse with _$GetPostsResponse {
     required String? nextCursor,
     required int total,
   }) = _GetPostsResponse;
-  
-  factory GetPostsResponse.fromJson(Map<String, Object?> json) => _$GetPostsResponseFromJson(json);
+
+  factory GetPostsResponse.fromJson(Map<String, Object?> json) =>
+      _$GetPostsResponseFromJson(json);
 }

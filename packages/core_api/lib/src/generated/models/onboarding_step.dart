@@ -19,6 +19,7 @@ abstract class OnboardingStep with _$OnboardingStep {
     required bool blocking,
     required String? hint,
   }) = _OnboardingStep;
-  
-  factory OnboardingStep.fromJson(Map<String, Object?> json) => _$OnboardingStepFromJson(json);
+
+  factory OnboardingStep.fromJson(Map<String, Object?> json) =>
+      _$OnboardingStepFromJson(json);
 }

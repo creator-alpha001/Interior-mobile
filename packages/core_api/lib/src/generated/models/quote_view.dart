@@ -18,6 +18,7 @@ abstract class QuoteView with _$QuoteView {
     required ProfessionalSummary professional,
     required Domain domain,
   }) = _QuoteView;
-  
-  factory QuoteView.fromJson(Map<String, Object?> json) => _$QuoteViewFromJson(json);
+
+  factory QuoteView.fromJson(Map<String, Object?> json) =>
+      _$QuoteViewFromJson(json);
 }

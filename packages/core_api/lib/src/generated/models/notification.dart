@@ -25,6 +25,7 @@ abstract class Notification with _$Notification {
     required String? entityId,
     required bool isRead,
   }) = _Notification;
-  
-  factory Notification.fromJson(Map<String, Object?> json) => _$NotificationFromJson(json);
+
+  factory Notification.fromJson(Map<String, Object?> json) =>
+      _$NotificationFromJson(json);
 }

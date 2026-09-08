@@ -32,6 +32,7 @@ abstract class Meeting with _$Meeting {
     required String? outcomeRecordedAt,
     required bool outcomeChangedScope,
   }) = _Meeting;
-  
-  factory Meeting.fromJson(Map<String, Object?> json) => _$MeetingFromJson(json);
+
+  factory Meeting.fromJson(Map<String, Object?> json) =>
+      _$MeetingFromJson(json);
 }

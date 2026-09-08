@@ -9,9 +9,8 @@ part 'set_password.g.dart';
 
 @Freezed()
 abstract class SetPassword with _$SetPassword {
-  const factory SetPassword({
-    required String password,
-  }) = _SetPassword;
-  
-  factory SetPassword.fromJson(Map<String, Object?> json) => _$SetPasswordFromJson(json);
+  const factory SetPassword({required String password}) = _SetPassword;
+
+  factory SetPassword.fromJson(Map<String, Object?> json) =>
+      _$SetPasswordFromJson(json);
 }

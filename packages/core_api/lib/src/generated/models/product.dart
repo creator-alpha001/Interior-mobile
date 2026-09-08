@@ -37,6 +37,7 @@ abstract class Product with _$Product {
     required num rating,
     required int ratingCount,
   }) = _Product;
-  
-  factory Product.fromJson(Map<String, Object?> json) => _$ProductFromJson(json);
+
+  factory Product.fromJson(Map<String, Object?> json) =>
+      _$ProductFromJson(json);
 }

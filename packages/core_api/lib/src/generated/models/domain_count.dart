@@ -11,10 +11,9 @@ part 'domain_count.g.dart';
 
 @Freezed()
 abstract class DomainCount with _$DomainCount {
-  const factory DomainCount({
-    required Domain domain,
-    required int count,
-  }) = _DomainCount;
-  
-  factory DomainCount.fromJson(Map<String, Object?> json) => _$DomainCountFromJson(json);
+  const factory DomainCount({required Domain domain, required int count}) =
+      _DomainCount;
+
+  factory DomainCount.fromJson(Map<String, Object?> json) =>
+      _$DomainCountFromJson(json);
 }

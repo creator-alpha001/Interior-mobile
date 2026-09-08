@@ -16,6 +16,7 @@ abstract class GetProfessionalsResponse with _$GetProfessionalsResponse {
     required String? nextCursor,
     required int total,
   }) = _GetProfessionalsResponse;
-  
-  factory GetProfessionalsResponse.fromJson(Map<String, Object?> json) => _$GetProfessionalsResponseFromJson(json);
+
+  factory GetProfessionalsResponse.fromJson(Map<String, Object?> json) =>
+      _$GetProfessionalsResponseFromJson(json);
 }

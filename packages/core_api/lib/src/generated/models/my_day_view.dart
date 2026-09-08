@@ -25,6 +25,7 @@ abstract class MyDayView with _$MyDayView {
     required int visitsNeedingOutcome,
     required CommissionSummary commission,
   }) = _MyDayView;
-  
-  factory MyDayView.fromJson(Map<String, Object?> json) => _$MyDayViewFromJson(json);
+
+  factory MyDayView.fromJson(Map<String, Object?> json) =>
+      _$MyDayViewFromJson(json);
 }

@@ -27,6 +27,7 @@ abstract class CreateRequirementBody with _$CreateRequirementBody {
     List<String>? photoIds,
     List<CatalogueSelection>? catalogueItems,
   }) = _CreateRequirementBody;
-  
-  factory CreateRequirementBody.fromJson(Map<String, Object?> json) => _$CreateRequirementBodyFromJson(json);
+
+  factory CreateRequirementBody.fromJson(Map<String, Object?> json) =>
+      _$CreateRequirementBodyFromJson(json);
 }

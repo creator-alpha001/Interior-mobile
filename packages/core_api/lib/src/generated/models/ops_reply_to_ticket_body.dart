@@ -9,9 +9,9 @@ part 'ops_reply_to_ticket_body.g.dart';
 
 @Freezed()
 abstract class OpsReplyToTicketBody with _$OpsReplyToTicketBody {
-  const factory OpsReplyToTicketBody({
-    required String body,
-  }) = _OpsReplyToTicketBody;
-  
-  factory OpsReplyToTicketBody.fromJson(Map<String, Object?> json) => _$OpsReplyToTicketBodyFromJson(json);
+  const factory OpsReplyToTicketBody({required String body}) =
+      _OpsReplyToTicketBody;
+
+  factory OpsReplyToTicketBody.fromJson(Map<String, Object?> json) =>
+      _$OpsReplyToTicketBodyFromJson(json);
 }

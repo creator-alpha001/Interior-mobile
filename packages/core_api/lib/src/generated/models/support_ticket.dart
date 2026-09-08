@@ -31,6 +31,7 @@ abstract class SupportTicket with _$SupportTicket {
     required String? assignedToUserId,
     required List<TicketReply> replies,
   }) = _SupportTicket;
-  
-  factory SupportTicket.fromJson(Map<String, Object?> json) => _$SupportTicketFromJson(json);
+
+  factory SupportTicket.fromJson(Map<String, Object?> json) =>
+      _$SupportTicketFromJson(json);
 }

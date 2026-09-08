@@ -48,17 +48,13 @@ abstract class ClientClient {
   ///
   /// Requires a signed-in customer.
   @GET('/me/requirements/{id}')
-  Future<LeadView> getRequirement({
-    @Path('id') required String id,
-  });
+  Future<LeadView> getRequirement({@Path('id') required String id});
 
   /// listServiceMessages.
   ///
   /// Requires a signed-in customer.
   @GET('/me/services/{id}/messages')
-  Future<List<Message>> listServiceMessages({
-    @Path('id') required String id,
-  });
+  Future<List<Message>> listServiceMessages({@Path('id') required String id});
 
   /// sendServiceMessage.
   ///
@@ -96,9 +92,7 @@ abstract class ClientClient {
   ///
   /// Requires a signed-in customer.
   @POST('/me/agreements/{id}/sign')
-  Future<Agreement> signAgreement({
-    @Path('id') required String id,
-  });
+  Future<Agreement> signAgreement({@Path('id') required String id});
 
   /// listProjects.
   ///
@@ -110,9 +104,7 @@ abstract class ClientClient {
   ///
   /// Requires a signed-in customer.
   @POST('/me/reviews')
-  Future<Review> submitReview({
-    @Body() required SubmitReviewBody body,
-  });
+  Future<Review> submitReview({@Body() required SubmitReviewBody body});
 
   /// requestReschedule.
   ///
@@ -145,9 +137,7 @@ abstract class ClientClient {
   ///
   /// Requires a signed-in customer.
   @POST('/me/tickets')
-  Future<SupportTicket> createTicket({
-    @Body() required CreateTicketBody body,
-  });
+  Future<SupportTicket> createTicket({@Body() required CreateTicketBody body});
 
   /// replyToTicket.
   ///

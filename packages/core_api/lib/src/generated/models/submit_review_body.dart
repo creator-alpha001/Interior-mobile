@@ -15,9 +15,9 @@ abstract class SubmitReviewBody with _$SubmitReviewBody {
     int? qualityRating,
     int? timelinessRating,
     int? professionalismRating,
-    @Default('')
-    String comment,
+    @Default('') String comment,
   }) = _SubmitReviewBody;
-  
-  factory SubmitReviewBody.fromJson(Map<String, Object?> json) => _$SubmitReviewBodyFromJson(json);
+
+  factory SubmitReviewBody.fromJson(Map<String, Object?> json) =>
+      _$SubmitReviewBodyFromJson(json);
 }

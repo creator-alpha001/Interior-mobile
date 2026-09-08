@@ -17,6 +17,7 @@ abstract class MediaAsset with _$MediaAsset {
     required MediaAssetType type,
     String? caption,
   }) = _MediaAsset;
-  
-  factory MediaAsset.fromJson(Map<String, Object?> json) => _$MediaAssetFromJson(json);
+
+  factory MediaAsset.fromJson(Map<String, Object?> json) =>
+      _$MediaAssetFromJson(json);
 }

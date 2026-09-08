@@ -16,6 +16,7 @@ abstract class GetProductsResponse with _$GetProductsResponse {
     required String? nextCursor,
     required int total,
   }) = _GetProductsResponse;
-  
-  factory GetProductsResponse.fromJson(Map<String, Object?> json) => _$GetProductsResponseFromJson(json);
+
+  factory GetProductsResponse.fromJson(Map<String, Object?> json) =>
+      _$GetProductsResponseFromJson(json);
 }

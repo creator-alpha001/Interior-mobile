@@ -17,6 +17,7 @@ abstract class BlogTag with _$BlogTag {
     required String name,
     required String slug,
   }) = _BlogTag;
-  
-  factory BlogTag.fromJson(Map<String, Object?> json) => _$BlogTagFromJson(json);
+
+  factory BlogTag.fromJson(Map<String, Object?> json) =>
+      _$BlogTagFromJson(json);
 }

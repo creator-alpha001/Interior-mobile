@@ -16,6 +16,7 @@ abstract class ProductOption with _$ProductOption {
     required String name,
     required List<ProductOptionValue> values,
   }) = _ProductOption;
-  
-  factory ProductOption.fromJson(Map<String, Object?> json) => _$ProductOptionFromJson(json);
+
+  factory ProductOption.fromJson(Map<String, Object?> json) =>
+      _$ProductOptionFromJson(json);
 }

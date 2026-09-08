@@ -27,6 +27,7 @@ abstract class LeadDomainView with _$LeadDomainView {
     required ProfessionalSummary? selectedProfessional,
     required int unreadMessages,
   }) = _LeadDomainView;
-  
-  factory LeadDomainView.fromJson(Map<String, Object?> json) => _$LeadDomainViewFromJson(json);
+
+  factory LeadDomainView.fromJson(Map<String, Object?> json) =>
+      _$LeadDomainViewFromJson(json);
 }

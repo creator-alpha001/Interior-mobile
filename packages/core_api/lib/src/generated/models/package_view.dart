@@ -18,6 +18,7 @@ abstract class PackageView with _$PackageView {
     required Domain domain,
     required List<PackageLine> items,
   }) = _PackageView;
-  
-  factory PackageView.fromJson(Map<String, Object?> json) => _$PackageViewFromJson(json);
+
+  factory PackageView.fromJson(Map<String, Object?> json) =>
+      _$PackageViewFromJson(json);
 }

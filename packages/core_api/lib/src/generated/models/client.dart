@@ -19,6 +19,6 @@ abstract class Client with _$Client {
     required String referralCode,
     required String? referredByUserId,
   }) = _Client;
-  
+
   factory Client.fromJson(Map<String, Object?> json) => _$ClientFromJson(json);
 }

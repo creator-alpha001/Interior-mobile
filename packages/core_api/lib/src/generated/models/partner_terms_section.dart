@@ -13,6 +13,7 @@ abstract class PartnerTermsSection with _$PartnerTermsSection {
     required String heading,
     required String body,
   }) = _PartnerTermsSection;
-  
-  factory PartnerTermsSection.fromJson(Map<String, Object?> json) => _$PartnerTermsSectionFromJson(json);
+
+  factory PartnerTermsSection.fromJson(Map<String, Object?> json) =>
+      _$PartnerTermsSectionFromJson(json);
 }

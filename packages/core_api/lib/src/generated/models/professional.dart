@@ -28,6 +28,7 @@ abstract class Professional with _$Professional {
     required VerificationStatus verificationStatus,
     required num avgResponseHours,
   }) = _Professional;
-  
-  factory Professional.fromJson(Map<String, Object?> json) => _$ProfessionalFromJson(json);
+
+  factory Professional.fromJson(Map<String, Object?> json) =>
+      _$ProfessionalFromJson(json);
 }

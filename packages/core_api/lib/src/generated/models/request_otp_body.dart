@@ -9,9 +9,8 @@ part 'request_otp_body.g.dart';
 
 @Freezed()
 abstract class RequestOtpBody with _$RequestOtpBody {
-  const factory RequestOtpBody({
-    required String mobile,
-  }) = _RequestOtpBody;
-  
-  factory RequestOtpBody.fromJson(Map<String, Object?> json) => _$RequestOtpBodyFromJson(json);
+  const factory RequestOtpBody({required String mobile}) = _RequestOtpBody;
+
+  factory RequestOtpBody.fromJson(Map<String, Object?> json) =>
+      _$RequestOtpBodyFromJson(json);
 }

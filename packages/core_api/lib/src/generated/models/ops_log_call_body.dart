@@ -14,9 +14,9 @@ abstract class OpsLogCallBody with _$OpsLogCallBody {
   const factory OpsLogCallBody({
     required OpsLogCallBodyCallStatus callStatus,
     String? followUpDate,
-    @Default('')
-    String remarks,
+    @Default('') String remarks,
   }) = _OpsLogCallBody;
-  
-  factory OpsLogCallBody.fromJson(Map<String, Object?> json) => _$OpsLogCallBodyFromJson(json);
+
+  factory OpsLogCallBody.fromJson(Map<String, Object?> json) =>
+      _$OpsLogCallBodyFromJson(json);
 }

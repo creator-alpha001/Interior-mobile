@@ -14,6 +14,7 @@ abstract class ProductOptionValue with _$ProductOptionValue {
     required String label,
     required int priceDelta,
   }) = _ProductOptionValue;
-  
-  factory ProductOptionValue.fromJson(Map<String, Object?> json) => _$ProductOptionValueFromJson(json);
+
+  factory ProductOptionValue.fromJson(Map<String, Object?> json) =>
+      _$ProductOptionValueFromJson(json);
 }

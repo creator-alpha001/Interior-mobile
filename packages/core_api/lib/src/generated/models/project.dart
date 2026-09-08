@@ -33,6 +33,7 @@ abstract class Project with _$Project {
     required ProjectStatus status,
     required List<ProjectMilestone> milestones,
   }) = _Project;
-  
-  factory Project.fromJson(Map<String, Object?> json) => _$ProjectFromJson(json);
+
+  factory Project.fromJson(Map<String, Object?> json) =>
+      _$ProjectFromJson(json);
 }

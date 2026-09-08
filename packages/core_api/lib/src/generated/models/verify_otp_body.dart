@@ -15,6 +15,7 @@ abstract class VerifyOtpBody with _$VerifyOtpBody {
     String? name,
     String? cityId,
   }) = _VerifyOtpBody;
-  
-  factory VerifyOtpBody.fromJson(Map<String, Object?> json) => _$VerifyOtpBodyFromJson(json);
+
+  factory VerifyOtpBody.fromJson(Map<String, Object?> json) =>
+      _$VerifyOtpBodyFromJson(json);
 }

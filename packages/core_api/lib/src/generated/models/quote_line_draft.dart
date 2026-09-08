@@ -15,6 +15,7 @@ abstract class QuoteLineDraft with _$QuoteLineDraft {
     required String unit,
     required int rate,
   }) = _QuoteLineDraft;
-  
-  factory QuoteLineDraft.fromJson(Map<String, Object?> json) => _$QuoteLineDraftFromJson(json);
+
+  factory QuoteLineDraft.fromJson(Map<String, Object?> json) =>
+      _$QuoteLineDraftFromJson(json);
 }

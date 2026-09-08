@@ -15,6 +15,7 @@ abstract class UploadTicket with _$UploadTicket {
     required String assetId,
     required String publicUrl,
   }) = _UploadTicket;
-  
-  factory UploadTicket.fromJson(Map<String, Object?> json) => _$UploadTicketFromJson(json);
+
+  factory UploadTicket.fromJson(Map<String, Object?> json) =>
+      _$UploadTicketFromJson(json);
 }

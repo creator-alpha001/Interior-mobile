@@ -23,6 +23,7 @@ abstract class LeadDomainAssignment with _$LeadDomainAssignment {
     required String? respondedAt,
     required String? rejectionReason,
   }) = _LeadDomainAssignment;
-  
-  factory LeadDomainAssignment.fromJson(Map<String, Object?> json) => _$LeadDomainAssignmentFromJson(json);
+
+  factory LeadDomainAssignment.fromJson(Map<String, Object?> json) =>
+      _$LeadDomainAssignmentFromJson(json);
 }

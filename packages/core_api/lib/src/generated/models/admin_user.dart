@@ -17,6 +17,7 @@ abstract class AdminUser with _$AdminUser {
     required String userId,
     required String roleId,
   }) = _AdminUser;
-  
-  factory AdminUser.fromJson(Map<String, Object?> json) => _$AdminUserFromJson(json);
+
+  factory AdminUser.fromJson(Map<String, Object?> json) =>
+      _$AdminUserFromJson(json);
 }

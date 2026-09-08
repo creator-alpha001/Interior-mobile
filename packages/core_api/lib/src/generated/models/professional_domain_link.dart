@@ -16,6 +16,7 @@ abstract class ProfessionalDomainLink with _$ProfessionalDomainLink {
     required ProfessionalDomain link,
     required Domain domain,
   }) = _ProfessionalDomainLink;
-  
-  factory ProfessionalDomainLink.fromJson(Map<String, Object?> json) => _$ProfessionalDomainLinkFromJson(json);
+
+  factory ProfessionalDomainLink.fromJson(Map<String, Object?> json) =>
+      _$ProfessionalDomainLinkFromJson(json);
 }

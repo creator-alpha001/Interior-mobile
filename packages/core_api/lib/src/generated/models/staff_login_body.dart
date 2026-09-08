@@ -14,6 +14,7 @@ abstract class StaffLoginBody with _$StaffLoginBody {
     required String password,
     String? totp,
   }) = _StaffLoginBody;
-  
-  factory StaffLoginBody.fromJson(Map<String, Object?> json) => _$StaffLoginBodyFromJson(json);
+
+  factory StaffLoginBody.fromJson(Map<String, Object?> json) =>
+      _$StaffLoginBodyFromJson(json);
 }

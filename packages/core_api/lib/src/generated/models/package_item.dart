@@ -19,6 +19,7 @@ abstract class PackageItem with _$PackageItem {
     required String label,
     required num quantity,
   }) = _PackageItem;
-  
-  factory PackageItem.fromJson(Map<String, Object?> json) => _$PackageItemFromJson(json);
+
+  factory PackageItem.fromJson(Map<String, Object?> json) =>
+      _$PackageItemFromJson(json);
 }

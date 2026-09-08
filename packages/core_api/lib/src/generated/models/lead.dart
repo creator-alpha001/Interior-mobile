@@ -33,6 +33,6 @@ abstract class Lead with _$Lead {
     required LeadStatus overallStatus,
     required String? assignedSalesAgentId,
   }) = _Lead;
-  
+
   factory Lead.fromJson(Map<String, Object?> json) => _$LeadFromJson(json);
 }

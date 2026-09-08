@@ -16,6 +16,7 @@ abstract class VendorInvoiceView with _$VendorInvoiceView {
     required String agreementReference,
     required List<String> domains,
   }) = _VendorInvoiceView;
-  
-  factory VendorInvoiceView.fromJson(Map<String, Object?> json) => _$VendorInvoiceViewFromJson(json);
+
+  factory VendorInvoiceView.fromJson(Map<String, Object?> json) =>
+      _$VendorInvoiceViewFromJson(json);
 }

@@ -11,9 +11,9 @@ part 'ops_visit_outcome_body.g.dart';
 abstract class OpsVisitOutcomeBody with _$OpsVisitOutcomeBody {
   const factory OpsVisitOutcomeBody({
     required String outcome,
-    @Default(false)
-    bool changedScope,
+    @Default(false) bool changedScope,
   }) = _OpsVisitOutcomeBody;
-  
-  factory OpsVisitOutcomeBody.fromJson(Map<String, Object?> json) => _$OpsVisitOutcomeBodyFromJson(json);
+
+  factory OpsVisitOutcomeBody.fromJson(Map<String, Object?> json) =>
+      _$OpsVisitOutcomeBodyFromJson(json);
 }

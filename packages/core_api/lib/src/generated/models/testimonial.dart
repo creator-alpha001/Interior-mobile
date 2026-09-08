@@ -21,6 +21,7 @@ abstract class Testimonial with _$Testimonial {
     required String quote,
     required String? avatarUrl,
   }) = _Testimonial;
-  
-  factory Testimonial.fromJson(Map<String, Object?> json) => _$TestimonialFromJson(json);
+
+  factory Testimonial.fromJson(Map<String, Object?> json) =>
+      _$TestimonialFromJson(json);
 }

@@ -49,25 +49,19 @@ abstract class PublicClient {
   ///
   /// Send a six-digit code to a mobile number No session required.
   @POST('/auth/otp/request')
-  Future<OtpChallenge> requestOtp({
-    @Body() required RequestOtpBody body,
-  });
+  Future<OtpChallenge> requestOtp({@Body() required RequestOtpBody body});
 
   /// Exchange a code for a session cookie, creating the account if new.
   ///
   /// Exchange a code for a session cookie, creating the account if new No session required.
   @POST('/auth/otp/verify')
-  Future<AuthSession> verifyOtp({
-    @Body() required VerifyOtpBody body,
-  });
+  Future<AuthSession> verifyOtp({@Body() required VerifyOtpBody body});
 
   /// Password and TOTP sign-in for ops and admin.
   ///
   /// Password and TOTP sign-in for ops and admin No session required.
   @POST('/auth/staff/login')
-  Future<AuthSession> staffLogin({
-    @Body() required StaffLoginBody body,
-  });
+  Future<AuthSession> staffLogin({@Body() required StaffLoginBody body});
 
   /// Revoke the current session.
   ///
@@ -85,17 +79,13 @@ abstract class PublicClient {
   ///
   /// Register this handset for push, against the current session No session required.
   @POST('/me/devices')
-  Future<Ok> registerDevice({
-    @Body() required RegisterDeviceBody body,
-  });
+  Future<Ok> registerDevice({@Body() required RegisterDeviceBody body});
 
   /// Stop pushing to this handset.
   ///
   /// Stop pushing to this handset No session required.
   @DELETE('/me/devices/{token}')
-  Future<Ok> forgetDevice({
-    @Path('token') required String token,
-  });
+  Future<Ok> forgetDevice({@Path('token') required String token});
 
   /// Close the account and revoke every session.
   ///
@@ -121,9 +111,7 @@ abstract class PublicClient {
   ///
   /// No session required.
   @GET('/domains/{slug}')
-  Future<Domain> getDomain({
-    @Path('slug') required String slug,
-  });
+  Future<Domain> getDomain({@Path('slug') required String slug});
 
   /// listCities.
   ///
@@ -188,9 +176,7 @@ abstract class PublicClient {
   ///
   /// No session required.
   @GET('/packages/{slug}')
-  Future<PackageView> getPackage({
-    @Path('slug') required String slug,
-  });
+  Future<PackageView> getPackage({@Path('slug') required String slug});
 
   /// catalogueCounts.
   ///
@@ -215,9 +201,7 @@ abstract class PublicClient {
   ///
   /// No session required.
   @GET('/professionals/{id}')
-  Future<ProfessionalProfile> getProfessional({
-    @Path('id') required String id,
-  });
+  Future<ProfessionalProfile> getProfessional({@Path('id') required String id});
 
   /// listPortfolio.
   ///
@@ -251,9 +235,7 @@ abstract class PublicClient {
   ///
   /// No session required.
   @GET('/posts/{slug}')
-  Future<BlogPostView> getPost({
-    @Path('slug') required String slug,
-  });
+  Future<BlogPostView> getPost({@Path('slug') required String slug});
 
   /// listRelatedPosts.
   ///
@@ -301,9 +283,7 @@ abstract class PublicClient {
   ///
   /// No session required.
   @GET('/search/suggest')
-  Future<List<SearchSuggestion>> searchSuggest({
-    @Query('q') required String q,
-  });
+  Future<List<SearchSuggestion>> searchSuggest({@Query('q') required String q});
 
   /// A short-lived URL to PUT one file straight at storage.
   ///

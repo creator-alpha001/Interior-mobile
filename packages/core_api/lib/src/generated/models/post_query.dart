@@ -15,9 +15,9 @@ abstract class PostQuery with _$PostQuery {
     String? tag,
     String? domain,
     String? search,
-    @Default(24)
-    int limit,
+    @Default(24) int limit,
   }) = _PostQuery;
-  
-  factory PostQuery.fromJson(Map<String, Object?> json) => _$PostQueryFromJson(json);
+
+  factory PostQuery.fromJson(Map<String, Object?> json) =>
+      _$PostQueryFromJson(json);
 }

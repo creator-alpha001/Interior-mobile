@@ -15,9 +15,9 @@ abstract class ProfessionalQuery with _$ProfessionalQuery {
     String? city,
     String? search,
     dynamic verifiedOnly,
-    @Default(24)
-    int limit,
+    @Default(24) int limit,
   }) = _ProfessionalQuery;
-  
-  factory ProfessionalQuery.fromJson(Map<String, Object?> json) => _$ProfessionalQueryFromJson(json);
+
+  factory ProfessionalQuery.fromJson(Map<String, Object?> json) =>
+      _$ProfessionalQueryFromJson(json);
 }

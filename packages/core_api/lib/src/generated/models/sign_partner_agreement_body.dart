@@ -15,6 +15,7 @@ abstract class SignPartnerAgreementBody with _$SignPartnerAgreementBody {
     required String signatureText,
     required List<String> acknowledgedClauses,
   }) = _SignPartnerAgreementBody;
-  
-  factory SignPartnerAgreementBody.fromJson(Map<String, Object?> json) => _$SignPartnerAgreementBodyFromJson(json);
+
+  factory SignPartnerAgreementBody.fromJson(Map<String, Object?> json) =>
+      _$SignPartnerAgreementBodyFromJson(json);
 }

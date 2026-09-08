@@ -13,6 +13,7 @@ abstract class OpsReplyToClientBody with _$OpsReplyToClientBody {
     required String body,
     String? sourceMessageId,
   }) = _OpsReplyToClientBody;
-  
-  factory OpsReplyToClientBody.fromJson(Map<String, Object?> json) => _$OpsReplyToClientBodyFromJson(json);
+
+  factory OpsReplyToClientBody.fromJson(Map<String, Object?> json) =>
+      _$OpsReplyToClientBodyFromJson(json);
 }

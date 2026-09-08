@@ -18,6 +18,7 @@ abstract class AgreementLine with _$AgreementLine {
     required Domain domain,
     required Quote quote,
   }) = _AgreementLine;
-  
-  factory AgreementLine.fromJson(Map<String, Object?> json) => _$AgreementLineFromJson(json);
+
+  factory AgreementLine.fromJson(Map<String, Object?> json) =>
+      _$AgreementLineFromJson(json);
 }

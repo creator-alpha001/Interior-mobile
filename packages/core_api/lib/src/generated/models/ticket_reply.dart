@@ -18,6 +18,7 @@ abstract class TicketReply with _$TicketReply {
     required String body,
     required String createdAt,
   }) = _TicketReply;
-  
-  factory TicketReply.fromJson(Map<String, Object?> json) => _$TicketReplyFromJson(json);
+
+  factory TicketReply.fromJson(Map<String, Object?> json) =>
+      _$TicketReplyFromJson(json);
 }

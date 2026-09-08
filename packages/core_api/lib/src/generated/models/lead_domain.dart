@@ -26,6 +26,7 @@ abstract class LeadDomain with _$LeadDomain {
     required String? selectedProfessionalId,
     required String? selectedQuoteId,
   }) = _LeadDomain;
-  
-  factory LeadDomain.fromJson(Map<String, Object?> json) => _$LeadDomainFromJson(json);
+
+  factory LeadDomain.fromJson(Map<String, Object?> json) =>
+      _$LeadDomainFromJson(json);
 }

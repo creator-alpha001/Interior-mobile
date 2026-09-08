@@ -9,9 +9,8 @@ part 'device_token_param.g.dart';
 
 @Freezed()
 abstract class DeviceTokenParam with _$DeviceTokenParam {
-  const factory DeviceTokenParam({
-    required String token,
-  }) = _DeviceTokenParam;
-  
-  factory DeviceTokenParam.fromJson(Map<String, Object?> json) => _$DeviceTokenParamFromJson(json);
+  const factory DeviceTokenParam({required String token}) = _DeviceTokenParam;
+
+  factory DeviceTokenParam.fromJson(Map<String, Object?> json) =>
+      _$DeviceTokenParamFromJson(json);
 }

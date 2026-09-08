@@ -13,6 +13,6 @@ abstract class Ok with _$Ok {
     /// Always true.
     required bool ok,
   }) = _Ok;
-  
+
   factory Ok.fromJson(Map<String, Object?> json) => _$OkFromJson(json);
 }

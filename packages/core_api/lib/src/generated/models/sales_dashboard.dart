@@ -23,6 +23,7 @@ abstract class SalesDashboard with _$SalesDashboard {
     required List<UrgencyCount> byUrgency,
     required List<DomainCount> byDomain,
   }) = _SalesDashboard;
-  
-  factory SalesDashboard.fromJson(Map<String, Object?> json) => _$SalesDashboardFromJson(json);
+
+  factory SalesDashboard.fromJson(Map<String, Object?> json) =>
+      _$SalesDashboardFromJson(json);
 }

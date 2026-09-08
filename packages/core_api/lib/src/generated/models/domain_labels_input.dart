@@ -14,6 +14,7 @@ abstract class DomainLabelsInput with _$DomainLabelsInput {
     required String warranty,
     required String pricingBasis,
   }) = _DomainLabelsInput;
-  
-  factory DomainLabelsInput.fromJson(Map<String, Object?> json) => _$DomainLabelsInputFromJson(json);
+
+  factory DomainLabelsInput.fromJson(Map<String, Object?> json) =>
+      _$DomainLabelsInputFromJson(json);
 }

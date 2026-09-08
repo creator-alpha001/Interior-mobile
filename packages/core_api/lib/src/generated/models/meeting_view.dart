@@ -16,6 +16,7 @@ abstract class MeetingView with _$MeetingView {
     required Meeting meeting,
     required ProfessionalSummary professional,
   }) = _MeetingView;
-  
-  factory MeetingView.fromJson(Map<String, Object?> json) => _$MeetingViewFromJson(json);
+
+  factory MeetingView.fromJson(Map<String, Object?> json) =>
+      _$MeetingViewFromJson(json);
 }

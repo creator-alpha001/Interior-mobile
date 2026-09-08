@@ -35,6 +35,6 @@ abstract class Quote with _$Quote {
     required QuoteStatus status,
     required String? notes,
   }) = _Quote;
-  
+
   factory Quote.fromJson(Map<String, Object?> json) => _$QuoteFromJson(json);
 }

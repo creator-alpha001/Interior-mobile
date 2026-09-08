@@ -42,9 +42,7 @@ abstract class ProfessionalClient {
   ///
   /// Requires a signed-in professional.
   @GET('/vendor/leads/{id}')
-  Future<VendorLeadCard> vendorLead({
-    @Path('id') required String id,
-  });
+  Future<VendorLeadCard> vendorLead({@Path('id') required String id});
 
   /// respondToLead.
   ///
@@ -68,9 +66,7 @@ abstract class ProfessionalClient {
   ///
   /// Requires a signed-in professional.
   @GET('/vendor/leads/{id}/messages')
-  Future<List<Message>> vendorThread({
-    @Path('id') required String id,
-  });
+  Future<List<Message>> vendorThread({@Path('id') required String id});
 
   /// sendVendorMessage.
   ///

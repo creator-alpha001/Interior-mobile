@@ -20,6 +20,7 @@ abstract class InvoiceRow with _$InvoiceRow {
     required bool isCombined,
     required int daysOverdue,
   }) = _InvoiceRow;
-  
-  factory InvoiceRow.fromJson(Map<String, Object?> json) => _$InvoiceRowFromJson(json);
+
+  factory InvoiceRow.fromJson(Map<String, Object?> json) =>
+      _$InvoiceRowFromJson(json);
 }

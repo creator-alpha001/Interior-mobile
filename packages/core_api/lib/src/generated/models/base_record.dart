@@ -14,6 +14,7 @@ abstract class BaseRecord with _$BaseRecord {
     required String updatedAt,
     required String? deletedAt,
   }) = _BaseRecord;
-  
-  factory BaseRecord.fromJson(Map<String, Object?> json) => _$BaseRecordFromJson(json);
+
+  factory BaseRecord.fromJson(Map<String, Object?> json) =>
+      _$BaseRecordFromJson(json);
 }

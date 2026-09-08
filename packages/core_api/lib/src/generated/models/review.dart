@@ -24,6 +24,6 @@ abstract class Review with _$Review {
     required num? timelinessRating,
     required num? professionalismRating,
   }) = _Review;
-  
+
   factory Review.fromJson(Map<String, Object?> json) => _$ReviewFromJson(json);
 }

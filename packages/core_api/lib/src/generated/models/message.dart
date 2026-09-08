@@ -27,6 +27,7 @@ abstract class Message with _$Message {
     required String? readAt,
     required String? relayedFromMessageId,
   }) = _Message;
-  
-  factory Message.fromJson(Map<String, Object?> json) => _$MessageFromJson(json);
+
+  factory Message.fromJson(Map<String, Object?> json) =>
+      _$MessageFromJson(json);
 }

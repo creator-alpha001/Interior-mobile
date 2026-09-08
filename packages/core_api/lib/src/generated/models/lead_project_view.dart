@@ -26,6 +26,7 @@ abstract class LeadProjectView with _$LeadProjectView {
     required String? currentStage,
     required List<ProjectMilestone> milestones,
   }) = _LeadProjectView;
-  
-  factory LeadProjectView.fromJson(Map<String, Object?> json) => _$LeadProjectViewFromJson(json);
+
+  factory LeadProjectView.fromJson(Map<String, Object?> json) =>
+      _$LeadProjectViewFromJson(json);
 }

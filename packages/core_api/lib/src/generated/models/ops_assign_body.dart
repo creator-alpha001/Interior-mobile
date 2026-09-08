@@ -9,9 +9,9 @@ part 'ops_assign_body.g.dart';
 
 @Freezed()
 abstract class OpsAssignBody with _$OpsAssignBody {
-  const factory OpsAssignBody({
-    required List<String> professionalIds,
-  }) = _OpsAssignBody;
-  
-  factory OpsAssignBody.fromJson(Map<String, Object?> json) => _$OpsAssignBodyFromJson(json);
+  const factory OpsAssignBody({required List<String> professionalIds}) =
+      _OpsAssignBody;
+
+  factory OpsAssignBody.fromJson(Map<String, Object?> json) =>
+      _$OpsAssignBodyFromJson(json);
 }

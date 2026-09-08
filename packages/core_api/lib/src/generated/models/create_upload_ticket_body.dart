@@ -17,6 +17,7 @@ abstract class CreateUploadTicketBody with _$CreateUploadTicketBody {
     required String contentType,
     required int sizeBytes,
   }) = _CreateUploadTicketBody;
-  
-  factory CreateUploadTicketBody.fromJson(Map<String, Object?> json) => _$CreateUploadTicketBodyFromJson(json);
+
+  factory CreateUploadTicketBody.fromJson(Map<String, Object?> json) =>
+      _$CreateUploadTicketBodyFromJson(json);
 }

@@ -19,11 +19,10 @@ abstract class ProductQuery with _$ProductQuery {
     String? tags,
     String? city,
     int? maxPrice,
-    @Default(24)
-    int limit,
-    @Default(ProductQuerySort.featured)
-    ProductQuerySort sort,
+    @Default(24) int limit,
+    @Default(ProductQuerySort.featured) ProductQuerySort sort,
   }) = _ProductQuery;
-  
-  factory ProductQuery.fromJson(Map<String, Object?> json) => _$ProductQueryFromJson(json);
+
+  factory ProductQuery.fromJson(Map<String, Object?> json) =>
+      _$ProductQueryFromJson(json);
 }

@@ -16,6 +16,7 @@ abstract class RegisterDeviceBody with _$RegisterDeviceBody {
     required RegisterDeviceBodyPlatform platform,
     String? appVersion,
   }) = _RegisterDeviceBody;
-  
-  factory RegisterDeviceBody.fromJson(Map<String, Object?> json) => _$RegisterDeviceBodyFromJson(json);
+
+  factory RegisterDeviceBody.fromJson(Map<String, Object?> json) =>
+      _$RegisterDeviceBodyFromJson(json);
 }

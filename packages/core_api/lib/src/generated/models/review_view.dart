@@ -18,6 +18,7 @@ abstract class ReviewView with _$ReviewView {
     required Domain domain,
     required String projectTitle,
   }) = _ReviewView;
-  
-  factory ReviewView.fromJson(Map<String, Object?> json) => _$ReviewViewFromJson(json);
+
+  factory ReviewView.fromJson(Map<String, Object?> json) =>
+      _$ReviewViewFromJson(json);
 }

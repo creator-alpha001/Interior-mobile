@@ -29,6 +29,7 @@ abstract class ProfessionalSummary with _$ProfessionalSummary {
     required List<Domain> domains,
     DomainRating? domainRating,
   }) = _ProfessionalSummary;
-  
-  factory ProfessionalSummary.fromJson(Map<String, Object?> json) => _$ProfessionalSummaryFromJson(json);
+
+  factory ProfessionalSummary.fromJson(Map<String, Object?> json) =>
+      _$ProfessionalSummaryFromJson(json);
 }

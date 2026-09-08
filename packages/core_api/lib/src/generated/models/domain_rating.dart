@@ -14,6 +14,7 @@ abstract class DomainRating with _$DomainRating {
     required num avgRating,
     required int ratingCount,
   }) = _DomainRating;
-  
-  factory DomainRating.fromJson(Map<String, Object?> json) => _$DomainRatingFromJson(json);
+
+  factory DomainRating.fromJson(Map<String, Object?> json) =>
+      _$DomainRatingFromJson(json);
 }

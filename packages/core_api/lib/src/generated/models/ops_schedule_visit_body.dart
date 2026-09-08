@@ -17,6 +17,7 @@ abstract class OpsScheduleVisitBody with _$OpsScheduleVisitBody {
     required MeetingType type,
     String? notes,
   }) = _OpsScheduleVisitBody;
-  
-  factory OpsScheduleVisitBody.fromJson(Map<String, Object?> json) => _$OpsScheduleVisitBodyFromJson(json);
+
+  factory OpsScheduleVisitBody.fromJson(Map<String, Object?> json) =>
+      _$OpsScheduleVisitBodyFromJson(json);
 }

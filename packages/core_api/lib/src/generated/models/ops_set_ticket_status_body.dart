@@ -14,6 +14,7 @@ abstract class OpsSetTicketStatusBody with _$OpsSetTicketStatusBody {
   const factory OpsSetTicketStatusBody({
     required OpsSetTicketStatusBodyStatus status,
   }) = _OpsSetTicketStatusBody;
-  
-  factory OpsSetTicketStatusBody.fromJson(Map<String, Object?> json) => _$OpsSetTicketStatusBodyFromJson(json);
+
+  factory OpsSetTicketStatusBody.fromJson(Map<String, Object?> json) =>
+      _$OpsSetTicketStatusBodyFromJson(json);
 }

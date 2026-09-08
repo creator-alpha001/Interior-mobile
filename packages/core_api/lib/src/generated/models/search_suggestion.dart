@@ -14,6 +14,7 @@ abstract class SearchSuggestion with _$SearchSuggestion {
     required String hint,
     required String href,
   }) = _SearchSuggestion;
-  
-  factory SearchSuggestion.fromJson(Map<String, Object?> json) => _$SearchSuggestionFromJson(json);
+
+  factory SearchSuggestion.fromJson(Map<String, Object?> json) =>
+      _$SearchSuggestionFromJson(json);
 }

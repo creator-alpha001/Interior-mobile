@@ -14,6 +14,7 @@ abstract class CatalogueCount with _$CatalogueCount {
     required int products,
     required int packages,
   }) = _CatalogueCount;
-  
-  factory CatalogueCount.fromJson(Map<String, Object?> json) => _$CatalogueCountFromJson(json);
+
+  factory CatalogueCount.fromJson(Map<String, Object?> json) =>
+      _$CatalogueCountFromJson(json);
 }

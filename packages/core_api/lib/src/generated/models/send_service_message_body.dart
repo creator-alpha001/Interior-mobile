@@ -9,9 +9,9 @@ part 'send_service_message_body.g.dart';
 
 @Freezed()
 abstract class SendServiceMessageBody with _$SendServiceMessageBody {
-  const factory SendServiceMessageBody({
-    required String body,
-  }) = _SendServiceMessageBody;
-  
-  factory SendServiceMessageBody.fromJson(Map<String, Object?> json) => _$SendServiceMessageBodyFromJson(json);
+  const factory SendServiceMessageBody({required String body}) =
+      _SendServiceMessageBody;
+
+  factory SendServiceMessageBody.fromJson(Map<String, Object?> json) =>
+      _$SendServiceMessageBodyFromJson(json);
 }

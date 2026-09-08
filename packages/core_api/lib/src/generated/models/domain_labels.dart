@@ -14,6 +14,7 @@ abstract class DomainLabels with _$DomainLabels {
     required String warranty,
     required String pricingBasis,
   }) = _DomainLabels;
-  
-  factory DomainLabels.fromJson(Map<String, Object?> json) => _$DomainLabelsFromJson(json);
+
+  factory DomainLabels.fromJson(Map<String, Object?> json) =>
+      _$DomainLabelsFromJson(json);
 }

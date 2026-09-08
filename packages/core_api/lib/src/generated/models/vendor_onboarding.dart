@@ -23,6 +23,7 @@ abstract class VendorOnboarding with _$VendorOnboarding {
     required PartnerAgreement? agreement,
     required PartnerTerms terms,
   }) = _VendorOnboarding;
-  
-  factory VendorOnboarding.fromJson(Map<String, Object?> json) => _$VendorOnboardingFromJson(json);
+
+  factory VendorOnboarding.fromJson(Map<String, Object?> json) =>
+      _$VendorOnboardingFromJson(json);
 }

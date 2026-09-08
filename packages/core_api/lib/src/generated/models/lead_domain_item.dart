@@ -23,6 +23,7 @@ abstract class LeadDomainItem with _$LeadDomainItem {
     required int? indicativePrice,
     required String? customerNotes,
   }) = _LeadDomainItem;
-  
-  factory LeadDomainItem.fromJson(Map<String, Object?> json) => _$LeadDomainItemFromJson(json);
+
+  factory LeadDomainItem.fromJson(Map<String, Object?> json) =>
+      _$LeadDomainItemFromJson(json);
 }

@@ -34,6 +34,7 @@ abstract class BlogPost with _$BlogPost {
     required String? ogImageUrl,
     required bool isFeatured,
   }) = _BlogPost;
-  
-  factory BlogPost.fromJson(Map<String, Object?> json) => _$BlogPostFromJson(json);
+
+  factory BlogPost.fromJson(Map<String, Object?> json) =>
+      _$BlogPostFromJson(json);
 }

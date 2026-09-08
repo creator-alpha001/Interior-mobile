@@ -18,6 +18,7 @@ abstract class SalesAgent with _$SalesAgent {
     required List<String> assignedCityIds,
     required int dailyTarget,
   }) = _SalesAgent;
-  
-  factory SalesAgent.fromJson(Map<String, Object?> json) => _$SalesAgentFromJson(json);
+
+  factory SalesAgent.fromJson(Map<String, Object?> json) =>
+      _$SalesAgentFromJson(json);
 }

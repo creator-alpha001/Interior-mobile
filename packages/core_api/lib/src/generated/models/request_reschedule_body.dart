@@ -9,10 +9,9 @@ part 'request_reschedule_body.g.dart';
 
 @Freezed()
 abstract class RequestRescheduleBody with _$RequestRescheduleBody {
-  const factory RequestRescheduleBody({
-    @Default('')
-    String note,
-  }) = _RequestRescheduleBody;
-  
-  factory RequestRescheduleBody.fromJson(Map<String, Object?> json) => _$RequestRescheduleBodyFromJson(json);
+  const factory RequestRescheduleBody({@Default('') String note}) =
+      _RequestRescheduleBody;
+
+  factory RequestRescheduleBody.fromJson(Map<String, Object?> json) =>
+      _$RequestRescheduleBodyFromJson(json);
 }

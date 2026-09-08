@@ -9,9 +9,7 @@ part 'count.g.dart';
 
 @Freezed()
 abstract class Count with _$Count {
-  const factory Count({
-    required int count,
-  }) = _Count;
-  
+  const factory Count({required int count}) = _Count;
+
   factory Count.fromJson(Map<String, Object?> json) => _$CountFromJson(json);
 }

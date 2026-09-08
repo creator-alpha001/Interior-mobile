@@ -19,6 +19,7 @@ abstract class VendorVisitView with _$VendorVisitView {
     required MaskedClientSummary client,
     required String leadReference,
   }) = _VendorVisitView;
-  
-  factory VendorVisitView.fromJson(Map<String, Object?> json) => _$VendorVisitViewFromJson(json);
+
+  factory VendorVisitView.fromJson(Map<String, Object?> json) =>
+      _$VendorVisitViewFromJson(json);
 }

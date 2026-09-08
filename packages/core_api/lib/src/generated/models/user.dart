@@ -25,6 +25,6 @@ abstract class User with _$User {
     required UserStatus status,
     required String? avatarUrl,
   }) = _User;
-  
+
   factory User.fromJson(Map<String, Object?> json) => _$UserFromJson(json);
 }

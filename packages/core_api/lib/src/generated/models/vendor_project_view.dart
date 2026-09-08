@@ -21,6 +21,7 @@ abstract class VendorProjectView with _$VendorProjectView {
     required String cityName,
     required Review? review,
   }) = _VendorProjectView;
-  
-  factory VendorProjectView.fromJson(Map<String, Object?> json) => _$VendorProjectViewFromJson(json);
+
+  factory VendorProjectView.fromJson(Map<String, Object?> json) =>
+      _$VendorProjectViewFromJson(json);
 }

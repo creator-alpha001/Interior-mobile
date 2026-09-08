@@ -16,6 +16,7 @@ abstract class AdminTicketRow with _$AdminTicketRow {
     required String raisedByName,
     required String raisedByRole,
   }) = _AdminTicketRow;
-  
-  factory AdminTicketRow.fromJson(Map<String, Object?> json) => _$AdminTicketRowFromJson(json);
+
+  factory AdminTicketRow.fromJson(Map<String, Object?> json) =>
+      _$AdminTicketRowFromJson(json);
 }

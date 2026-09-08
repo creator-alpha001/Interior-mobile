@@ -15,11 +15,10 @@ abstract class OpsCreateDomainBody with _$OpsCreateDomainBody {
     required String name,
     required int defaultCommissionPercent,
     required DomainLabelsInput labels,
-    @Default('')
-    String tagline,
-    @Default('')
-    String description,
+    @Default('') String tagline,
+    @Default('') String description,
   }) = _OpsCreateDomainBody;
-  
-  factory OpsCreateDomainBody.fromJson(Map<String, Object?> json) => _$OpsCreateDomainBodyFromJson(json);
+
+  factory OpsCreateDomainBody.fromJson(Map<String, Object?> json) =>
+      _$OpsCreateDomainBodyFromJson(json);
 }

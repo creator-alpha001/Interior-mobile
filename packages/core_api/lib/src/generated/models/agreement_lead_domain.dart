@@ -19,6 +19,7 @@ abstract class AgreementLeadDomain with _$AgreementLeadDomain {
     required String quoteId,
     required int value,
   }) = _AgreementLeadDomain;
-  
-  factory AgreementLeadDomain.fromJson(Map<String, Object?> json) => _$AgreementLeadDomainFromJson(json);
+
+  factory AgreementLeadDomain.fromJson(Map<String, Object?> json) =>
+      _$AgreementLeadDomainFromJson(json);
 }

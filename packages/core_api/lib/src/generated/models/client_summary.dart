@@ -20,6 +20,7 @@ abstract class ClientSummary with _$ClientSummary {
     required City city,
     required String? address,
   }) = _ClientSummary;
-  
-  factory ClientSummary.fromJson(Map<String, Object?> json) => _$ClientSummaryFromJson(json);
+
+  factory ClientSummary.fromJson(Map<String, Object?> json) =>
+      _$ClientSummaryFromJson(json);
 }

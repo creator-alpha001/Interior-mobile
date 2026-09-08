@@ -33,6 +33,11 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # Only for the Hindi widget tests. The app composes these delegates in
+  # `main.dart`; a screen pumped on its own has no MaterialLocalizations,
+  # and an AppBar asserts without one.
+  flutter_localizations:
+    sdk: flutter
   flutter_lints: ^6.0.0
   dio: ^5.7.0
 

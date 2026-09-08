@@ -20,6 +20,7 @@ abstract class CommissionFocusRow with _$CommissionFocusRow {
     required int daysOverdue,
     required List<String> domains,
   }) = _CommissionFocusRow;
-  
-  factory CommissionFocusRow.fromJson(Map<String, Object?> json) => _$CommissionFocusRowFromJson(json);
+
+  factory CommissionFocusRow.fromJson(Map<String, Object?> json) =>
+      _$CommissionFocusRowFromJson(json);
 }

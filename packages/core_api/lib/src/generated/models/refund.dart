@@ -24,6 +24,6 @@ abstract class Refund with _$Refund {
     required String? processedAt,
     required String? handledByUserId,
   }) = _Refund;
-  
+
   factory Refund.fromJson(Map<String, Object?> json) => _$RefundFromJson(json);
 }

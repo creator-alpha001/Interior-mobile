@@ -18,6 +18,7 @@ abstract class ProfessionalServiceArea with _$ProfessionalServiceArea {
     required String cityId,
     required List<String> localities,
   }) = _ProfessionalServiceArea;
-  
-  factory ProfessionalServiceArea.fromJson(Map<String, Object?> json) => _$ProfessionalServiceAreaFromJson(json);
+
+  factory ProfessionalServiceArea.fromJson(Map<String, Object?> json) =>
+      _$ProfessionalServiceAreaFromJson(json);
 }

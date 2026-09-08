@@ -17,11 +17,10 @@ abstract class SubmitQuoteBody with _$SubmitQuoteBody {
     required int timelineDays,
     required int warrantyMonths,
     String? notes,
-    @Default('')
-    String warrantyDetails,
-    @Default('')
-    String materialsSummary,
+    @Default('') String warrantyDetails,
+    @Default('') String materialsSummary,
   }) = _SubmitQuoteBody;
-  
-  factory SubmitQuoteBody.fromJson(Map<String, Object?> json) => _$SubmitQuoteBodyFromJson(json);
+
+  factory SubmitQuoteBody.fromJson(Map<String, Object?> json) =>
+      _$SubmitQuoteBodyFromJson(json);
 }

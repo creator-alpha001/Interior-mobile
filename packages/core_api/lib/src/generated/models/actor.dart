@@ -41,6 +41,5 @@ sealed class Actor with _$Actor {
     required String userId,
   }) = ActorAdmin;
 
-  
   factory Actor.fromJson(Map<String, Object?> json) => _$ActorFromJson(json);
 }

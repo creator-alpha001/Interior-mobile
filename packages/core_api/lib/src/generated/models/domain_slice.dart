@@ -22,6 +22,7 @@ abstract class DomainSlice with _$DomainSlice {
     required num conversionPercent,
     required int vendors,
   }) = _DomainSlice;
-  
-  factory DomainSlice.fromJson(Map<String, Object?> json) => _$DomainSliceFromJson(json);
+
+  factory DomainSlice.fromJson(Map<String, Object?> json) =>
+      _$DomainSliceFromJson(json);
 }

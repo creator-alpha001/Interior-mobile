@@ -15,6 +15,7 @@ abstract class ReferralEntry with _$ReferralEntry {
     required Referral referral,
     required String name,
   }) = _ReferralEntry;
-  
-  factory ReferralEntry.fromJson(Map<String, Object?> json) => _$ReferralEntryFromJson(json);
+
+  factory ReferralEntry.fromJson(Map<String, Object?> json) =>
+      _$ReferralEntryFromJson(json);
 }

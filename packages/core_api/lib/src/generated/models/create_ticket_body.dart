@@ -18,6 +18,7 @@ abstract class CreateTicketBody with _$CreateTicketBody {
     String? leadId,
     String? projectId,
   }) = _CreateTicketBody;
-  
-  factory CreateTicketBody.fromJson(Map<String, Object?> json) => _$CreateTicketBodyFromJson(json);
+
+  factory CreateTicketBody.fromJson(Map<String, Object?> json) =>
+      _$CreateTicketBodyFromJson(json);
 }

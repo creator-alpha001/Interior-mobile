@@ -15,6 +15,7 @@ abstract class OpsSetVendorDomainBody with _$OpsSetVendorDomainBody {
     DomainApprovalStatus? status,
     int? commissionPercentOverride,
   }) = _OpsSetVendorDomainBody;
-  
-  factory OpsSetVendorDomainBody.fromJson(Map<String, Object?> json) => _$OpsSetVendorDomainBodyFromJson(json);
+
+  factory OpsSetVendorDomainBody.fromJson(Map<String, Object?> json) =>
+      _$OpsSetVendorDomainBodyFromJson(json);
 }

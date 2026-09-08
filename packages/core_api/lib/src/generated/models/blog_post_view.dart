@@ -19,6 +19,7 @@ abstract class BlogPostView with _$BlogPostView {
     required List<String> tags,
     required Domain? domain,
   }) = _BlogPostView;
-  
-  factory BlogPostView.fromJson(Map<String, Object?> json) => _$BlogPostViewFromJson(json);
+
+  factory BlogPostView.fromJson(Map<String, Object?> json) =>
+      _$BlogPostViewFromJson(json);
 }

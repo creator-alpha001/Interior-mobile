@@ -22,6 +22,7 @@ abstract class LeadView with _$LeadView {
     required List<String> domainNames,
     required bool isMultiDomain,
   }) = _LeadView;
-  
-  factory LeadView.fromJson(Map<String, Object?> json) => _$LeadViewFromJson(json);
+
+  factory LeadView.fromJson(Map<String, Object?> json) =>
+      _$LeadViewFromJson(json);
 }

@@ -28,6 +28,7 @@ abstract class PartnerAgreement with _$PartnerAgreement {
     required String? signedUserAgent,
     required String? documentUrl,
   }) = _PartnerAgreement;
-  
-  factory PartnerAgreement.fromJson(Map<String, Object?> json) => _$PartnerAgreementFromJson(json);
+
+  factory PartnerAgreement.fromJson(Map<String, Object?> json) =>
+      _$PartnerAgreementFromJson(json);
 }

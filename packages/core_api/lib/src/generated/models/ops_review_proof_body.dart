@@ -9,10 +9,9 @@ part 'ops_review_proof_body.g.dart';
 
 @Freezed()
 abstract class OpsReviewProofBody with _$OpsReviewProofBody {
-  const factory OpsReviewProofBody({
-    required bool approve,
-    String? note,
-  }) = _OpsReviewProofBody;
-  
-  factory OpsReviewProofBody.fromJson(Map<String, Object?> json) => _$OpsReviewProofBodyFromJson(json);
+  const factory OpsReviewProofBody({required bool approve, String? note}) =
+      _OpsReviewProofBody;
+
+  factory OpsReviewProofBody.fromJson(Map<String, Object?> json) =>
+      _$OpsReviewProofBodyFromJson(json);
 }

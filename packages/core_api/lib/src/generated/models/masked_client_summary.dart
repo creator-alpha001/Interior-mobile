@@ -20,6 +20,7 @@ abstract class MaskedClientSummary with _$MaskedClientSummary {
     /// Always false.
     required bool contactReleased,
   }) = _MaskedClientSummary;
-  
-  factory MaskedClientSummary.fromJson(Map<String, Object?> json) => _$MaskedClientSummaryFromJson(json);
+
+  factory MaskedClientSummary.fromJson(Map<String, Object?> json) =>
+      _$MaskedClientSummaryFromJson(json);
 }

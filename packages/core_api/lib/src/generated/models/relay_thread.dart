@@ -17,6 +17,7 @@ abstract class RelayThread with _$RelayThread {
     required List<Message> messages,
     required bool awaitingReply,
   }) = _RelayThread;
-  
-  factory RelayThread.fromJson(Map<String, Object?> json) => _$RelayThreadFromJson(json);
+
+  factory RelayThread.fromJson(Map<String, Object?> json) =>
+      _$RelayThreadFromJson(json);
 }

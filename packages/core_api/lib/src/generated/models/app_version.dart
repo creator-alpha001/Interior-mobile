@@ -9,10 +9,9 @@ part 'app_version.g.dart';
 
 @Freezed()
 abstract class AppVersion with _$AppVersion {
-  const factory AppVersion({
-    required int minBuild,
-    required String message,
-  }) = _AppVersion;
-  
-  factory AppVersion.fromJson(Map<String, Object?> json) => _$AppVersionFromJson(json);
+  const factory AppVersion({required int minBuild, required String message}) =
+      _AppVersion;
+
+  factory AppVersion.fromJson(Map<String, Object?> json) =>
+      _$AppVersionFromJson(json);
 }

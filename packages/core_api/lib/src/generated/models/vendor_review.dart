@@ -17,6 +17,7 @@ abstract class VendorReview with _$VendorReview {
     required Domain domain,
     required String clientName,
   }) = _VendorReview;
-  
-  factory VendorReview.fromJson(Map<String, Object?> json) => _$VendorReviewFromJson(json);
+
+  factory VendorReview.fromJson(Map<String, Object?> json) =>
+      _$VendorReviewFromJson(json);
 }

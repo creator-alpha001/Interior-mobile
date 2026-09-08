@@ -24,6 +24,7 @@ abstract class VendorRow with _$VendorRow {
     required int outstandingCommission,
     required bool hasSignedPartnerAgreement,
   }) = _VendorRow;
-  
-  factory VendorRow.fromJson(Map<String, Object?> json) => _$VendorRowFromJson(json);
+
+  factory VendorRow.fromJson(Map<String, Object?> json) =>
+      _$VendorRowFromJson(json);
 }

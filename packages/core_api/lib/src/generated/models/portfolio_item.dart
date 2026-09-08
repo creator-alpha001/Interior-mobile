@@ -24,6 +24,7 @@ abstract class PortfolioItem with _$PortfolioItem {
     required List<MediaAsset> media,
     required DomainApprovalStatus moderationStatus,
   }) = _PortfolioItem;
-  
-  factory PortfolioItem.fromJson(Map<String, Object?> json) => _$PortfolioItemFromJson(json);
+
+  factory PortfolioItem.fromJson(Map<String, Object?> json) =>
+      _$PortfolioItemFromJson(json);
 }

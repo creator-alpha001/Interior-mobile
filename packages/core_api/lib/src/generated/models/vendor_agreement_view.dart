@@ -23,6 +23,7 @@ abstract class VendorAgreementView with _$VendorAgreementView {
     required List<AgreementProject> projects,
     required CommissionInvoice? invoice,
   }) = _VendorAgreementView;
-  
-  factory VendorAgreementView.fromJson(Map<String, Object?> json) => _$VendorAgreementViewFromJson(json);
+
+  factory VendorAgreementView.fromJson(Map<String, Object?> json) =>
+      _$VendorAgreementViewFromJson(json);
 }

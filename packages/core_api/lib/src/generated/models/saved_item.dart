@@ -18,6 +18,7 @@ abstract class SavedItem with _$SavedItem {
     required String? productId,
     required String? packageId,
   }) = _SavedItem;
-  
-  factory SavedItem.fromJson(Map<String, Object?> json) => _$SavedItemFromJson(json);
+
+  factory SavedItem.fromJson(Map<String, Object?> json) =>
+      _$SavedItemFromJson(json);
 }

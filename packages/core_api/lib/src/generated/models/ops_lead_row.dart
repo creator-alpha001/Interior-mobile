@@ -21,6 +21,7 @@ abstract class OpsLeadRow with _$OpsLeadRow {
     required int awaitingReply,
     required int ageDays,
   }) = _OpsLeadRow;
-  
-  factory OpsLeadRow.fromJson(Map<String, Object?> json) => _$OpsLeadRowFromJson(json);
+
+  factory OpsLeadRow.fromJson(Map<String, Object?> json) =>
+      _$OpsLeadRowFromJson(json);
 }

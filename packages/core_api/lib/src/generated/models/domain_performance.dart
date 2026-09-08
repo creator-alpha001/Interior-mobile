@@ -21,6 +21,7 @@ abstract class DomainPerformance with _$DomainPerformance {
     required num winRatePercent,
     required num commissionPercent,
   }) = _DomainPerformance;
-  
-  factory DomainPerformance.fromJson(Map<String, Object?> json) => _$DomainPerformanceFromJson(json);
+
+  factory DomainPerformance.fromJson(Map<String, Object?> json) =>
+      _$DomainPerformanceFromJson(json);
 }

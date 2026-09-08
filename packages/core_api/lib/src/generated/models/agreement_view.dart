@@ -25,6 +25,7 @@ abstract class AgreementView with _$AgreementView {
     required List<ProjectView> projects,
     required CommissionInvoice? invoice,
   }) = _AgreementView;
-  
-  factory AgreementView.fromJson(Map<String, Object?> json) => _$AgreementViewFromJson(json);
+
+  factory AgreementView.fromJson(Map<String, Object?> json) =>
+      _$AgreementViewFromJson(json);
 }

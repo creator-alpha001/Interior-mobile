@@ -21,9 +21,9 @@ abstract class LeadQueue with _$LeadQueue {
     String? agentId,
     String? search,
     dynamic needsAssignment,
-    @Default(24)
-    int limit,
+    @Default(24) int limit,
   }) = _LeadQueue;
-  
-  factory LeadQueue.fromJson(Map<String, Object?> json) => _$LeadQueueFromJson(json);
+
+  factory LeadQueue.fromJson(Map<String, Object?> json) =>
+      _$LeadQueueFromJson(json);
 }

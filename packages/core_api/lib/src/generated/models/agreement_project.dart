@@ -16,6 +16,7 @@ abstract class AgreementProject with _$AgreementProject {
     required Project project,
     required Domain domain,
   }) = _AgreementProject;
-  
-  factory AgreementProject.fromJson(Map<String, Object?> json) => _$AgreementProjectFromJson(json);
+
+  factory AgreementProject.fromJson(Map<String, Object?> json) =>
+      _$AgreementProjectFromJson(json);
 }

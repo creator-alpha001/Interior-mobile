@@ -23,6 +23,7 @@ abstract class LeadSalesActivity with _$LeadSalesActivity {
     required String? recordingUrl,
     required String? followUpDate,
   }) = _LeadSalesActivity;
-  
-  factory LeadSalesActivity.fromJson(Map<String, Object?> json) => _$LeadSalesActivityFromJson(json);
+
+  factory LeadSalesActivity.fromJson(Map<String, Object?> json) =>
+      _$LeadSalesActivityFromJson(json);
 }

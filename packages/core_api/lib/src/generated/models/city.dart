@@ -16,6 +16,6 @@ abstract class City with _$City {
     required String state,
     required bool isActive,
   }) = _City;
-  
+
   factory City.fromJson(Map<String, Object?> json) => _$CityFromJson(json);
 }

@@ -29,6 +29,7 @@ abstract class Agreement with _$Agreement {
     required String? startDate,
     required String? cancelledReason,
   }) = _Agreement;
-  
-  factory Agreement.fromJson(Map<String, Object?> json) => _$AgreementFromJson(json);
+
+  factory Agreement.fromJson(Map<String, Object?> json) =>
+      _$AgreementFromJson(json);
 }

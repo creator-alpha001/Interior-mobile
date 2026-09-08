@@ -19,6 +19,7 @@ abstract class ProductView with _$ProductView {
     required ProductCategory category,
     required int effectivePrice,
   }) = _ProductView;
-  
-  factory ProductView.fromJson(Map<String, Object?> json) => _$ProductViewFromJson(json);
+
+  factory ProductView.fromJson(Map<String, Object?> json) =>
+      _$ProductViewFromJson(json);
 }

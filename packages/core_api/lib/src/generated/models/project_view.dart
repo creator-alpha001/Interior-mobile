@@ -22,6 +22,7 @@ abstract class ProjectView with _$ProjectView {
     required ClientSummary client,
     required Review? review,
   }) = _ProjectView;
-  
-  factory ProjectView.fromJson(Map<String, Object?> json) => _$ProjectViewFromJson(json);
+
+  factory ProjectView.fromJson(Map<String, Object?> json) =>
+      _$ProjectViewFromJson(json);
 }

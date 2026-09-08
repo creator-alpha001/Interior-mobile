@@ -15,6 +15,7 @@ abstract class RespondToLeadBody with _$RespondToLeadBody {
     required RespondToLeadBodyResponse response,
     String? reason,
   }) = _RespondToLeadBody;
-  
-  factory RespondToLeadBody.fromJson(Map<String, Object?> json) => _$RespondToLeadBodyFromJson(json);
+
+  factory RespondToLeadBody.fromJson(Map<String, Object?> json) =>
+      _$RespondToLeadBodyFromJson(json);
 }

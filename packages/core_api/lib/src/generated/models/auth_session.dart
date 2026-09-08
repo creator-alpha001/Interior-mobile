@@ -49,6 +49,6 @@ sealed class AuthSession with _$AuthSession {
     String? expiresAt,
   }) = AuthSessionAdmin;
 
-  
-  factory AuthSession.fromJson(Map<String, Object?> json) => _$AuthSessionFromJson(json);
+  factory AuthSession.fromJson(Map<String, Object?> json) =>
+      _$AuthSessionFromJson(json);
 }

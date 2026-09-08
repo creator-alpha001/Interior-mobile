@@ -20,6 +20,7 @@ abstract class PartnerTerms with _$PartnerTerms {
     required List<PartnerTermsSection> sections,
     required List<PartnerAcknowledgement> acknowledgements,
   }) = _PartnerTerms;
-  
-  factory PartnerTerms.fromJson(Map<String, Object?> json) => _$PartnerTermsFromJson(json);
+
+  factory PartnerTerms.fromJson(Map<String, Object?> json) =>
+      _$PartnerTermsFromJson(json);
 }

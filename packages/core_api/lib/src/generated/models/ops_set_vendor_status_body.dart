@@ -11,9 +11,9 @@ part 'ops_set_vendor_status_body.g.dart';
 
 @Freezed()
 abstract class OpsSetVendorStatusBody with _$OpsSetVendorStatusBody {
-  const factory OpsSetVendorStatusBody({
-    required VerificationStatus status,
-  }) = _OpsSetVendorStatusBody;
-  
-  factory OpsSetVendorStatusBody.fromJson(Map<String, Object?> json) => _$OpsSetVendorStatusBodyFromJson(json);
+  const factory OpsSetVendorStatusBody({required VerificationStatus status}) =
+      _OpsSetVendorStatusBody;
+
+  factory OpsSetVendorStatusBody.fromJson(Map<String, Object?> json) =>
+      _$OpsSetVendorStatusBodyFromJson(json);
 }

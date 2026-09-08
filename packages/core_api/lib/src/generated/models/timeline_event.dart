@@ -20,6 +20,7 @@ abstract class TimelineEvent with _$TimelineEvent {
     required String? domainName,
     required String? actor,
   }) = _TimelineEvent;
-  
-  factory TimelineEvent.fromJson(Map<String, Object?> json) => _$TimelineEventFromJson(json);
+
+  factory TimelineEvent.fromJson(Map<String, Object?> json) =>
+      _$TimelineEventFromJson(json);
 }

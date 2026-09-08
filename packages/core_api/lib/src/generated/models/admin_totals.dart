@@ -20,6 +20,7 @@ abstract class AdminTotals with _$AdminTotals {
     required int commissionOverdue,
     required int openTickets,
   }) = _AdminTotals;
-  
-  factory AdminTotals.fromJson(Map<String, Object?> json) => _$AdminTotalsFromJson(json);
+
+  factory AdminTotals.fromJson(Map<String, Object?> json) =>
+      _$AdminTotalsFromJson(json);
 }
