@@ -59,6 +59,27 @@ Whichever, say so in the review notes. A reviewer stuck at an OTP screen rejects
 
 ---
 
+## Size, and what to actually upload
+
+A release build works today, unsigned. The numbers, so nobody is surprised by
+the fat one:
+
+| Build | Size |
+| --- | --- |
+| `--release` (all ABIs in one APK) | 54.0 MB |
+| `--release --split-per-abi`, arm64 | 19.0 MB |
+| `--release --split-per-abi`, armeabi-v7a | 16.8 MB |
+
+**Upload an app bundle, not an APK.** `flutter build appbundle` lets Play serve
+each device only its own ABI, which is the 17–19 MB figure rather than the 54 MB
+one. On the connections this audience has, that difference is the difference
+between an install that completes and one somebody abandons.
+
+The three faces still to bundle add roughly 1 MB in total, and none of it is
+per-ABI.
+
+---
+
 ## Store listing
 
 Copy below is a starting point in the product's own voice. Not written to
