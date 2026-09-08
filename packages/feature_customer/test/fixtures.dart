@@ -176,3 +176,54 @@ ProjectView fixtureProjectView({List<ProjectMilestone>? milestones}) =>
       client: _client,
       review: null,
     );
+
+/// One requirement, wrapping whatever services it was given.
+///
+/// `notifications_test.dart` needs a requirement only so the notification list
+/// has somewhere to resolve a `leadDomainId` against — that lookup is the whole
+/// mechanism by which a tap reaches a record rather than a list.
+LeadView fixtureRequirement({List<LeadDomainView>? services}) => LeadView(
+  lead: Lead(
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    deletedAt: null,
+    id: 'lead-1',
+    reference: 'REQ-1042',
+    clientId: 'c1',
+    cityId: 'city-1',
+    description: 'Two wardrobes and a study unit.',
+    urgency: Urgency.withinMonth,
+    budgetMin: null,
+    budgetMax: 500000,
+    siteAccessibilityTags: const [],
+    photos: const [],
+    source: LeadSource.app,
+    overallStatus: LeadStatus.inProgress,
+    assignedSalesAgentId: null,
+  ),
+  client: _client,
+  city: _city,
+  domains: services ?? [fixtureService()],
+  domainNames: const ['Furniture Work'],
+  isMultiDomain: false,
+);
+
+/// A notification pointing at something.
+Notification fixtureNotification({
+  NotificationEntityType? entityType,
+  String? entityId,
+  NotificationType type = NotificationType.messageReceived,
+  bool isRead = false,
+}) => Notification(
+  createdAt: '2026-02-01T00:00:00.000Z',
+  updatedAt: '2026-02-01T00:00:00.000Z',
+  deletedAt: null,
+  id: 'n-1',
+  userId: 'u1',
+  type: type,
+  title: 'Aangan replied about your wardrobes',
+  body: 'The carpenter has answered your question about the board.',
+  entityType: entityType,
+  entityId: entityId,
+  isRead: isRead,
+);

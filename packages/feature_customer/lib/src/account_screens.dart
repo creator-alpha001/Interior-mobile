@@ -18,7 +18,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'async_view.dart';
+import 'customer_shell.dart';
 import 'providers.dart';
+import 'quote_comparison.dart';
 
 /// Every read these screens need already exists in `providers.dart`.
 ///
@@ -99,17 +101,88 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
   }
 }
 
-class _NotificationRow extends StatelessWidget {
+/// Where a notification's own record lives, given what is loaded.
+///
+/// `core_push`'s `deepLinkFor` answers the same question as a URL — for a
+/// router that does not have these routes yet, because both shells are
+/// `IndexedStack`s with their own `Navigator` rather than nested go_router
+/// routes. This answers it as a *widget*, which is the form today's
+/// architecture can actually use. When the shells move onto nested routes the
+/// two collapse into one table, and that is the right time to do it — not by
+/// half-parsing a location string here.
+///
+/// Returns null when there is no screen addressed by that id. A row that does
+/// nothing is better than one that opens a list and leaves somebody to find
+/// the thing again, and the row does not look tappable when this is null.
+Widget? _recordFor(Notification notification, List<LeadView> requirements) {
+  final id = notification.entityId;
+  if (id == null) return null;
+
+  /// The service the notification is about, found across every requirement.
+  ///
+  /// `orElse` rather than `firstWhere`'s throw: a notification can outlive the
+  /// requirement it points at, and an exception inside a list builder would
+  /// take down a screen whose whole job is to be readable.
+  (LeadView, LeadDomainView)? service;
+  for (final requirement in requirements) {
+    for (final domain in requirement.domains) {
+      if (domain.leadDomain.id == id) service = (requirement, domain);
+    }
+  }
+
+  return switch (notification.entityType) {
+    NotificationEntityType.message when service != null => ServiceThreadScreen(
+      leadDomainId: service.$2.leadDomain.id,
+      title: service.$2.domain.name,
+    ),
+
+    // Quotes are compared per service, and the screen needs the requirement
+    // it belongs to as well as the service itself.
+    NotificationEntityType.quote when service != null =>
+      service.$2.quotes.isEmpty
+          ? null
+          : QuoteComparisonScreen(
+              service: service.$2,
+              requirementId: service.$1.lead.id,
+            ),
+    NotificationEntityType.leadDomain when service != null =>
+      service.$2.quotes.isEmpty
+          ? null
+          : QuoteComparisonScreen(
+              service: service.$2,
+              requirementId: service.$1.lead.id,
+            ),
+
+    _ => null,
+  };
+}
+
+class _NotificationRow extends ConsumerWidget {
   const _NotificationRow({required this.notification});
 
   final Notification notification;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    /// Whatever is already loaded, and nothing fetched for this.
+    ///
+    /// The Jobs tab has almost always run by the time somebody opens their
+    /// notifications. If it has not, the row is simply not tappable — which is
+    /// the honest state, and better than a spinner on a list row.
+    final requirements = ref
+        .watch(requirementsProvider)
+        .maybeWhen(data: (list) => list, orElse: () => const <LeadView>[]);
+    final record = _recordFor(notification, requirements);
+
     return AanganCard(
       // Unread sits on the peach panel. It is the one colour that means "you",
       // and an unread notification is by definition waiting on the reader.
       nested: notification.isRead,
+      onTap: record == null
+          ? null
+          : () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => record)),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

@@ -4,16 +4,23 @@
 /// get there given how the shells are actually built.
 ///
 /// **What works, and what does not.** The shells are `IndexedStack`s with their
-/// own `Navigator`, not nested `go_router` routes — which means a deep link can
-/// select the right shell and the right *tab* today, but cannot yet open a
-/// specific record. So `newLead` lands on the vendor's Leads tab rather than on
-/// lead `ld-42`.
+/// own `Navigator`, not nested `go_router` routes — which means a *push* tap
+/// can select the right shell and the right tab, but cannot address a record by
+/// URL. So `newLead` lands on the vendor's Leads tab rather than on lead
+/// `ld-42`.
 ///
-/// That is short of MOBILE.md §9's bar for M12 — *"Every push in 7.2 lands on
-/// the right screen"* — and closing it means moving both shells onto nested
-/// routes so every record has a URL. That is a real restructure and is recorded
-/// in the README rather than half-done here: a deep link that silently drops
-/// its id is worse than one that admits it only reaches the list.
+/// The **in-app** notification list does reach the record, by a different road:
+/// `_recordFor` in `feature_customer/src/account_screens.dart` resolves the
+/// entity id against what is already loaded and pushes the screen onto the
+/// tab's own `Navigator`. That is the same question this file answers, in the
+/// form today's architecture can use — and it is the half that matters most
+/// right now, because push is inert until a Firebase project exists.
+///
+/// The remaining gap is a cold start from a push, and closing it means moving
+/// both shells onto nested routes so every record has a URL. That is a real
+/// restructure, and the two tables collapse into one when it happens. Recorded
+/// rather than half-done: a deep link that silently drops its id is worse than
+/// one that admits it only reaches the list.
 library;
 
 import 'package:aangan_core_api/aangan_core_api.dart';
