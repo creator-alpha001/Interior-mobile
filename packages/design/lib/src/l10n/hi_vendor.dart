@@ -239,4 +239,33 @@ const hiVendor = <String, String>{
   'Not yet rated': 'अभी रेटिंग नहीं',
   'Overall': 'कुल मिलाकर',
   'Across every trade': 'सभी कामों में',
+  // ---- agreements ----
+  'Contracts you have won': 'आपके जीते हुए एग्रीमेंट',
+  'One is drawn up when a customer picks your quote.':
+      'जब कोई ग्राहक आपका कोटेशन चुनता है, तब एग्रीमेंट बनता है।',
+
+  /// The sentence that stops a vendor invoicing twice for one contract.
+  'One contract covering {n} job. Execution still runs per job, and commission is invoiced once.':
+      'एक ही एग्रीमेंट, {n} काम के लिए। काम फिर भी अलग-अलग चलता है, और कमीशन का बिल एक ही बार बनता है।',
+  'One contract covering {n} jobs. Execution still runs per job, and commission is invoiced once.':
+      'एक ही एग्रीमेंट, {n} कामों के लिए। काम फिर भी अलग-अलग चलता है, और कमीशन का बिल एक ही बार बनता है।',
+
+  // ---- the vendor's own record ----
+  'Your profile': 'आपकी प्रोफ़ाइल',
+  'Approved trades': 'मंज़ूर किए गए काम',
+  'What you may be sent': 'आपको क्या भेजा जा सकता है',
+  'On record': 'दर्ज ब्यौरा',
+  'What customers see': 'ग्राहक क्या देखते हैं',
+  'Experience': 'अनुभव',
+  'Jobs completed': 'पूरे किए गए काम',
+  'Median response': 'जवाब देने का औसत समय',
+  '{n} year': '{n} साल',
+  '{n} years': '{n} साल',
+  '{n} hour': '{n} घंटा',
+  '{n} hours': '{n} घंटे',
+
+  /// Said plainly, because a vendor who cannot find the pencil will assume
+  /// the app is broken rather than that the feature is absent.
+  'To change any of this, message your coordinator. Editing from the app is not built yet.':
+      'इनमें कुछ भी बदलवाने के लिए अपने को-ऑर्डिनेटर को संदेश भेजिए। ऐप से बदलाव की सुविधा अभी नहीं बनी है।',
 };

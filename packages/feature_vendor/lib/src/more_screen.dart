@@ -14,6 +14,7 @@ import 'package:aangan_design/aangan_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'agreements_screen.dart';
 import 'async_view.dart';
 import 'providers.dart';
 
@@ -42,6 +43,18 @@ class MoreScreen extends StatelessWidget {
               title: context.t('Performance'),
               subtitle: context.t('Your rating in each trade'),
               onTap: () => _push(context, const PerformanceScreen()),
+            ),
+            const SizedBox(height: Space.xs),
+            _Link(
+              title: context.t('Agreements'),
+              subtitle: context.t('Contracts you have won'),
+              onTap: () => _push(context, const VendorAgreementsScreen()),
+            ),
+            const SizedBox(height: Space.xs),
+            _Link(
+              title: context.t('Your profile'),
+              subtitle: context.t('What customers see'),
+              onTap: () => _push(context, const VendorProfileScreen()),
             ),
             const SizedBox(height: Space.xs),
             _Link(

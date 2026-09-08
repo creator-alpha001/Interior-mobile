@@ -6,6 +6,7 @@
 /// `test/boundaries_test.dart` asserts it.
 library;
 
+export 'src/agreements_screen.dart';
 export 'src/async_view.dart';
 export 'src/dashboard_screen.dart';
 export 'src/lead_detail_screen.dart';

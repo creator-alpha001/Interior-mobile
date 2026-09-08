@@ -315,6 +315,22 @@ class PostScreen extends ConsumerWidget {
                 ),
               ),
 
+              /// The cover, on the post and not in the list.
+              ///
+              /// Twenty covers is the most expensive screen in the app, and
+              /// the list is better as a column of headlines. One cover, on
+              /// the post somebody chose to open, costs one request.
+              if (view.post.coverImageUrl.isNotEmpty) ...[
+                const SizedBox(height: Space.md),
+                AspectRatio(
+                  aspectRatio: 3 / 2,
+                  child: AanganMedia(
+                    src: view.post.coverImageUrl,
+                    alt: view.post.title,
+                  ),
+                ),
+              ],
+
               const SizedBox(height: Space.lg),
               Text(
                 view.post.excerpt,
