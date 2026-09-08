@@ -156,3 +156,38 @@ void refreshAfterWrite(WidgetRef ref) {
     ..invalidate(projectsProvider)
     ..invalidate(notificationsProvider);
 }
+
+/// **Everything that belonged to whoever was signed in.**
+///
+/// A `FutureProvider` keeps its resolved value for the life of the container,
+/// and the container lives as long as the app. Signing out cleared the token
+/// and the HTTP cache but left these — so signing in as somebody else on the
+/// same handset showed the previous person's jobs, by reference number, until
+/// something happened to invalidate them. Seen on a real device: a customer
+/// with no requirements at all was shown two of another customer's.
+///
+/// Called on both edges — sign-in and sign-out — because either can change who
+/// the data belongs to, and the flow that verifies a number *at the end* of the
+/// requirement form only crosses the first one.
+///
+/// `customerSessionProviders` is the list, kept as a value rather than inlined here, so
+/// `session_reset_test.dart` can scan this file and fail when a new per-session
+/// provider is added without being added to it. That test is the only reason
+/// this stays correct: the next provider will be written by somebody who has
+/// never read this comment.
+final customerSessionProviders = <ProviderOrFamily>[
+  requirementsProvider,
+  requirementProvider,
+  agreementsProvider,
+  projectsProvider,
+  notificationsProvider,
+  ticketsProvider,
+  referralsProvider,
+  serviceThreadProvider,
+];
+
+void resetCustomerSession(ProviderContainer container) {
+  for (final provider in customerSessionProviders) {
+    container.invalidate(provider);
+  }
+}

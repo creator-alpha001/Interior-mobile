@@ -62,15 +62,51 @@ Future<void> main() async {
   /// out by SMS. Push only adds the buzz.
   final devices = DeviceRegistrar(api: api, tokens: const NoPushTokens());
 
+  /// The container, built here rather than by `ProviderScope`, so the auth
+  /// callbacks below can reach it.
+  ///
+  /// **Both shells, both overridden.** The feature packages read the client
+  /// from here rather than being handed it down a widget tree, which is what
+  /// lets a test swap the transport. There is one provider per shell, and
+  /// missing either leaves that half of the app throwing on its first read —
+  /// so `providers_test.dart` asserts this list covers both.
+  final container = ProviderContainer(
+    overrides: [
+      customerApiProvider.overrideWithValue(api),
+      vendorApiProvider.overrideWithValue(api),
+    ],
+  );
+
+  /// Throws away one person's data when the person changes.
+  ///
+  /// A `FutureProvider` holds its resolved value for the life of the
+  /// container, and this container lives as long as the process. Signing out
+  /// cleared the token and the HTTP cache and left the providers — so signing
+  /// in as somebody else on the same handset showed the previous person's
+  /// jobs, by reference number. Found on a device: a customer with no
+  /// requirements was shown two of another customer's.
+  ///
+  /// Both shells, on both edges. Sign-out is the obvious one; sign-*in* is
+  /// necessary because the requirement flow verifies a number at the end, so a
+  /// person can acquire a session without ever having signed out of one.
+  void resetSession() {
+    resetCustomerSession(container);
+    resetVendorSession(container);
+  }
+
   final auth = AuthController(
     api: api,
     session: session,
-    onSignedIn: devices.register,
+    onSignedIn: () async {
+      resetSession();
+      await devices.register();
+    },
     onSigningOut: () async {
       // Order matters and is asserted in core_auth: deregistering is an
       // authenticated call, and the cache holds one person's figures.
       await devices.forget();
       api.cache?.clear();
+      resetSession();
     },
   );
 
@@ -102,18 +138,8 @@ Future<void> main() async {
   unawaited(version.check());
 
   runApp(
-    ProviderScope(
-      /// Both shells, both overridden.
-      ///
-      /// The feature packages read the client from here rather than being
-      /// handed it down a widget tree, which is what lets a test swap the
-      /// transport. There is one provider per shell, and missing either leaves
-      /// that half of the app throwing on its first read — so
-      /// `providers_test.dart` asserts this list covers both.
-      overrides: [
-        customerApiProvider.overrideWithValue(api),
-        vendorApiProvider.overrideWithValue(api),
-      ],
+    UncontrolledProviderScope(
+      container: container,
       child: AanganApp(
         api: api,
         auth: auth,

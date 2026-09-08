@@ -150,3 +150,34 @@ void refreshAfterWriteFrom(WidgetRef ref) {
     ..invalidate(invoicesProvider)
     ..invalidate(performanceProvider);
 }
+
+/// **Everything that belonged to whoever was signed in.**
+///
+/// The same hole as the customer side, and worse here: a vendor's leads carry
+/// masked client summaries and localities, and their invoices are their
+/// pipeline. A `FutureProvider` holds its value for the life of the container,
+/// which is the life of the app — so signing out and in as a different
+/// professional on a shared handset left the first one's leads on screen.
+///
+/// The list is a value, not an inline sequence, so `session_reset_test.dart`
+/// can scan this file and fail when a provider built on `_vendor(ref)` is not
+/// in it. Both shells are checked by the same test.
+final vendorSessionProviders = <ProviderOrFamily>[
+  onboardingProvider,
+  dashboardProvider,
+  leadsProvider,
+  leadProvider,
+  threadProvider,
+  projectsProvider,
+  visitsProvider,
+  invoicesProvider,
+  performanceProvider,
+  portfolioProvider,
+  agreementsProvider,
+];
+
+void resetVendorSession(ProviderContainer container) {
+  for (final provider in vendorSessionProviders) {
+    container.invalidate(provider);
+  }
+}
