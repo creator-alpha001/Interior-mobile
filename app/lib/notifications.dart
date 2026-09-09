@@ -23,9 +23,9 @@
 /// one that admits it only reaches the list.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_auth/aangan_core_auth.dart';
-import 'package:aangan_core_push/aangan_core_push.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
+import 'package:interiobee_core_push/interiobee_core_push.dart';
 import 'package:flutter/foundation.dart';
 
 /// Which tab a notification should open, in whichever shell owns it.

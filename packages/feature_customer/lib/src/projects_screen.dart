@@ -4,7 +4,7 @@
 /// §6.1 is explicit: *"Four stages, proof photographs, ochre while submitted,
 /// sage on approval. **No approve button.**"*
 ///
-/// That absence is the product. A stage is done when somebody at Aangan has
+/// That absence is the product. A stage is done when somebody at InterioBee has
 /// checked the photographs against it — not when the vendor says so, and not
 /// when the customer says so. Putting an approve button here would move a
 /// verification the platform performs onto the person least able to perform it,
@@ -13,8 +13,8 @@
 /// So the customer sees the evidence and the state, and nothing to press.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -74,7 +74,7 @@ class CustomerProjectCard extends StatelessWidget {
     /// done and the review has to use the same one.
     final finished = milestones.isNotEmpty && approved == milestones.length;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

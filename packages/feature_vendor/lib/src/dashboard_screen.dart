@@ -11,8 +11,8 @@
 ///     and how leads reach them.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -126,7 +126,7 @@ class DashboardScreen extends ConsumerWidget {
                   context.t('Commission'),
                   eyebrow: context.t('Yours alone'),
                 ),
-                AanganCard(
+                InterioBeeCard(
                   padding: const EdgeInsets.all(Space.cardPaddingWide),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +202,7 @@ class _Figures extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.symmetric(vertical: Space.xs),
       child: Column(
         children: [
@@ -220,17 +220,17 @@ class _Figures extends StatelessWidget {
                   Text(
                     '${row.$2}',
                     // Tabular, so a column of counters does not jitter.
-                    style: AanganTextStyles.financialNum.copyWith(
+                    style: InterioBeeTextStyles.financialNum.copyWith(
                       fontSize: 20,
                       color: row.$2 == 0
                           ? context.colors.onSurfaceVariant
-                          : AanganColors.ink,
+                          : InterioBeeColors.ink,
                     ),
                   ),
                 ],
               ),
             ),
-            if (index < rows.length - 1) const AanganDivider(),
+            if (index < rows.length - 1) const InterioBeeDivider(),
           ],
         ],
       ),

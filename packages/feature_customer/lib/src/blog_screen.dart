@@ -21,8 +21,8 @@
 /// slowest thing here by an order of magnitude.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -233,7 +233,7 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => PostScreen(slug: view.post.slug)),
       ),
@@ -324,7 +324,7 @@ class PostScreen extends ConsumerWidget {
                 const SizedBox(height: Space.md),
                 AspectRatio(
                   aspectRatio: 3 / 2,
-                  child: AanganMedia(
+                  child: InterioBeeMedia(
                     src: view.post.coverImageUrl,
                     alt: view.post.title,
                   ),
@@ -339,7 +339,7 @@ class PostScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: Space.md),
-              const AanganDivider(inset: 0),
+              const InterioBeeDivider(inset: 0),
               const SizedBox(height: Space.md),
 
               /// The body, as prose.
@@ -372,7 +372,7 @@ class PostScreen extends ConsumerWidget {
               /// thing the app has to an intent signal, and interrupting the
               /// article to say so would cost more than it earns.
               const SizedBox(height: Space.lg),
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

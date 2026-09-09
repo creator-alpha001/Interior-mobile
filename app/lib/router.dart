@@ -10,12 +10,12 @@
 /// one that mattered.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_auth/aangan_core_auth.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
-import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
+import 'package:interiobee_feature_vendor/interiobee_feature_vendor.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -39,7 +39,7 @@ abstract final class Routes {
 }
 
 GoRouter buildRouter({
-  required AanganApi api,
+  required InterioBeeApi api,
   required AuthController auth,
   required BiometricGate gate,
   required UploadQueue Function(String milestoneId) queueFor,
@@ -236,7 +236,7 @@ class _Splash extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Not translated, in any locale. It is the product's name.
-            Text('Aangan', style: context.text.displayLarge),
+            Text('InterioBee', style: context.text.displayLarge),
             const SizedBox(height: Space.md),
             Text(
               context.t('Resolving your session…'),
@@ -268,7 +268,7 @@ class _Locked extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                context.t('Aangan is locked'),
+                context.t('InterioBee is locked'),
                 style: context.text.headlineLarge,
               ),
               const SizedBox(height: Space.sm),

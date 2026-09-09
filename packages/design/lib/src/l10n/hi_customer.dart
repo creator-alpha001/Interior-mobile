@@ -166,7 +166,7 @@ const hiCustomer = <String, String>{
   'Your coordinator reads this and passes anything relevant to the professionals quoting for you.':
       'आपका को-ऑर्डिनेटर यह पढ़ता है और ज़रूरी बात उन कारीगरों तक पहुँचाता है जो आपके लिए कोटेशन दे रहे हैं।',
   'Ask us anything about your job.': 'अपने काम के बारे में हमसे कुछ भी पूछिए।',
-  'Message Aangan': 'Aangan को संदेश भेजें',
+  'Message InterioBee': 'InterioBee को संदेश भेजें',
   'You': 'आप',
 
   // ---- account ----
@@ -202,8 +202,8 @@ const hiCustomer = <String, String>{
   /// somebody rating a painter three stars should know it does not touch
   /// their carpentry.
   'Leave a review': 'रिव्यू लिखें',
-  'This rates their {trade} only. Ratings on Aangan are per trade, so it will not affect their other work.':
-      'यह रेटिंग सिर्फ़ इनके {trade} के लिए है। Aangan पर रेटिंग हर काम की अलग होती है, इसलिए इससे इनके बाक़ी काम पर कोई असर नहीं पड़ेगा।',
+  'This rates their {trade} only. Ratings on InterioBee are per trade, so it will not affect their other work.':
+      'यह रेटिंग सिर्फ़ इनके {trade} के लिए है। InterioBee पर रेटिंग हर काम की अलग होती है, इसलिए इससे इनके बाक़ी काम पर कोई असर नहीं पड़ेगा।',
   // 'Overall' is in hi_vendor.dart, on the performance screen. One key has
   //  one home — a duplicate makes the merged const map throw on lookup.
   'The one that counts': 'यही गिना जाता है',

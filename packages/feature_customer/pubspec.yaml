@@ -1,4 +1,4 @@
-name: aangan_feature_customer
+name: interiobee_feature_customer
 description: The customer's shell — requirements, quotes, agreements and projects.
 publish_to: none
 
@@ -15,11 +15,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  aangan_core_api:
+  interiobee_core_api:
     path: ../core_api
-  aangan_core_upload:
+  interiobee_core_upload:
     path: ../core_upload
-  aangan_design:
+  interiobee_design:
     path: ../design
 
   flutter_riverpod: ^2.6.1

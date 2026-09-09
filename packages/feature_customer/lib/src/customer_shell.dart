@@ -10,9 +10,9 @@
 /// way to find out the answer was no.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -522,7 +522,7 @@ class ProfessionalCard extends StatelessWidget {
     final rating = domainRating?.avgRating ?? professional.avgRating;
     final count = domainRating?.ratingCount ?? professional.ratingCount;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       // The directory used to be a dead end: a list of names with nothing
       // behind them, while `getProfessional` was reachable from nowhere.
@@ -613,7 +613,7 @@ class _MessagesTab extends ConsumerWidget {
                   const SizedBox(height: Space.xxs),
                   Text(
                     // Stated plainly, as MOBILE.md §6.1 asks: one thread per
-                    // service, with Aangan, and we carry messages both ways.
+                    // service, with InterioBee, and we carry messages both ways.
                     context.t(
                       'You talk to us, and we talk to the professionals. One '
                       'conversation per job.',
@@ -657,7 +657,7 @@ class _MessagesTab extends ConsumerWidget {
                         const SizedBox(height: Space.xs),
                     itemBuilder: (context, i) {
                       final (lead, service) = services[i];
-                      return AanganCard(
+                      return InterioBeeCard(
                         onTap: () => Navigator.of(context).push(
                           MaterialPageRoute(
                             builder: (_) => ServiceThreadScreen(
@@ -771,7 +771,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Aangan'),
+            const Text('InterioBee'),
             Text(
               context.t('about your {trade}', {
                 'trade': widget.title.toLowerCase(),
@@ -835,7 +835,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                               decoration: BoxDecoration(
                                 color: mine
                                     ? context.colors.surfaceContainerHighest
-                                    : AanganColors.chalk,
+                                    : InterioBeeColors.chalk,
                                 borderRadius: Radii.panelRadius,
                                 border: Border.all(
                                   color: context.palette.hairline,
@@ -847,7 +847,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                                     : CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    mine ? context.t('You') : 'Aangan',
+                                    mine ? context.t('You') : 'InterioBee',
                                     style: context.text.labelMedium?.copyWith(
                                       color: context.colors.onSurfaceVariant,
                                     ),
@@ -876,7 +876,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                       minLines: 1,
                       maxLines: 4,
                       decoration: InputDecoration(
-                        hintText: context.t('Message Aangan'),
+                        hintText: context.t('Message InterioBee'),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),
@@ -928,7 +928,7 @@ class _AccountTab extends ConsumerWidget {
             /// that opens a screen saying "please try again" is worse than no
             /// row: it looks broken rather than locked.
             if (!signedIn) ...[
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1035,7 +1035,7 @@ class _AccountTab extends ConsumerWidget {
 
             /// The language switcher.
             ///
-            /// Renders nothing when there is no `AanganLanguageScope` above —
+            /// Renders nothing when there is no `InterioBeeLanguageScope` above —
             /// a widget test pumping this tab alone, or the gallery.
             const SizedBox(height: Space.xs),
             const LanguageSetting(),
@@ -1068,7 +1068,7 @@ class _Link extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       onTap: onTap,
       child: Row(
         children: [
@@ -1109,7 +1109,7 @@ class _Shortcut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       onTap: onTap,
       padding: const EdgeInsets.all(Space.cardPadding),
       child: Column(
@@ -1142,7 +1142,7 @@ class _SearchBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       onTap: () => Navigator.of(
         context,
       ).push(MaterialPageRoute(builder: (_) => SearchScreen(onStart: onStart))),

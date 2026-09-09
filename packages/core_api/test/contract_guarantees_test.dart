@@ -8,7 +8,7 @@ library;
 
 import 'dart:io';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:test/test.dart';
 
 /// Source with comment lines stripped.

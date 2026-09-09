@@ -8,7 +8,7 @@
 ///
 ///   dart run tool/sync_contract.dart            # from ../Interior
 ///   dart run tool/sync_contract.dart --check    # CI: fail if it has drifted
-///   AANGAN_API_REPO=/path/to/repo dart run tool/sync_contract.dart
+///   INTERIOBEE_API_REPO=/path/to/repo dart run tool/sync_contract.dart
 ///
 /// `--check` is only meaningful where both repositories are present. CI for
 /// this repository does not run it: there is nothing to compare against, and
@@ -20,14 +20,14 @@ import 'dart:io';
 const _defaultRepo = r'../Interior';
 
 void main(List<String> args) {
-  final repo = Platform.environment['AANGAN_API_REPO'] ?? _defaultRepo;
+  final repo = Platform.environment['INTERIOBEE_API_REPO'] ?? _defaultRepo;
   final source = File('$repo/openapi.json');
   final target = File('contract/openapi.json');
 
   if (!source.existsSync()) {
     stderr.writeln(
       'Could not find ${source.path}.\n'
-      'Set AANGAN_API_REPO to the web repository, and run `npm run openapi` there first.',
+      'Set INTERIOBEE_API_REPO to the web repository, and run `npm run openapi` there first.',
     );
     exitCode = 1;
     return;

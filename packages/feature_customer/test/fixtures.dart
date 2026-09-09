@@ -1,11 +1,11 @@
 /// Shapes the API would send, built once so the tests read as assertions.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:dio/dio.dart';
 
-AanganApi fixtureApi() =>
-    AanganApi.withDio(Dio(BaseOptions(baseUrl: 'https://test')));
+InterioBeeApi fixtureApi() =>
+    InterioBeeApi.withDio(Dio(BaseOptions(baseUrl: 'https://test')));
 
 const _city = City(
   id: 'city-1',
@@ -238,7 +238,7 @@ Notification fixtureNotification({
   id: 'n-1',
   userId: 'u1',
   type: type,
-  title: 'Aangan replied about your wardrobes',
+  title: 'InterioBee replied about your wardrobes',
   body: 'The carpenter has answered your question about the board.',
   entityType: entityType,
   entityId: entityId,

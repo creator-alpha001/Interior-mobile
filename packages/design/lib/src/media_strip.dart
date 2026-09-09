@@ -61,7 +61,7 @@ class MediaStrip extends StatelessWidget {
             child: InkWell(
               onTap: () => showMediaViewer(context, items: items, initial: i),
               borderRadius: Radii.smallRadius,
-              child: AanganMedia(
+              child: InterioBeeMedia(
                 src: items[i].url,
                 alt: items[i].caption,
                 rounded: true,
@@ -142,7 +142,7 @@ class _MediaViewerState extends State<_MediaViewer> {
                 // finish, and the detail being argued about is small.
                 minScale: 1,
                 maxScale: 4,
-                child: AanganMedia(
+                child: InterioBeeMedia(
                   src: widget.items[i].url,
                   alt: widget.items[i].caption,
                   rounded: false,

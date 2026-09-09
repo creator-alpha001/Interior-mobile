@@ -12,7 +12,7 @@ library;
 
 import 'dart:io';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:flutter/foundation.dart';
 
 /// Where the push token comes from.
@@ -59,14 +59,14 @@ class NoPushTokens implements PushTokenSource {
 /// Keeps the server's idea of this handset in step with reality.
 class DeviceRegistrar {
   DeviceRegistrar({
-    required AanganApi api,
+    required InterioBeeApi api,
     PushTokenSource tokens = const NoPushTokens(),
     String? appVersion,
   }) : _api = api,
        _tokens = tokens,
        _appVersion = appVersion;
 
-  final AanganApi _api;
+  final InterioBeeApi _api;
   final PushTokenSource _tokens;
   final String? _appVersion;
 

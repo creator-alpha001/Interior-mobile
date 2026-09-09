@@ -10,8 +10,8 @@
 /// individually. There is deliberately no "accept all".
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -138,7 +138,7 @@ class _PartnerAgreementScreenState
             const SizedBox(height: Space.sm),
 
             for (final clause in terms.acknowledgements)
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.symmetric(
                   horizontal: Space.xs,
                   vertical: Space.xxs,

@@ -1,6 +1,6 @@
 {
-    "name": "aangan_app",
-    "short_name": "aangan_app",
+    "name": "InterioBee",
+    "short_name": "InterioBee",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

@@ -16,26 +16,26 @@
 ///   API, and offering a way past it would defeat the only lever there is.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 
 /// The build number this binary was compiled as.
 ///
-/// From `--dart-define=AANGAN_BUILD`, which CI sets from the same number it
+/// From `--dart-define=INTERIOBEE_BUILD`, which CI sets from the same number it
 /// gives the store. Zero in a development build, which is below every floor —
 /// so the default is *deliberately* not "assume current": a developer build
 /// that ignored the gate would be the one place the gate is never exercised.
 /// [VersionGate] treats zero as "unknown" and lets it through, but a release
 /// build with no define is caught by the CI check rather than at runtime.
-const kBuildNumber = int.fromEnvironment('AANGAN_BUILD');
+const kBuildNumber = int.fromEnvironment('INTERIOBEE_BUILD');
 
 class VersionGate extends ChangeNotifier {
-  VersionGate({required AanganApi api, int build = kBuildNumber})
+  VersionGate({required InterioBeeApi api, int build = kBuildNumber})
     : _api = api,
       _build = build;
 
-  final AanganApi _api;
+  final InterioBeeApi _api;
   final int _build;
 
   bool _blocked = false;
@@ -85,7 +85,7 @@ class UpgradeRequiredScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  context.t('Update Aangan'),
+                  context.t('Update InterioBee'),
                   style: context.text.displayLarge,
                 ),
                 const SizedBox(height: Space.sm),
@@ -113,7 +113,7 @@ class UpgradeRequiredScreen extends StatelessWidget {
                 Text(
                   context.t(
                     'Your account and anything in progress are safe. This build '
-                    'just cannot talk to Aangan any more.',
+                    'just cannot talk to InterioBee any more.',
                   ),
                   style: context.text.bodySmall?.copyWith(
                     color: context.colors.onSurfaceVariant,
@@ -134,7 +134,7 @@ class UpgradeRequiredScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          context.t('Search for "Aangan" in your app store to update.'),
+          context.t('Search for "InterioBee" in your app store to update.'),
         ),
       ),
     );

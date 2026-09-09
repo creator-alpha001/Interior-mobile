@@ -15,8 +15,8 @@
 /// a query parameter that silently stops being sent looks identical on screen.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -44,7 +44,7 @@ class _Recorder extends Interceptor {
     ..interceptors.add(recorder);
 
   final container = ProviderContainer(
-    overrides: [customerApiProvider.overrideWithValue(AanganApi.withDio(dio))],
+    overrides: [customerApiProvider.overrideWithValue(InterioBeeApi.withDio(dio))],
   );
   addTearDown(container.dispose);
 

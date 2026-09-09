@@ -13,7 +13,7 @@ library;
 
 import 'dart:io';
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -231,7 +231,7 @@ const _notCopyFiles = <String>[
 /// Individually exempt, each with the reason it earns it.
 const _allowed = <String>{
   // The company's name, in either language.
-  'Aangan',
+  'InterioBee',
 
   // Pure layout: a bullet, a separator, a rating glyph, a locality pair.
   r'• $note',
@@ -438,7 +438,7 @@ void main() {
 
   group('the lookup itself', () {
     test('falls back to English rather than to a key name or null', () {
-      const l10n = AanganL10n.english;
+      const l10n = InterioBeeL10n.english;
       expect(
         l10n('Something nobody translated'),
         'Something nobody translated',
@@ -446,12 +446,12 @@ void main() {
     });
 
     test('substitutes placeholders', () {
-      final l10n = AanganL10n.forLocale(const Locale('hi'));
+      final l10n = InterioBeeL10n.forLocale(const Locale('hi'));
       expect(l10n('{n} new leads', {'n': 3}), contains('3'));
     });
 
     test('picks the singular and the plural apart', () {
-      const l10n = AanganL10n.english;
+      const l10n = InterioBeeL10n.english;
       expect(
         l10n.plural(
           1,
@@ -472,13 +472,13 @@ void main() {
 
     test('resolves Hindi for a locale with a country attached', () {
       // A phone set to Hindi reports `hi_IN`, not `hi`.
-      final l10n = AanganL10n.forLocale(const Locale('hi', 'IN'));
+      final l10n = InterioBeeL10n.forLocale(const Locale('hi', 'IN'));
       expect(l10n.isHindi, isTrue);
       expect(l10n('Sign out'), isNot('Sign out'));
     });
 
     test('an unsupported locale gets English, not an empty screen', () {
-      final l10n = AanganL10n.forLocale(const Locale('ta'));
+      final l10n = InterioBeeL10n.forLocale(const Locale('ta'));
       expect(l10n('Sign out'), 'Sign out');
     });
   });

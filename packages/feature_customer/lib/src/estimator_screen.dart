@@ -13,7 +13,7 @@
 /// is.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 
 import 'estimator.dart';
@@ -298,7 +298,7 @@ class _Range extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -315,7 +315,7 @@ class _Range extends StatelessWidget {
           /// ₹8,70,000` wraps at 360dp and a wrapped price reads as two prices.
           Text(
             '${result.low.short} – ${result.high.short}',
-            style: AanganTextStyles.financialNum.copyWith(
+            style: InterioBeeTextStyles.financialNum.copyWith(
               color: context.colors.onSurface,
             ),
           ),

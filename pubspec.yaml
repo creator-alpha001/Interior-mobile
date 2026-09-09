@@ -5,7 +5,7 @@
 # flavour and an entrypoint, not a rewrite — which only stays true if
 # feature_customer and feature_vendor never import each other. Enforce that with
 # a dependency lint in CI rather than by asking.
-name: aangan_mobile
+name: interiobee_mobile
 publish_to: none
 
 environment:
@@ -47,7 +47,7 @@ melos:
       exec:
         concurrency: 1
       packageFilters:
-        scope: aangan_core_api
+        scope: interiobee_core_api
 
     # The full contract pipeline, from the committed document to compiled Dart.
     #

@@ -10,7 +10,7 @@ import 'typography.dart';
 ///
 /// DESIGN.md §1.4 is the rule, and it is load-bearing rather than decorative:
 ///
-///   sage       verified, signed, or approved **by a person at Aangan**
+///   sage       verified, signed, or approved **by a person at InterioBee**
 ///   terracotta your turn — the one thing on this screen to act on
 ///   ochre      waiting on somebody else
 ///   burntIron  wrong
@@ -21,8 +21,8 @@ import 'typography.dart';
 /// it. That single transition is the most important piece of colour in the
 /// product, because it is "a stage is done when somebody checked" made visible.
 @immutable
-class AanganPalette extends ThemeExtension<AanganPalette> {
-  const AanganPalette({
+class InterioBeePalette extends ThemeExtension<InterioBeePalette> {
+  const InterioBeePalette({
     required this.verified,
     required this.verifiedContainer,
     required this.onVerifiedContainer,
@@ -60,21 +60,21 @@ class AanganPalette extends ThemeExtension<AanganPalette> {
   /// Every rupee figure. Tabular, so a column of quotes aligns.
   final TextStyle financialNum;
 
-  static const light = AanganPalette(
-    verified: AanganColors.sage,
-    verifiedContainer: AanganColors.sageContainer,
-    onVerifiedContainer: AanganColors.onSageContainer,
-    waiting: AanganColors.ochre,
-    wrong: AanganColors.burntIron,
-    metadata: AanganColors.travertine,
-    hairline: AanganColors.mortar,
-    inputBorder: AanganColors.overlayBorder,
+  static const light = InterioBeePalette(
+    verified: InterioBeeColors.sage,
+    verifiedContainer: InterioBeeColors.sageContainer,
+    onVerifiedContainer: InterioBeeColors.onSageContainer,
+    waiting: InterioBeeColors.ochre,
+    wrong: InterioBeeColors.burntIron,
+    metadata: InterioBeeColors.travertine,
+    hairline: InterioBeeColors.mortar,
+    inputBorder: InterioBeeColors.overlayBorder,
     overlayShadow: Layering.overlayShadow,
-    financialNum: AanganTextStyles.financialNum,
+    financialNum: InterioBeeTextStyles.financialNum,
   );
 
   @override
-  AanganPalette copyWith({
+  InterioBeePalette copyWith({
     Color? verified,
     Color? verifiedContainer,
     Color? onVerifiedContainer,
@@ -86,7 +86,7 @@ class AanganPalette extends ThemeExtension<AanganPalette> {
     BoxShadow? overlayShadow,
     TextStyle? financialNum,
   }) {
-    return AanganPalette(
+    return InterioBeePalette(
       verified: verified ?? this.verified,
       verifiedContainer: verifiedContainer ?? this.verifiedContainer,
       onVerifiedContainer: onVerifiedContainer ?? this.onVerifiedContainer,
@@ -101,9 +101,9 @@ class AanganPalette extends ThemeExtension<AanganPalette> {
   }
 
   @override
-  AanganPalette lerp(ThemeExtension<AanganPalette>? other, double t) {
-    if (other is! AanganPalette) return this;
-    return AanganPalette(
+  InterioBeePalette lerp(ThemeExtension<InterioBeePalette>? other, double t) {
+    if (other is! InterioBeePalette) return this;
+    return InterioBeePalette(
       verified: Color.lerp(verified, other.verified, t)!,
       verifiedContainer: Color.lerp(
         verifiedContainer,
@@ -127,8 +127,8 @@ class AanganPalette extends ThemeExtension<AanganPalette> {
 }
 
 /// Reads the palette without the ceremony.
-extension AanganPaletteAccess on BuildContext {
-  AanganPalette get palette => Theme.of(this).extension<AanganPalette>()!;
+extension InterioBeePaletteAccess on BuildContext {
+  InterioBeePalette get palette => Theme.of(this).extension<InterioBeePalette>()!;
   ColorScheme get colors => Theme.of(this).colorScheme;
   TextTheme get text => Theme.of(this).textTheme;
 }
@@ -140,62 +140,62 @@ extension AanganPaletteAccess on BuildContext {
 /// loaded verbatim, every `FilledButton` comes out black. Remapping on the way
 /// in means the framework defaults land correctly and espresso ink stays where
 /// it belongs, on text.
-const aanganLightScheme = ColorScheme(
+const interiobeeLightScheme = ColorScheme(
   brightness: Brightness.light,
 
-  primary: AanganColors.terracotta,
-  onPrimary: AanganColors.chalk,
-  primaryContainer: AanganColors.attention,
-  onPrimaryContainer: AanganColors.onAttention,
+  primary: InterioBeeColors.terracotta,
+  onPrimary: InterioBeeColors.chalk,
+  primaryContainer: InterioBeeColors.attention,
+  onPrimaryContainer: InterioBeeColors.onAttention,
 
-  secondary: AanganColors.ink,
-  onSecondary: AanganColors.limestone,
-  secondaryContainer: AanganColors.chipStrong,
-  onSecondaryContainer: AanganColors.inkMuted,
+  secondary: InterioBeeColors.ink,
+  onSecondary: InterioBeeColors.limestone,
+  secondaryContainer: InterioBeeColors.chipStrong,
+  onSecondaryContainer: InterioBeeColors.inkMuted,
 
-  tertiary: AanganColors.sage,
-  onTertiary: AanganColors.chalk,
-  tertiaryContainer: AanganColors.sageContainer,
-  onTertiaryContainer: AanganColors.onSageContainer,
+  tertiary: InterioBeeColors.sage,
+  onTertiary: InterioBeeColors.chalk,
+  tertiaryContainer: InterioBeeColors.sageContainer,
+  onTertiaryContainer: InterioBeeColors.onSageContainer,
 
-  error: AanganColors.burntIron,
-  onError: AanganColors.chalk,
-  errorContainer: AanganColors.errorContainer,
-  onErrorContainer: AanganColors.burntIron,
+  error: InterioBeeColors.burntIron,
+  onError: InterioBeeColors.chalk,
+  errorContainer: InterioBeeColors.errorContainer,
+  onErrorContainer: InterioBeeColors.burntIron,
 
-  surface: AanganColors.limestone,
-  onSurface: AanganColors.onSurface,
-  onSurfaceVariant: AanganColors.inkMuted,
+  surface: InterioBeeColors.limestone,
+  onSurface: InterioBeeColors.onSurface,
+  onSurfaceVariant: InterioBeeColors.inkMuted,
 
-  surfaceContainerLowest: AanganColors.chalk,
-  surfaceContainerLow: AanganColors.card,
-  surfaceContainer: AanganColors.panel,
-  surfaceContainerHigh: AanganColors.chip,
-  surfaceContainerHighest: AanganColors.chipStrong,
+  surfaceContainerLowest: InterioBeeColors.chalk,
+  surfaceContainerLow: InterioBeeColors.card,
+  surfaceContainer: InterioBeeColors.panel,
+  surfaceContainerHigh: InterioBeeColors.chip,
+  surfaceContainerHighest: InterioBeeColors.chipStrong,
 
-  outline: AanganColors.outline,
-  outlineVariant: AanganColors.mortar,
+  outline: InterioBeeColors.outline,
+  outlineVariant: InterioBeeColors.mortar,
 
-  inverseSurface: AanganColors.inverseSurface,
-  onInverseSurface: AanganColors.onInverseSurface,
-  inversePrimary: AanganColors.inversePrimary,
+  inverseSurface: InterioBeeColors.inverseSurface,
+  onInverseSurface: InterioBeeColors.onInverseSurface,
+  inversePrimary: InterioBeeColors.inversePrimary,
 
-  // See `AanganTheme.light`. This one matters.
+  // See `InterioBeeTheme.light`. This one matters.
   surfaceTint: Color(0x00000000),
 );
 
-abstract final class AanganTheme {
+abstract final class InterioBeeTheme {
   /// The light theme. There is deliberately no dark one yet.
   ///
   /// DESIGN.md §3.8: ship light-only at v1, on the record. The palette is warm
   /// lime-washed plaster and the whole emotional argument is daylight on stone;
   /// a mechanical inversion gives a muddy brown-grey app that reads as a bug.
   /// Deferring costs exactly one discipline — every screen reads
-  /// `colorScheme` and `AanganPalette`, never a literal — and that discipline
+  /// `colorScheme` and `InterioBeePalette`, never a literal — and that discipline
   /// is what makes dark mode later a single file.
   static ThemeData get light {
-    const scheme = aanganLightScheme;
-    final text = tintedTextTheme(aanganTextTheme);
+    const scheme = interiobeeLightScheme;
+    final text = tintedTextTheme(interiobeeTextTheme);
 
     /// Material 3 tints surfaces by elevation and paints its own shadows.
     ///
@@ -209,14 +209,14 @@ abstract final class AanganTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: scheme.surface,
       textTheme: text,
-      fontFamily: AanganFonts.sans,
-      fontFamilyFallback: AanganFonts.devanagariFallback,
+      fontFamily: InterioBeeFonts.sans,
+      fontFamilyFallback: InterioBeeFonts.devanagariFallback,
       splashFactory: InkSparkle.splashFactory,
-      extensions: const [AanganPalette.light],
+      extensions: const [InterioBeePalette.light],
 
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surface,
-        foregroundColor: AanganColors.ink,
+        foregroundColor: InterioBeeColors.ink,
         surfaceTintColor: noTint,
         shadowColor: noTint,
         scrolledUnderElevation: 0,
@@ -226,19 +226,19 @@ abstract final class AanganTheme {
       ),
 
       cardTheme: const CardThemeData(
-        color: AanganColors.card,
+        color: InterioBeeColors.card,
         surfaceTintColor: noTint,
         shadowColor: noTint,
         elevation: 0,
         margin: EdgeInsets.zero,
         shape: RoundedRectangleBorder(
           borderRadius: Radii.panelRadius,
-          side: BorderSide(color: AanganColors.mortar),
+          side: BorderSide(color: InterioBeeColors.mortar),
         ),
       ),
 
       bottomSheetTheme: const BottomSheetThemeData(
-        backgroundColor: AanganColors.chalk,
+        backgroundColor: InterioBeeColors.chalk,
         surfaceTintColor: noTint,
         shadowColor: noTint,
         elevation: 0,
@@ -246,23 +246,23 @@ abstract final class AanganTheme {
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(Radii.panel),
           ),
-          side: BorderSide(color: AanganColors.overlayBorder),
+          side: BorderSide(color: InterioBeeColors.overlayBorder),
         ),
       ),
 
       dialogTheme: const DialogThemeData(
-        backgroundColor: AanganColors.chalk,
+        backgroundColor: InterioBeeColors.chalk,
         surfaceTintColor: noTint,
         shadowColor: noTint,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: Radii.panelRadius,
-          side: BorderSide(color: AanganColors.overlayBorder),
+          side: BorderSide(color: InterioBeeColors.overlayBorder),
         ),
       ),
 
       popupMenuTheme: const PopupMenuThemeData(
-        color: AanganColors.chalk,
+        color: InterioBeeColors.chalk,
         surfaceTintColor: noTint,
         shadowColor: noTint,
         elevation: 0,
@@ -276,7 +276,7 @@ abstract final class AanganTheme {
         height: 64,
         indicatorColor: Colors.transparent,
         labelTextStyle: WidgetStateProperty.resolveWith(
-          (states) => AanganTextStyles.eyebrow.copyWith(
+          (states) => InterioBeeTextStyles.eyebrow.copyWith(
             color: states.contains(WidgetState.selected)
                 ? scheme.primary
                 : scheme.onSurfaceVariant,
@@ -309,8 +309,8 @@ abstract final class AanganTheme {
           minimumSize: const Size(0, TapTarget.minimum),
           padding: const EdgeInsets.symmetric(horizontal: Space.lg),
           textStyle: text.titleMedium,
-          foregroundColor: AanganColors.ink,
-          side: const BorderSide(color: AanganColors.overlayBorder),
+          foregroundColor: InterioBeeColors.ink,
+          side: const BorderSide(color: InterioBeeColors.overlayBorder),
           shape: const RoundedRectangleBorder(borderRadius: Radii.smallRadius),
         ),
       ),
@@ -325,7 +325,7 @@ abstract final class AanganTheme {
 
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AanganColors.chalk,
+        fillColor: InterioBeeColors.chalk,
         constraints: const BoxConstraints(minHeight: TapTarget.minimum),
         contentPadding: const EdgeInsets.symmetric(
           horizontal: Space.sm,
@@ -334,11 +334,11 @@ abstract final class AanganTheme {
         labelStyle: text.labelMedium,
         border: const OutlineInputBorder(
           borderRadius: Radii.smallRadius,
-          borderSide: BorderSide(color: AanganColors.overlayBorder),
+          borderSide: BorderSide(color: InterioBeeColors.overlayBorder),
         ),
         enabledBorder: const OutlineInputBorder(
           borderRadius: Radii.smallRadius,
-          borderSide: BorderSide(color: AanganColors.overlayBorder),
+          borderSide: BorderSide(color: InterioBeeColors.overlayBorder),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: Radii.smallRadius,
@@ -352,9 +352,9 @@ abstract final class AanganTheme {
 
       /// `height` defaults to 16, which quietly breaks the vertical rhythm on
       /// every card. Dividers also respect a card's inset rather than running
-      /// edge to edge — see `AanganDivider`.
+      /// edge to edge — see `InterioBeeDivider`.
       dividerTheme: const DividerThemeData(
-        color: AanganColors.mortar,
+        color: InterioBeeColors.mortar,
         thickness: 1,
         space: 1,
       ),

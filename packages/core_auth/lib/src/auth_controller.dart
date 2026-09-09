@@ -15,7 +15,7 @@ library;
 
 import 'dart:async';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:flutter/foundation.dart';
 
 import 'secure_session.dart';
@@ -106,7 +106,7 @@ class SignInState {
 
 class AuthController extends ChangeNotifier {
   AuthController({
-    required AanganApi api,
+    required InterioBeeApi api,
     required AuthSessionStore session,
     this.onSignedIn,
     this.onSigningOut,
@@ -115,7 +115,7 @@ class AuthController extends ChangeNotifier {
     _session.onLost = _handleSessionLost;
   }
 
-  final AanganApi _api;
+  final InterioBeeApi _api;
   final AuthSessionStore _session;
 
   /// Called once a session exists. Where device registration happens.

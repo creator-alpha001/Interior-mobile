@@ -11,8 +11,8 @@
 /// leads with them.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -94,7 +94,7 @@ class _Profile extends StatelessWidget {
               ),
             ),
             if (profile.isVerified)
-              // Sage: a person at Aangan checked them.
+              // Sage: a person at InterioBee checked them.
               StatusPill(context.t('Verified'), tone: StatusTone.verified),
           ],
         ),
@@ -212,7 +212,7 @@ class _TradeRow extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.xs),
-      child: AanganCard(
+      child: InterioBeeCard(
         padding: const EdgeInsets.all(Space.cardPaddingWide),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -275,7 +275,7 @@ class _PortfolioCard extends StatelessWidget {
     /// The web's `/our-work` leads with the image at full width. So does this.
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.sm),
-      child: AanganCard(
+      child: InterioBeeCard(
         padding: EdgeInsets.zero,
         onTap: media.isEmpty
             ? null
@@ -290,7 +290,7 @@ class _PortfolioCard extends StatelessWidget {
                 ),
                 child: AspectRatio(
                   aspectRatio: 4 / 3,
-                  child: AanganMedia(
+                  child: InterioBeeMedia(
                     src: media.first.url,
                     alt: media.first.caption,
                     rounded: false,
@@ -340,7 +340,7 @@ class _ReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.xs),
-      child: AanganCard(
+      child: InterioBeeCard(
         padding: const EdgeInsets.all(Space.cardPaddingWide),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

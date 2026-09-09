@@ -14,8 +14,8 @@ library;
 
 import 'dart:async';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -229,7 +229,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             eyebrow: context.t('Verified'),
           ),
           for (final professional in results.professionals) ...[
-            AanganCard(
+            InterioBeeCard(
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => ProfessionalScreen(id: professional.id),

@@ -135,7 +135,7 @@ class RetryInterceptor extends Interceptor {
   final int maxAttempts;
   final Duration baseDelay;
 
-  static const _attemptKey = 'aangan.retryAttempt';
+  static const _attemptKey = 'interiobee.retryAttempt';
 
   bool _mayRetry(RequestOptions options, ApiException failure) {
     if (!failure.isTransient) return false;

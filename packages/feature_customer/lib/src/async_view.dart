@@ -11,8 +11,8 @@
 ///   traffic, and it says for how long. Showing its number is the whole job.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -92,7 +92,7 @@ class ErrorState extends StatelessWidget {
         context.t('No connection'),
         context.t(
           context.t(
-            'We could not reach Aangan. Check your signal and try again.',
+            'We could not reach InterioBee. Check your signal and try again.',
           ),
         ),
         true,

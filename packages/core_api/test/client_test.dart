@@ -8,7 +8,7 @@ library;
 
 import 'dart:convert';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 
@@ -44,7 +44,7 @@ ResponseBody _json(Object body, int status) => ResponseBody.fromString(
   },
 );
 
-(AanganApi, _StubAdapter, InMemorySession) _build(
+(InterioBeeApi, _StubAdapter, InMemorySession) _build(
   ResponseBody Function(int attempt, RequestOptions options) respond, {
   String? token,
 }) {
@@ -52,7 +52,7 @@ ResponseBody _json(Object body, int status) => ResponseBody.fromString(
   final session = InMemorySession(token);
   final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
     ..httpClientAdapter = adapter;
-  final api = AanganApi.withDio(dio, session: session);
+  final api = InterioBeeApi.withDio(dio, session: session);
   return (api, adapter, session);
 }
 
@@ -177,7 +177,7 @@ void main() {
       );
       final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
         ..httpClientAdapter = adapter;
-      final api = AanganApi.withDio(dio);
+      final api = InterioBeeApi.withDio(dio);
 
       final error = await _capture(() => api.customer.listRequirements());
       expect(error.failure, ApiFailure.rateLimited);

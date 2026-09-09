@@ -25,7 +25,7 @@ void main() {
 
     for (final file in _sources()) {
       final source = file.readAsStringSync();
-      if (source.contains('package:aangan_feature_customer')) {
+      if (source.contains('package:interiobee_feature_customer')) {
         offenders.add(file.path);
       }
     }
@@ -40,7 +40,7 @@ void main() {
   test('the dependency is absent from the manifest too', () {
     // An import is the symptom; the dependency is what makes it possible.
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(pubspec.contains('aangan_feature_customer'), isFalse);
+    expect(pubspec.contains('interiobee_feature_customer'), isFalse);
   });
 
   /// MOBILE.md §7.6: *"No dialer or SMS launcher anywhere in `feature_vendor`.

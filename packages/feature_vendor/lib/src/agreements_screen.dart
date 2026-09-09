@@ -11,8 +11,8 @@
 /// never owed. The card says so where it happens.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -61,7 +61,7 @@ class _AgreementCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final signed = view.agreement.status == AgreementStatus.signed;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,7 +96,7 @@ class _AgreementCard extends StatelessWidget {
 
           if (view.isCombined) ...[
             const SizedBox(height: Space.sm),
-            AanganCard(
+            InterioBeeCard(
               nested: true,
               child: Text(
                 context.l10n.plural(
@@ -233,11 +233,11 @@ class VendorProfileScreen extends ConsumerWidget {
               /// the web, which has no form for it and no endpoint behind one.
               ///
               /// This is the same rule as trade approval: what a customer sees
-              /// about a professional is changed by a person at Aangan, not by
+              /// about a professional is changed by a person at InterioBee, not by
               /// the professional. Saying "not built yet" would have described
               /// a mobile shortfall that does not exist.
               const SizedBox(height: Space.lg),
-              AanganCard(
+              InterioBeeCard(
                 nested: true,
                 child: Text(
                   context.t(

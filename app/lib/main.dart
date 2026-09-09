@@ -8,13 +8,13 @@ library;
 import 'dart:async';
 import 'dart:io';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_auth/aangan_core_auth.dart';
-import 'package:aangan_core_push/aangan_core_push.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_design/aangan_design.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
-import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
+import 'package:interiobee_core_push/interiobee_core_push.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_design/interiobee_design.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
+import 'package:interiobee_feature_vendor/interiobee_feature_vendor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,7 +48,7 @@ Future<void> main() async {
     debugPrint('no read cache — serving every read from the network: $error');
   }
 
-  final api = AanganApi(
+  final api = InterioBeeApi(
     ApiConfig(baseUrl: Env.baseUrl),
     session: session,
     cacheDirectory: cacheDirectory,
@@ -140,7 +140,7 @@ Future<void> main() async {
   runApp(
     UncontrolledProviderScope(
       container: container,
-      child: AanganApp(
+      child: InterioBeeApp(
         api: api,
         auth: auth,
         gate: gate,
@@ -151,8 +151,8 @@ Future<void> main() async {
   );
 }
 
-class AanganApp extends StatefulWidget {
-  const AanganApp({
+class InterioBeeApp extends StatefulWidget {
+  const InterioBeeApp({
     super.key,
     required this.api,
     required this.auth,
@@ -161,17 +161,17 @@ class AanganApp extends StatefulWidget {
     required this.language,
   });
 
-  final AanganApi api;
+  final InterioBeeApi api;
   final AuthController auth;
   final BiometricGate gate;
   final VersionGate version;
   final LanguageController language;
 
   @override
-  State<AanganApp> createState() => _AanganAppState();
+  State<InterioBeeApp> createState() => _InterioBeeAppState();
 }
 
-class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
+class _InterioBeeAppState extends State<InterioBeeApp> with WidgetsBindingObserver {
   /// One upload queue per stage.
   ///
   /// Held here rather than inside the screen, so a vendor can leave the stage,
@@ -261,14 +261,14 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
     return MaterialApp.router(
       title: Env.flavour.appName,
       debugShowCheckedModeBanner: false,
-      theme: AanganTheme.light,
+      theme: InterioBeeTheme.light,
 
       /// `null` means follow the device, which is the default and the common
       /// case. An explicit choice overrides it — see [LanguageController].
       locale: widget.language.locale,
-      supportedLocales: aanganSupportedLocales,
+      supportedLocales: interiobeeSupportedLocales,
       localizationsDelegates: const [
-        AanganL10nDelegate(),
+        InterioBeeL10nDelegate(),
         // Material, Cupertino and the raw widget layer each carry their own
         // strings. All three, or the framework speaks English inside a Hindi
         // app.
@@ -283,7 +283,7 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
       /// nobody has looked at. The palette is warm lime-washed plaster and the
       /// argument is daylight on stone; a mechanical inversion reads as a bug.
       themeMode: ThemeMode.light,
-      darkTheme: AanganTheme.light,
+      darkTheme: InterioBeeTheme.light,
 
       routerConfig: _router,
 
@@ -296,7 +296,7 @@ class _AanganAppState extends State<AanganApp> with WidgetsBindingObserver {
       /// `Localizations` is already above it, and above the navigator, so every
       /// routed screen in both feature packages can find the setting without a
       /// parameter threaded through the shells.
-      builder: (context, child) => AanganLanguageScope(
+      builder: (context, child) => InterioBeeLanguageScope(
         language: widget.language,
         child: AnimatedBuilder(
           animation: widget.version,

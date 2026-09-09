@@ -1,4 +1,4 @@
-/// The Aangan API client.
+/// The InterioBee API client.
 ///
 /// Generated models and typed clients, plus the hand-written half: the dio
 /// instance, the interceptors, and the error type every failure becomes.

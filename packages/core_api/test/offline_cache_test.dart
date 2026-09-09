@@ -8,7 +8,7 @@ library;
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 
@@ -49,7 +49,7 @@ class _FlakyAdapter implements HttpClientAdapter {
 void main() {
   late Directory dir;
 
-  setUp(() => dir = Directory.systemTemp.createTempSync('aangan-cache-test'));
+  setUp(() => dir = Directory.systemTemp.createTempSync('interiobee-cache-test'));
   tearDown(() {
     if (dir.existsSync()) dir.deleteSync(recursive: true);
   });

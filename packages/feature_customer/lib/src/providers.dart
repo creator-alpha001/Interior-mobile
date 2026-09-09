@@ -1,7 +1,7 @@
 /// The customer shell's reads, and what a write invalidates.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,7 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// binaries to be a build flavour rather than a rewrite, which only holds while
 /// neither feature package reaches into the other. Distinct names are what make
 /// that separation safe instead of a trap.
-final customerApiProvider = Provider<AanganApi>(
+final customerApiProvider = Provider<InterioBeeApi>(
   (ref) => throw UnimplementedError('customerApiProvider must be overridden'),
 );
 

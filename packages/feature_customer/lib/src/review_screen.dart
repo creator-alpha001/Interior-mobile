@@ -10,8 +10,8 @@
 /// that, so this screen reviews a *project*, and a project is one trade.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -98,7 +98,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             /// know it does not follow them to carpentry.
             Text(
               context.t(
-                'This rates their {trade} only. Ratings on Aangan are per '
+                'This rates their {trade} only. Ratings on InterioBee are per '
                 'trade, so it will not affect their other work.',
                 {'trade': view.domain.name.toLowerCase()},
               ),

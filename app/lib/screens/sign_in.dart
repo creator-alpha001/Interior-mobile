@@ -7,8 +7,8 @@
 /// the server has not seen before.
 library;
 
-import 'package:aangan_core_auth/aangan_core_auth.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -80,7 +80,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: Space.xxl),
-                  Text('Aangan', style: context.text.displayLarge),
+                  Text('InterioBee', style: context.text.displayLarge),
                   const SizedBox(height: Space.xs),
                   Text(
                     switch (state.stage) {
@@ -257,7 +257,7 @@ class _CodeStageState extends State<_CodeStage> {
         // never render against a real deployment.
         if (state.devCode != null) ...[
           const SizedBox(height: Space.md),
-          AanganCard(
+          InterioBeeCard(
             nested: true,
             child: Row(
               children: [

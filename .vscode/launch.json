@@ -13,17 +13,17 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Aangan (dev)",
+      "name": "InterioBee (dev)",
       "request": "launch",
       "type": "dart",
       "program": "app/lib/main.dart",
       // `10.0.2.2` is the host machine as seen from the Android emulator, and
       // is already the dev flavour's default — set explicitly so the value is
       // visible rather than buried in `env.dart`.
-      "args": ["--dart-define=AANGAN_API_URL=http://10.0.2.2:4000"]
+      "args": ["--dart-define=INTERIOBEE_API_URL=http://10.0.2.2:4000"]
     },
     {
-      "name": "Aangan (dev, device on this wifi)",
+      "name": "InterioBee (dev, device on this wifi)",
       "request": "launch",
       "type": "dart",
       "program": "app/lib/main.dart",
@@ -32,14 +32,14 @@
       // `app/android/app/src/debug/res/xml/network_security_config.xml` too —
       // that file permits cleartext to two named hosts rather than to
       // everything, so an address it does not list is refused silently.
-      "args": ["--dart-define=AANGAN_API_URL=http://192.168.1.20:4000"]
+      "args": ["--dart-define=INTERIOBEE_API_URL=http://192.168.1.20:4000"]
     },
     {
-      "name": "Aangan (staging)",
+      "name": "InterioBee (staging)",
       "request": "launch",
       "type": "dart",
       "program": "app/lib/main.dart",
-      "args": ["--dart-define=AANGAN_ENV=staging"]
+      "args": ["--dart-define=INTERIOBEE_ENV=staging"]
     }
   ]
 }

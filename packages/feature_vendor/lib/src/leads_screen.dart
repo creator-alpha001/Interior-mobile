@@ -11,8 +11,8 @@
 /// the job is theirs.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -150,15 +150,15 @@ class _FilterChip extends StatelessWidget {
             // A tab, not a status. So a 4px radius, not a pill: the pill is
             // reserved for metadata and using it here would blunt that signal.
             borderRadius: Radii.smallRadius,
-            color: selected ? AanganColors.ink : Colors.transparent,
+            color: selected ? InterioBeeColors.ink : Colors.transparent,
             border: Border.all(
-              color: selected ? AanganColors.ink : context.palette.inputBorder,
+              color: selected ? InterioBeeColors.ink : context.palette.inputBorder,
             ),
           ),
           child: Text(
             label,
             style: context.text.titleMedium?.copyWith(
-              color: selected ? AanganColors.limestone : AanganColors.ink,
+              color: selected ? InterioBeeColors.limestone : InterioBeeColors.ink,
             ),
           ),
         ),
@@ -177,7 +177,7 @@ class LeadCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.palette;
 
-    return AanganCard(
+    return InterioBeeCard(
       onTap: onTap,
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
@@ -235,7 +235,7 @@ class LeadCard extends StatelessWidget {
           ),
 
           const SizedBox(height: Space.sm),
-          const AanganDivider(inset: 0),
+          const InterioBeeDivider(inset: 0),
           const SizedBox(height: Space.sm),
 
           Row(

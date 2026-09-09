@@ -28,7 +28,7 @@ import 'hi.dart';
 /// Hindi is not a nice-to-have here. The vendor half of this app is carpenters,
 /// painters and fabricators, and English-only would be a functional barrier for
 /// a large share of them — not a polish item.
-const aanganSupportedLocales = <Locale>[Locale('en'), Locale('hi')];
+const interiobeeSupportedLocales = <Locale>[Locale('en'), Locale('hi')];
 
 /// A lookup, and nothing else.
 ///
@@ -36,12 +36,12 @@ const aanganSupportedLocales = <Locale>[Locale('en'), Locale('hi')];
 /// to a screen should not mean touching a code generator, and a translator
 /// should be able to work from one table rather than from a Dart API.
 @immutable
-class AanganL10n {
-  const AanganL10n({required this.locale, required Map<String, String> table})
+class InterioBeeL10n {
+  const InterioBeeL10n({required this.locale, required Map<String, String> table})
     : _table = table;
 
   /// English, which needs no table: the key is already the string.
-  static const english = AanganL10n(
+  static const english = InterioBeeL10n(
     locale: Locale('en'),
     table: <String, String>{},
   );
@@ -75,21 +75,21 @@ class AanganL10n {
   String plural(int count, String one, String other) =>
       call(count == 1 ? one : other, {'n': '$count'});
 
-  static AanganL10n of(BuildContext context) =>
-      Localizations.of<AanganL10n>(context, AanganL10n) ?? english;
+  static InterioBeeL10n of(BuildContext context) =>
+      Localizations.of<InterioBeeL10n>(context, InterioBeeL10n) ?? english;
 
-  static AanganL10n forLocale(Locale locale) => switch (locale.languageCode) {
-    'hi' => const AanganL10n(locale: Locale('hi'), table: hindi),
+  static InterioBeeL10n forLocale(Locale locale) => switch (locale.languageCode) {
+    'hi' => const InterioBeeL10n(locale: Locale('hi'), table: hindi),
     _ => english,
   };
 }
 
-class AanganL10nDelegate extends LocalizationsDelegate<AanganL10n> {
-  const AanganL10nDelegate();
+class InterioBeeL10nDelegate extends LocalizationsDelegate<InterioBeeL10n> {
+  const InterioBeeL10nDelegate();
 
   @override
   bool isSupported(Locale locale) =>
-      aanganSupportedLocales.any((l) => l.languageCode == locale.languageCode);
+      interiobeeSupportedLocales.any((l) => l.languageCode == locale.languageCode);
 
   /// Synchronous, because the table is compiled in.
   ///
@@ -97,17 +97,17 @@ class AanganL10nDelegate extends LocalizationsDelegate<AanganL10n> {
   /// language on every cold start, which is exactly the flicker the bundled
   /// fonts exist to avoid.
   @override
-  Future<AanganL10n> load(Locale locale) =>
-      SynchronousFuture(AanganL10n.forLocale(locale));
+  Future<InterioBeeL10n> load(Locale locale) =>
+      SynchronousFuture(InterioBeeL10n.forLocale(locale));
 
   @override
-  bool shouldReload(AanganL10nDelegate old) => false;
+  bool shouldReload(InterioBeeL10nDelegate old) => false;
 }
 
-extension AanganL10nContext on BuildContext {
-  AanganL10n get l10n => AanganL10n.of(this);
+extension InterioBeeL10nContext on BuildContext {
+  InterioBeeL10n get l10n => InterioBeeL10n.of(this);
 
   /// The workhorse. `context.t('Sign in')`.
   String t(String source, [Map<String, Object?> args = const {}]) =>
-      AanganL10n.of(this)(source, args);
+      InterioBeeL10n.of(this)(source, args);
 }

@@ -5,8 +5,8 @@
 /// This walks that table.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_push/aangan_core_push.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_push/interiobee_core_push.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

@@ -1,5 +1,5 @@
-name: aangan_design
-description: Tokens, theme and shared widgets for the Aangan mobile app.
+name: interiobee_design
+description: Tokens, theme and shared widgets for the InterioBee mobile app.
 publish_to: none
 
 # Resolved from the workspace root, so every package shares one lockfile and

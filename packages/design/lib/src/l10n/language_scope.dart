@@ -29,8 +29,8 @@ abstract class LanguageSwitch implements Listenable {
   Future<void> set(Locale? locale);
 }
 
-class AanganLanguageScope extends InheritedNotifier<Listenable> {
-  const AanganLanguageScope({
+class InterioBeeLanguageScope extends InheritedNotifier<Listenable> {
+  const InterioBeeLanguageScope({
     super.key,
     required this.language,
     required super.child,
@@ -44,11 +44,11 @@ class AanganLanguageScope extends InheritedNotifier<Listenable> {
   /// screen should not have to build the app's whole preference stack to see
   /// that screen.
   static LanguageSwitch? maybeOf(BuildContext context) => context
-      .dependOnInheritedWidgetOfExactType<AanganLanguageScope>()
+      .dependOnInheritedWidgetOfExactType<InterioBeeLanguageScope>()
       ?.language;
 
   @override
-  bool updateShouldNotify(AanganLanguageScope oldWidget) =>
+  bool updateShouldNotify(InterioBeeLanguageScope oldWidget) =>
       language != oldWidget.language;
 }
 
@@ -58,10 +58,10 @@ class LanguageSetting extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final language = AanganLanguageScope.maybeOf(context);
+    final language = InterioBeeLanguageScope.maybeOf(context);
     if (language == null) return const SizedBox.shrink();
 
-    return AanganCard(
+    return InterioBeeCard(
       onTap: () => showLanguagePicker(context),
       child: Row(
         children: [
@@ -94,7 +94,7 @@ class LanguageSetting extends StatelessWidget {
 }
 
 Future<void> showLanguagePicker(BuildContext context) async {
-  final language = AanganLanguageScope.maybeOf(context);
+  final language = InterioBeeLanguageScope.maybeOf(context);
   if (language == null) return;
 
   await showModalBottomSheet<void>(

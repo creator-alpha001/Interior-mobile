@@ -14,8 +14,8 @@
 /// terminal step is the partner agreement, acknowledged clause by clause.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -221,14 +221,14 @@ class _StepRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final palette = context.palette;
 
-    return AanganCard(
+    return InterioBeeCard(
       onTap: onOpen,
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           /// Sage only once it is genuinely done.
           ///
-          /// DESIGN.md §1.4: sage means a person at Aangan checked something.
+          /// DESIGN.md §1.4: sage means a person at InterioBee checked something.
           /// A step in progress is ochre, and an optional one not yet started
           /// is neutral — never a hopeful green.
           Icon(

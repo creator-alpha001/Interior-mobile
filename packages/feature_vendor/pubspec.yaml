@@ -1,4 +1,4 @@
-name: aangan_feature_vendor
+name: interiobee_feature_vendor
 description: The professional's shell — leads, quotes, visits, projects and commission.
 publish_to: none
 
@@ -15,13 +15,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  aangan_core_api:
+  interiobee_core_api:
     path: ../core_api
-  aangan_core_auth:
+  interiobee_core_auth:
     path: ../core_auth
-  aangan_design:
+  interiobee_design:
     path: ../design
-  aangan_core_upload:
+  interiobee_core_upload:
     path: ../core_upload
 
   # MOBILE.md 4.2. Nearly every screen here is one or two remote reads, which is

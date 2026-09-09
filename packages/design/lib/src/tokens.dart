@@ -8,16 +8,16 @@
 /// in any of the five screens.
 ///
 /// Nothing outside this file writes a colour literal. Screens read
-/// `Theme.of(context).colorScheme` and `AanganPalette`, which is what keeps the
+/// `Theme.of(context).colorScheme` and `InterioBeePalette`, which is what keeps the
 /// promise in DESIGN.md §3.8 that dark mode is later a single file rather than
 /// a sweep through every widget.
 library;
 
 import 'package:flutter/widgets.dart';
 
-/// Raw colour values. Prefer the `ColorScheme` and `AanganPalette` over these:
+/// Raw colour values. Prefer the `ColorScheme` and `InterioBeePalette` over these:
 /// they carry the *role*, which is what a screen should be choosing by.
-abstract final class AanganColors {
+abstract final class InterioBeeColors {
   /// Terracotta. The action colour — "your turn".
   ///
   /// `#944927`, not the prose's `#C06C47`. The lighter value appears in no
@@ -138,7 +138,7 @@ abstract final class Radii {
 ///
 /// DESIGN.md §4 is explicit that artificial drop shadows are strictly avoided:
 /// depth is tonal layering plus hairline borders, in exactly three levels.
-/// Flutter fights this in several places, which `AanganTheme` handles centrally
+/// Flutter fights this in several places, which `InterioBeeTheme` handles centrally
 /// rather than per widget.
 abstract final class Layering {
   /// The one permitted shadow, on level 2 only.

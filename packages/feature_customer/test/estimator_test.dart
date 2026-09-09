@@ -7,8 +7,8 @@
 /// what turns an estimate from useful into misleading.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
+import 'package:interiobee_design/interiobee_design.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -23,7 +23,7 @@ Future<void> _pump(WidgetTester tester, Widget home) async {
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 
-  await tester.pumpWidget(MaterialApp(theme: AanganTheme.light, home: home));
+  await tester.pumpWidget(MaterialApp(theme: InterioBeeTheme.light, home: home));
   await tester.pumpAndSettle();
 }
 
@@ -184,11 +184,11 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           locale: const Locale('hi'),
-          supportedLocales: aanganSupportedLocales,
+          supportedLocales: interiobeeSupportedLocales,
           localizationsDelegates: const [
-            AanganL10nDelegate(),
+            InterioBeeL10nDelegate(),
             // As `main.dart` composes them. Without these an AppBar
             // asserts, and the app's own strings would be Hindi
             // inside English framework chrome.

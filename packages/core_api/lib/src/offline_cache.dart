@@ -78,7 +78,7 @@ class CachedAt {
   /// When the network last answered this request successfully.
   final DateTime at;
 
-  static const key = 'aangan.cachedAt';
+  static const key = 'interiobee.cachedAt';
 }
 
 /// Which paths may be served stale.

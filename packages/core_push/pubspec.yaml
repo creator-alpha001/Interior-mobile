@@ -1,4 +1,4 @@
-name: aangan_core_push
+name: interiobee_core_push
 description: Device registration, and where a notification tap should land.
 publish_to: none
 
@@ -15,7 +15,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  aangan_core_api:
+  interiobee_core_api:
     path: ../core_api
   meta: ^1.16.0
 

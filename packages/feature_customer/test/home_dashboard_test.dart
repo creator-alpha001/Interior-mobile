@@ -17,9 +17,9 @@ library;
 
 import 'dart:async';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -67,7 +67,7 @@ Future<void> _pump(
         ),
       ],
       child: MaterialApp(
-        theme: AanganTheme.light,
+        theme: InterioBeeTheme.light,
         home: HomeScreen(
           onStart: onStart ?? () {},
           onOpenJobs: onOpenJobs ?? () {},
@@ -193,6 +193,6 @@ void main() {
     expect(find.text('Nothing under way yet'), findsNothing);
     expect(find.text('Your work'), findsNothing);
     // The rest of the screen still renders.
-    expect(find.text('Aangan'), findsOneWidget);
+    expect(find.text('InterioBee'), findsOneWidget);
   });
 }

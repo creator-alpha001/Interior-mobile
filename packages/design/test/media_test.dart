@@ -11,7 +11,7 @@
 /// Dart implementation, which would make this test a tautology.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -28,7 +28,7 @@ const _fromTheWeb = <String, int>{
 Future<void> _pump(WidgetTester tester, Widget child) async {
   await tester.pumpWidget(
     MaterialApp(
-      theme: AanganTheme.light,
+      theme: InterioBeeTheme.light,
       home: Scaffold(body: SizedBox(width: 300, height: 200, child: child)),
     ),
   );
@@ -73,7 +73,7 @@ void main() {
     ) async {
       await _pump(
         tester,
-        const AanganMedia(src: 'ph:furniture:wardrobe', alt: 'A wardrobe'),
+        const InterioBeeMedia(src: 'ph:furniture:wardrobe', alt: 'A wardrobe'),
       );
 
       expect(find.byType(CustomPaint), findsWidgets);
@@ -85,7 +85,7 @@ void main() {
       tester,
     ) async {
       // `ph:` with nothing after it reaches the empty-seed path above.
-      await _pump(tester, const AanganMedia(src: 'ph:', alt: 'Nothing'));
+      await _pump(tester, const InterioBeeMedia(src: 'ph:', alt: 'Nothing'));
       expect(tester.takeException(), isNull);
     });
 
@@ -94,7 +94,7 @@ void main() {
     ) async {
       await _pump(
         tester,
-        const AanganMedia(src: 'ph:plumbing:x', alt: 'A trade we do not have'),
+        const InterioBeeMedia(src: 'ph:plumbing:x', alt: 'A trade we do not have'),
       );
       expect(tester.takeException(), isNull);
     });
@@ -105,7 +105,7 @@ void main() {
       final handle = tester.ensureSemantics();
       await _pump(
         tester,
-        const AanganMedia(src: 'ph:interior:kitchen', alt: 'Modular kitchen'),
+        const InterioBeeMedia(src: 'ph:interior:kitchen', alt: 'Modular kitchen'),
       );
 
       expect(find.bySemanticsLabel('Modular kitchen'), findsOneWidget);
@@ -115,7 +115,7 @@ void main() {
     testWidgets('draws the label over a placeholder', (tester) async {
       await _pump(
         tester,
-        const AanganMedia(
+        const InterioBeeMedia(
           src: 'ph:painting:p1',
           alt: 'Painting',
           label: 'Two-coat emulsion',

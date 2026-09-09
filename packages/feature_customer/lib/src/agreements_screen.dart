@@ -23,8 +23,8 @@ library;
 
 import 'dart:math';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -201,7 +201,7 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
     final agreement = view.agreement;
     final isSigned = agreement.signedAt != null;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -327,7 +327,7 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
             Text(
               /// The payments line is not boilerplate.
               ///
-              /// Aangan never handles money, and a Hindi rendering that
+              /// InterioBee never handles money, and a Hindi rendering that
               /// implied otherwise would be the single most damaging sentence
               /// in the app.
               context.t(

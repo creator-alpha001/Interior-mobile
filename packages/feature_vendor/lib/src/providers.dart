@@ -10,15 +10,15 @@
 /// [refreshAfterWrite] is where that lives. Every mutation goes through it.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/widgets.dart';
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Supplied by the app at startup. Overridden in tests with a stubbed client.
 /// See the note on `customerApiProvider`: the two are named apart because
 /// sharing a name cost the customer half of the app its API client.
-final vendorApiProvider = Provider<AanganApi>(
+final vendorApiProvider = Provider<InterioBeeApi>(
   (ref) => throw UnimplementedError('vendorApiProvider must be overridden'),
 );
 

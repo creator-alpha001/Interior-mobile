@@ -26,7 +26,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -134,14 +134,14 @@ class QueuedUpload {
 /// Compresses, tickets and PUTs — and remembers where it got to.
 class UploadQueue extends ChangeNotifier {
   UploadQueue({
-    required AanganApi api,
+    required InterioBeeApi api,
     Directory? storageDirectory,
     ImageCompressor? compressor,
   }) : _api = api,
        _directory = storageDirectory,
        _compress = compressor ?? const FlutterImageCompressor();
 
-  final AanganApi _api;
+  final InterioBeeApi _api;
   final ImageCompressor _compress;
   Directory? _directory;
 

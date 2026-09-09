@@ -1,4 +1,4 @@
-/// The relay thread — with Aangan, never with the customer.
+/// The relay thread — with InterioBee, never with the customer.
 ///
 /// Every message here has the platform on one side of it. That is not a
 /// limitation of the app; it is the platform's proposition, and the schema
@@ -10,8 +10,8 @@
 /// the customer and they should understand why there isn't one.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -79,7 +79,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('Aangan'),
+            const Text('InterioBee'),
             Text(
               context.t('about {title}', {'title': widget.title}),
               style: context.text.bodySmall?.copyWith(
@@ -101,7 +101,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
               ),
               child: Text(
                 context.t(
-                  'You are talking to Aangan, not the customer. We carry your '
+                  'You are talking to InterioBee, not the customer. We carry your '
                   'questions to them and bring their answers back.',
                 ),
                 style: context.text.bodySmall?.copyWith(
@@ -191,7 +191,7 @@ class _Bubble extends StatelessWidget {
         decoration: BoxDecoration(
           color: mine
               ? context.colors.surfaceContainerHighest
-              : AanganColors.chalk,
+              : InterioBeeColors.chalk,
           borderRadius: Radii.panelRadius,
           border: Border.all(color: context.palette.hairline),
         ),
@@ -201,7 +201,7 @@ class _Bubble extends StatelessWidget {
               : CrossAxisAlignment.start,
           children: [
             Text(
-              mine ? context.t('You') : 'Aangan',
+              mine ? context.t('You') : 'InterioBee',
               style: context.text.labelMedium?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),

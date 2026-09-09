@@ -19,12 +19,12 @@
 /// phone.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// Implements `design`'s [LanguageSwitch] so screens in the feature packages
-/// can reach the setting through `AanganLanguageScope` without any of them
+/// can reach the setting through `InterioBeeLanguageScope` without any of them
 /// depending on `shared_preferences` — or on this file.
 class LanguageController extends ChangeNotifier implements LanguageSwitch {
   LanguageController({SharedPreferences? preferences})
@@ -34,7 +34,7 @@ class LanguageController extends ChangeNotifier implements LanguageSwitch {
 
   /// Not in secure storage. A language preference is not a secret, and the
   /// keychain is for the session token — see the note in core_auth's pubspec.
-  static const _key = 'aangan.language';
+  static const _key = 'interiobee.language';
 
   Locale? _locale;
 

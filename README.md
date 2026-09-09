@@ -1,4 +1,4 @@
-# Aangan mobile
+# InterioBee mobile
 
 One Flutter application carrying two audiences: the customer and the
 professional. Admin stays on the web, where it is.
@@ -119,8 +119,8 @@ talks to localhost and fails loudly on a device, which is the failure you want.
 
 ```bash
 cd app
-flutter run --dart-define=AANGAN_ENV=staging
-flutter run --dart-define=AANGAN_API_URL=http://192.168.1.20:4000   # a laptop on the same wifi
+flutter run --dart-define=INTERIOBEE_ENV=staging
+flutter run --dart-define=INTERIOBEE_API_URL=http://192.168.1.20:4000   # a laptop on the same wifi
 ```
 
 A device on the same wifi also needs that machine's address added to
@@ -156,7 +156,7 @@ vendor on a site with no signal should not get a fallback-font first paint.
 palette is warm lime-washed plaster and the argument is daylight on stone; a
 mechanical inversion gives a muddy brown-grey app that reads as a bug. Doing it
 properly is real design work. Deferring costs exactly one discipline: every
-screen reads `Theme.of(context).colorScheme` and `AanganPalette`, never a
+screen reads `Theme.of(context).colorScheme` and `InterioBeePalette`, never a
 literal. One screen reaching for a hex value breaks the promise that dark mode
 is later a single file.
 

@@ -7,7 +7,7 @@ library;
 
 import 'dart:convert';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:dio/dio.dart';
 
 /// Answers from a route table, and records what it was asked for.
@@ -56,10 +56,10 @@ class StubApi implements HttpClientAdapter {
   void close({bool force = false}) {}
 }
 
-AanganApi apiWith(StubApi stub, SessionStore session) {
+InterioBeeApi apiWith(StubApi stub, SessionStore session) {
   final dio = Dio(BaseOptions(baseUrl: 'https://api.test'))
     ..httpClientAdapter = stub;
-  return AanganApi.withDio(dio, session: session);
+  return InterioBeeApi.withDio(dio, session: session);
 }
 
 /// A `SessionUser` body, as the API would send it.
@@ -139,7 +139,7 @@ Map<String, Object?> onboarding({required bool canReceiveLeads}) {
     'terms': {
       'version': '1.0',
       'effectiveFrom': '2026-01-01',
-      'title': 'Aangan partner terms',
+      'title': 'InterioBee partner terms',
       'summary': 'How work reaches you, and what commission is charged.',
       'sections': <Object>[],
       'acknowledgements': <Object>[],

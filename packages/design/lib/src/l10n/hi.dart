@@ -11,7 +11,7 @@
 ///
 /// Words held in English on purpose, because translating them would be worse:
 ///
-///   - **Aangan** — the product's name.
+///   - **InterioBee** — the product's name.
 ///   - **OTP** — universally said in English, in every register.
 ///   - **GST**, **PIN**, **SMS** — the same.
 ///   - Trade names as they come from the API, which are data rather than copy.

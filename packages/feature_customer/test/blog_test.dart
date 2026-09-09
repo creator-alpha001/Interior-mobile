@@ -15,9 +15,9 @@
 ///     and interrupting the article to say so would cost more than it earns.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -85,7 +85,7 @@ Future<void> _pump(WidgetTester tester, Widget home) async {
         blogPostProvider.overrideWith((ref, slug) async => _view),
         relatedPostsProvider.overrideWith((ref, id) async => []),
       ],
-      child: MaterialApp(theme: AanganTheme.light, home: home),
+      child: MaterialApp(theme: InterioBeeTheme.light, home: home),
     ),
   );
   await tester.pumpAndSettle();
@@ -177,7 +177,7 @@ void main() {
         const PostScreen(slug: 'modular-kitchen-cost-lucknow'),
       );
 
-      expect(find.byType(AanganMedia), findsOneWidget);
+      expect(find.byType(InterioBeeMedia), findsOneWidget);
     });
 
     testWidgets('makes its pitch once, at the end', (tester) async {
@@ -211,11 +211,11 @@ void main() {
               ),
             ),
           ],
-          // The Aangan theme, like every other pump here. Without it
+          // The InterioBee theme, like every other pump here. Without it
           // `context.palette` is absent and the screen throws a null-check
           // long before it gets anywhere near the failure under test.
           child: MaterialApp(
-            theme: AanganTheme.light,
+            theme: InterioBeeTheme.light,
             home: const PostScreen(slug: 'modular-kitchen-cost-lucknow'),
           ),
         ),

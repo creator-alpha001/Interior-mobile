@@ -4,7 +4,7 @@
 ///
 /// **The button says "Submit for approval", not "Mark complete".** §6.2:
 /// *"evidence is not completion, and the screen must not imply it is."* A stage
-/// is done when somebody at Aangan has checked the photographs — that is a
+/// is done when somebody at InterioBee has checked the photographs — that is a
 /// platform rule, enforced server-side, and the customer's progress bar moves
 /// on the approval rather than on this submission. Wording it as completion
 /// would teach the vendor something false about how they get paid.
@@ -15,9 +15,9 @@
 /// product, because it is "a stage is done when somebody checked" made visible.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -334,7 +334,7 @@ class _UploadRow extends StatelessWidget {
       ),
     };
 
-    return AanganCard(
+    return InterioBeeCard(
       child: Row(
         children: [
           Icon(

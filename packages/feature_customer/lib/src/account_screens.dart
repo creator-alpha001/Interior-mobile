@@ -7,8 +7,8 @@
 /// routed a notification *tap* without there being anywhere to see the list.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 // Flutter has a `Notification` of its own — the scroll/size notification
 // base class — and the generated client has the platform's. Left ambiguous,
 // Dart resolves neither and quietly types every field access as `dynamic`,
@@ -174,7 +174,7 @@ class _NotificationRow extends ConsumerWidget {
         .maybeWhen(data: (list) => list, orElse: () => const <LeadView>[]);
     final record = _recordFor(notification, requirements);
 
-    return AanganCard(
+    return InterioBeeCard(
       // Unread sits on the peach panel. It is the one colour that means "you",
       // and an unread notification is by definition waiting on the reader.
       nested: notification.isRead,
@@ -260,7 +260,7 @@ class ReferralsScreen extends ConsumerWidget {
               ),
 
               const SizedBox(height: Space.lg),
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -276,7 +276,7 @@ class ReferralsScreen extends ConsumerWidget {
                       // Monospace-ish weight and letter spacing: this is a
                       // string somebody reads aloud over a phone call.
                       summary.code,
-                      style: AanganTextStyles.financialNum.copyWith(
+                      style: InterioBeeTextStyles.financialNum.copyWith(
                         color: context.colors.onSurface,
                       ),
                     ),
@@ -286,7 +286,7 @@ class ReferralsScreen extends ConsumerWidget {
                       child: FilledButton.icon(
                         onPressed: () => Share.share(
                           context.t(
-                            'I used Aangan for interior work — they find you '
+                            'I used InterioBee for interior work — they find you '
                             'three verified professionals and stay between '
                             'you. Use my code {code}: {url}',
                             {'code': summary.code, 'url': summary.shareUrl},
@@ -329,7 +329,7 @@ class ReferralsScreen extends ConsumerWidget {
                 for (final entry in summary.referrals)
                   Padding(
                     padding: const EdgeInsets.only(bottom: Space.xs),
-                    child: AanganCard(
+                    child: InterioBeeCard(
                       child: Row(
                         children: [
                           Expanded(
@@ -440,7 +440,7 @@ class _TicketRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final open = ticket.status != SupportTicketStatus.closed;
 
-    return AanganCard(
+    return InterioBeeCard(
       onTap: () => Navigator.of(
         context,
       ).push(MaterialPageRoute(builder: (_) => TicketScreen(ticket: ticket))),
@@ -535,12 +535,12 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
                   const SizedBox(height: Space.sm),
                   Text(ticket.body, style: context.text.bodyLarge),
                   const SizedBox(height: Space.md),
-                  const AanganDivider(inset: 0),
+                  const InterioBeeDivider(inset: 0),
                   for (final reply in ticket.replies)
                     Padding(
                       padding: const EdgeInsets.only(top: Space.sm),
-                      child: AanganCard(
-                        // Aangan's replies sit on the peach panel; the customer's own
+                      child: InterioBeeCard(
+                        // InterioBee's replies sit on the peach panel; the customer's own
                         // sit plain, so a thread reads as a conversation.
                         nested:
                             reply.authorRole == TicketReplyAuthorRole.platform,

@@ -12,8 +12,8 @@
 /// preview, never the source of truth.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -231,7 +231,7 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
             ),
 
             SectionHead(context.t('Total'), eyebrow: context.t('Whole rupees')),
-            AanganCard(
+            InterioBeeCard(
               padding: const EdgeInsets.all(Space.cardPaddingWide),
               child: Column(
                 children: [
@@ -261,7 +261,7 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
                   const SizedBox(height: Space.xs),
                   _TotalRow(label: context.t('Tax'), amount: _taxAmount),
                   const SizedBox(height: Space.sm),
-                  const AanganDivider(inset: 0),
+                  const InterioBeeDivider(inset: 0),
                   const SizedBox(height: Space.sm),
                   Row(
                     children: [
@@ -297,7 +297,7 @@ class _QuoteBuilderScreenState extends ConsumerState<QuoteBuilderScreen> {
               context.t('Terms'),
               eyebrow: context.t('What you are committing to'),
             ),
-            AanganCard(
+            InterioBeeCard(
               padding: const EdgeInsets.all(Space.cardPaddingWide),
               child: Column(
                 children: [
@@ -406,7 +406,7 @@ class _LineEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       child: Column(
         children: [
           Row(

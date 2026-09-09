@@ -2,7 +2,7 @@
 ///
 /// Read from `--dart-define` rather than from a file, so the value is baked
 /// into the binary at build time and cannot be changed by anything on the
-/// device. `flutter run --dart-define=AANGAN_ENV=staging`.
+/// device. `flutter run --dart-define=INTERIOBEE_ENV=staging`.
 ///
 /// There is no default that points at production. A build that forgets to say
 /// where it is going talks to localhost and fails loudly on a device, which is
@@ -11,14 +11,14 @@
 library;
 
 enum Flavour {
-  dev('http://10.0.2.2:4000', 'Aangan (dev)'),
+  dev('http://10.0.2.2:4000', 'InterioBee (dev)'),
 
   /// `10.0.2.2` is the host machine as seen from the Android emulator. On a
   /// physical device this needs the machine's LAN address instead, which is why
   /// the value is a define rather than a constant.
-  staging('https://staging-api.aangan.example', 'Aangan (staging)'),
+  staging('https://staging-api.interiobee.example', 'InterioBee (staging)'),
 
-  production('https://api.aangan.example', 'Aangan');
+  production('https://api.interiobee.example', 'InterioBee');
 
   const Flavour(this.defaultBaseUrl, this.appName);
 
@@ -28,12 +28,12 @@ enum Flavour {
 
 abstract final class Env {
   static const _name = String.fromEnvironment(
-    'AANGAN_ENV',
+    'INTERIOBEE_ENV',
     defaultValue: 'dev',
   );
 
   /// An explicit override, for pointing a build at a laptop on the same wifi.
-  static const _baseUrlOverride = String.fromEnvironment('AANGAN_API_URL');
+  static const _baseUrlOverride = String.fromEnvironment('INTERIOBEE_API_URL');
 
   static Flavour get flavour => switch (_name) {
     'production' => Flavour.production,

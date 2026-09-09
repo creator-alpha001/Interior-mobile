@@ -14,9 +14,9 @@
 /// So: sign-in is offered where it is needed and nowhere else.
 library;
 
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_design/aangan_design.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_design/interiobee_design.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -49,7 +49,7 @@ Future<void> _pumpAccount(WidgetTester tester, {required bool signedIn}) async {
     ProviderScope(
       overrides: [customerApiProvider.overrideWithValue(fixtureApi())],
       child: MaterialApp(
-        theme: AanganTheme.light,
+        theme: InterioBeeTheme.light,
         home: CustomerShell(
           queue: UploadQueue(api: fixtureApi()),
           authChanges: ChangeNotifier(),

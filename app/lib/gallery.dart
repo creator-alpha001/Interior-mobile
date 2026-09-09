@@ -10,7 +10,7 @@
 /// decorative" is something you can look at rather than something written down.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 
 class GalleryScreen extends StatelessWidget {
@@ -51,7 +51,7 @@ class _Masthead extends StatelessWidget {
         children: [
           Text(
             'COMPONENT GALLERY',
-            style: AanganTextStyles.eyebrow.copyWith(
+            style: InterioBeeTextStyles.eyebrow.copyWith(
               color: context.colors.onSurfaceVariant,
             ),
             semanticsLabel: 'Component gallery',
@@ -85,7 +85,7 @@ class _TypeSpecimen extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionHead('Typography', eyebrow: 'Two families'),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -98,7 +98,7 @@ class _TypeSpecimen extends StatelessWidget {
               const SizedBox(height: Space.xxs),
               Text('Card title, headline small', style: text.headlineSmall),
               const SizedBox(height: Space.md),
-              const AanganDivider(inset: 0),
+              const InterioBeeDivider(inset: 0),
               const SizedBox(height: Space.md),
               Text('List row title — Manrope 18/600', style: text.titleLarge),
               const SizedBox(height: Space.xxs),
@@ -130,7 +130,7 @@ class _StatusPills extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionHead('Status', eyebrow: 'Colour carries meaning'),
-        AanganCard(
+        InterioBeeCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -171,7 +171,7 @@ class _Surfaces extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionHead('Depth', eyebrow: 'Three levels, one shadow'),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +183,7 @@ class _Surfaces extends StatelessWidget {
                 style: context.text.bodyMedium,
               ),
               const SizedBox(height: Space.md),
-              AanganCard(
+              InterioBeeCard(
                 nested: true,
                 child: Text(
                   'A panel nested inside a card steps one level darker, rather '
@@ -195,7 +195,7 @@ class _Surfaces extends StatelessWidget {
           ),
         ),
         const SizedBox(height: Space.md),
-        const AanganOverlay(
+        const InterioBeeOverlay(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -255,7 +255,7 @@ class _Money extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionHead('Money', eyebrow: 'Whole rupees, Indian grouping'),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.symmetric(vertical: Space.cardPadding),
           child: Column(
             children: [
@@ -287,7 +287,7 @@ class _Money extends StatelessWidget {
                 ),
                 if (index < quotes.length - 1) ...[
                   const SizedBox(height: Space.sm),
-                  const AanganDivider(),
+                  const InterioBeeDivider(),
                   const SizedBox(height: Space.sm),
                 ],
               ],
@@ -308,7 +308,7 @@ class _Controls extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionHead('Controls', eyebrow: '48dp minimum'),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,14 +362,14 @@ class _CodeInput extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SectionHead('The code field', eyebrow: 'One field, six boxes'),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               OtpField(autofocus: false, onCompleted: (_) {}),
               const SizedBox(height: Space.lg),
-              const AanganDivider(inset: 0),
+              const InterioBeeDivider(inset: 0),
               const SizedBox(height: Space.lg),
               OtpField(
                 autofocus: false,

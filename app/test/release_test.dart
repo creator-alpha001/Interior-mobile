@@ -1,10 +1,10 @@
 /// The two release requirements that are code rather than paperwork.
 library;
 
-import 'package:aangan_app/screens/delete_account.dart';
-import 'package:aangan_app/version_gate.dart';
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_app/screens/delete_account.dart';
+import 'package:interiobee_app/version_gate.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,7 +21,7 @@ Future<void> _pumpTall(WidgetTester tester, Widget home) async {
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 
-  await tester.pumpWidget(MaterialApp(theme: AanganTheme.light, home: home));
+  await tester.pumpWidget(MaterialApp(theme: InterioBeeTheme.light, home: home));
   await tester.pumpAndSettle();
 }
 

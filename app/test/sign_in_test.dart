@@ -6,9 +6,9 @@
 /// at least once.
 library;
 
-import 'package:aangan_app/screens/sign_in.dart';
-import 'package:aangan_core_auth/aangan_core_auth.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_app/screens/sign_in.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,7 +21,7 @@ Future<(AuthController, StubApi)> _pump(WidgetTester tester) async {
 
   await tester.pumpWidget(
     MaterialApp(
-      theme: AanganTheme.light,
+      theme: InterioBeeTheme.light,
       home: SignInScreen(auth: auth),
     ),
   );
@@ -108,7 +108,7 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: Scaffold(
             body: OtpField(onCompleted: (code) => completed = code),
           ),
@@ -127,7 +127,7 @@ void main() {
       // made paste-safe, so the count is the invariant worth pinning.
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: Scaffold(body: OtpField(onCompleted: (_) {})),
         ),
       );
@@ -140,7 +140,7 @@ void main() {
       // the SMS Retriever API on Android.
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: Scaffold(body: OtpField(onCompleted: (_) {})),
         ),
       );
@@ -153,7 +153,7 @@ void main() {
       String? completed;
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: Scaffold(
             body: OtpField(onCompleted: (code) => completed = code),
           ),

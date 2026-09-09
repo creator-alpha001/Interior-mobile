@@ -7,7 +7,7 @@
 /// large text is checked here instead, without pixels.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -23,7 +23,7 @@ Future<void> _pump(
 
   await tester.pumpWidget(
     MaterialApp(
-      theme: AanganTheme.light,
+      theme: InterioBeeTheme.light,
       builder: (context, widget) => MediaQuery(
         data: MediaQuery.of(
           context,
@@ -86,7 +86,7 @@ void main() {
       await _pump(
         tester,
         const SingleChildScrollView(
-          child: AanganCard(
+          child: InterioBeeCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -223,16 +223,16 @@ void main() {
       );
 
       final text = tester.widget<Text>(find.byType(Text));
-      expect(text.style?.color, AanganColors.inkMuted);
-      expect(text.style?.color, isNot(AanganColors.outline));
+      expect(text.style?.color, InterioBeeColors.inkMuted);
+      expect(text.style?.color, isNot(InterioBeeColors.outline));
     });
 
     test('the muted ink is materially darker than the outline', () {
       // A cheap proxy for the contrast ratio: relative luminance, which is what
       // the ratio is computed from.
       expect(
-        AanganColors.inkMuted.computeLuminance(),
-        lessThan(AanganColors.outline.computeLuminance()),
+        InterioBeeColors.inkMuted.computeLuminance(),
+        lessThan(InterioBeeColors.outline.computeLuminance()),
       );
     });
   });

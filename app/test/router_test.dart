@@ -6,13 +6,13 @@
 /// looking at the wrong page.
 library;
 
-import 'package:aangan_app/router.dart';
-import 'package:aangan_core_auth/aangan_core_auth.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
-import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
+import 'package:interiobee_app/router.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
+import 'package:interiobee_feature_vendor/interiobee_feature_vendor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,7 +54,7 @@ Future<(AuthController, StubApi)> _pump(
         vendorApiProvider.overrideWithValue(client),
       ],
       child: MaterialApp.router(
-        theme: AanganTheme.light,
+        theme: InterioBeeTheme.light,
         routerConfig: buildRouter(
           api: client,
           auth: auth,
@@ -103,7 +103,7 @@ void main() {
           vendorApiProvider.overrideWithValue(client),
         ],
         child: MaterialApp.router(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           routerConfig: buildRouter(
             api: client,
             auth: auth,
@@ -133,7 +133,7 @@ void main() {
     final (_, api) = await _pump(tester);
 
     expect(find.text('Send code'), findsNothing);
-    expect(find.text('Aangan'), findsWidgets);
+    expect(find.text('InterioBee'), findsWidgets);
     expect(
       api.seen.where((r) => r.path == '/me'),
       isEmpty,

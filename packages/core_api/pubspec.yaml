@@ -1,5 +1,5 @@
-name: aangan_core_api
-description: Generated models and the typed HTTP client for the Aangan API.
+name: interiobee_core_api
+description: Generated models and the typed HTTP client for the InterioBee API.
 publish_to: none
 
 # Resolved from the workspace root, so every package shares one lockfile and

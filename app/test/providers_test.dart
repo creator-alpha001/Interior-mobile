@@ -24,16 +24,16 @@
 /// scope the app builds.**
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
-import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
+import 'package:interiobee_feature_vendor/interiobee_feature_vendor.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'helpers.dart';
 
 void main() {
-  late AanganApi api;
+  late InterioBeeApi api;
 
   setUp(() => api = apiWith(StubApi(), const NoSession()));
 

@@ -5,7 +5,7 @@
   Every entry below is something the app genuinely does. NSPrivacyTracking is
   false because nothing here follows anybody across other companies' apps or
   websites: there is no advertising SDK, no attribution SDK and no third-party
-  analytics. The only network destination is the Aangan API and its object
+  analytics. The only network destination is the InterioBee API and its object
   storage.
 
   The API-usage reasons at the bottom are the ones Apple requires a declared
@@ -81,7 +81,7 @@
       </array>
     </dict>
 
-    <!-- Messages between the person and Aangan's coordinators. -->
+    <!-- Messages between the person and InterioBee's coordinators. -->
     <dict>
       <key>NSPrivacyCollectedDataType</key>
       <string>NSPrivacyCollectedDataTypeCustomerSupport</string>

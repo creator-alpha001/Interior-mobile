@@ -6,8 +6,8 @@
 /// actually true here rather than with escrow promises.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -63,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: Space.xl),
               // The product's name. Not translated, in any locale.
-              Text('Aangan', style: context.text.displayLarge),
+              Text('InterioBee', style: context.text.displayLarge),
               const SizedBox(height: Space.sm),
               Text(
                 context.t(
@@ -140,7 +140,7 @@ class HomeScreen extends ConsumerWidget {
               if (onSignIn != null)
                 Padding(
                   padding: const EdgeInsets.only(top: Space.lg),
-                  child: AanganCard(
+                  child: InterioBeeCard(
                     padding: const EdgeInsets.all(Space.cardPaddingWide),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -271,7 +271,7 @@ class HomeScreen extends ConsumerWidget {
                 context.t('What you get'),
                 eyebrow: context.t('Every job'),
               ),
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -354,7 +354,7 @@ class _Banners extends ConsumerWidget {
                       child: Stack(
                         fit: StackFit.expand,
                         children: [
-                          AanganMedia(src: banner.imageUrl, alt: banner.title),
+                          InterioBeeMedia(src: banner.imageUrl, alt: banner.title),
                           // A scrim, so the title stays legible over whatever
                           // photograph or generated tile sits behind it.
                           DecoratedBox(
@@ -433,7 +433,7 @@ class _Testimonials extends ConsumerWidget {
                       final testimonial = list[i];
                       return SizedBox(
                         width: 260,
-                        child: AanganCard(
+                        child: InterioBeeCard(
                           padding: const EdgeInsets.all(Space.cardPaddingWide),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -588,7 +588,7 @@ class _YourWork extends StatelessWidget {
     if (knownEmpty) {
       return Padding(
         padding: const EdgeInsets.only(top: Space.lg),
-        child: AanganCard(
+        child: InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -721,7 +721,7 @@ class _WorkRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       onTap: onTap,
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Row(
@@ -764,7 +764,7 @@ class _TradeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       onTap: onTap,
       padding: EdgeInsets.zero,
       child: Column(
@@ -781,7 +781,7 @@ class _TradeTile extends StatelessWidget {
             ),
             child: AspectRatio(
               aspectRatio: 4 / 3,
-              child: AanganMedia(
+              child: InterioBeeMedia(
                 src: (domain.bannerUrl?.isNotEmpty ?? false)
                     ? domain.bannerUrl!
                     : 'ph:${domain.slug}:${domain.slug}',
@@ -852,7 +852,7 @@ class _Promise extends StatelessWidget {
           Icon(
             Icons.check_circle_outline,
             size: TapTarget.glyph,
-            // Sage: each of these is something a person at Aangan does.
+            // Sage: each of these is something a person at InterioBee does.
             color: context.palette.verified,
           ),
           const SizedBox(width: Space.sm),

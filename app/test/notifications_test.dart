@@ -1,10 +1,10 @@
 /// Which tab a notification opens, and which it refuses to.
 library;
 
-import 'package:aangan_app/notifications.dart';
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_auth/aangan_core_auth.dart';
-import 'package:aangan_core_push/aangan_core_push.dart';
+import 'package:interiobee_app/notifications.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
+import 'package:interiobee_core_push/interiobee_core_push.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Notification _notification({

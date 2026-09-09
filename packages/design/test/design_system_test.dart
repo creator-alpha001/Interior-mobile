@@ -7,7 +7,7 @@
 /// can be checked as values.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -46,7 +46,7 @@ void main() {
   });
 
   group('the theme holds the no-shadow rule', () {
-    final theme = AanganTheme.light;
+    final theme = InterioBeeTheme.light;
 
     test('kills Material 3 surface tinting everywhere it can appear', () {
       // The scheme's `surfaceTint` covers most of it, but these components read
@@ -82,13 +82,13 @@ void main() {
       // Loading the theme's own front matter verbatim puts ink in `primary` and
       // the action colour in `secondary`, and every FilledButton comes out
       // black. This asserts the remap survived.
-      expect(AanganTheme.light.colorScheme.primary, AanganColors.terracotta);
-      expect(AanganTheme.light.colorScheme.secondary, AanganColors.ink);
+      expect(InterioBeeTheme.light.colorScheme.primary, InterioBeeColors.terracotta);
+      expect(InterioBeeTheme.light.colorScheme.secondary, InterioBeeColors.ink);
     });
 
     test('type is espresso, never pure black', () {
-      expect(AanganColors.ink, isNot(const Color(0xFF000000)));
-      expect(AanganTheme.light.textTheme.bodyMedium?.color, AanganColors.ink);
+      expect(InterioBeeColors.ink, isNot(const Color(0xFF000000)));
+      expect(InterioBeeTheme.light.textTheme.bodyMedium?.color, InterioBeeColors.ink);
     });
   });
 
@@ -104,12 +104,12 @@ void main() {
     testWidgets('a status pill is a pill and a card is not', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: const Scaffold(
             body: Column(
               children: [
                 StatusPill('Verified', tone: StatusTone.verified),
-                AanganCard(child: Text('structure')),
+                InterioBeeCard(child: Text('structure')),
               ],
             ),
           ),
@@ -137,7 +137,7 @@ void main() {
     ) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: Scaffold(
             body: Center(
               child: FilledButton(onPressed: () {}, child: const Text('Tap')),
@@ -157,7 +157,7 @@ void main() {
       // not spell it out, so the original string stays in the semantics label.
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: const Scaffold(
             body: StatusPill('Awaiting approval', tone: StatusTone.waiting),
           ),
@@ -174,7 +174,7 @@ void main() {
     testWidgets('every status tone builds', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          theme: AanganTheme.light,
+          theme: InterioBeeTheme.light,
           home: Scaffold(
             body: Wrap(
               children: [

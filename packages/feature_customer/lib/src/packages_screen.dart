@@ -10,8 +10,8 @@
 /// costs a professional their rating.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -95,7 +95,7 @@ class PackageCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final package = view.servicePackage;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: EdgeInsets.zero,
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(
@@ -107,7 +107,7 @@ class PackageCard extends StatelessWidget {
         children: [
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: AanganMedia(
+            child: InterioBeeMedia(
               src: package.media.isEmpty
                   ? 'ph:default:x'
                   : package.media.first.url,
@@ -202,7 +202,7 @@ class _Detail extends StatelessWidget {
       children: [
         AspectRatio(
           aspectRatio: 16 / 9,
-          child: AanganMedia(
+          child: InterioBeeMedia(
             src: package.media.isEmpty
                 ? 'ph:default:x'
                 : package.media.first.url,
@@ -234,7 +234,7 @@ class _Detail extends StatelessWidget {
               ),
 
               const SizedBox(height: Space.md),
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

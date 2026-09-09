@@ -17,7 +17,7 @@
   build ends up quietly working against something it should not.
 
   Testing against a laptop on the same wifi needs that machine's LAN address
-  added here as well as an AANGAN_API_URL dart-define. (Spelled out rather than
+  added here as well as an INTERIOBEE_API_URL dart-define. (Spelled out rather than
   written with its two leading dashes: XML forbids a double hyphen inside a
   comment, and the resource compiler rejects the file outright.)
 -->
@@ -34,7 +34,7 @@
 
           It is a LAN address, so it means nothing off this network and cannot
           resolve to anything on the internet. Change it when the machine's
-          address changes, and pass the matching AANGAN_API_URL.
+          address changes, and pass the matching INTERIOBEE_API_URL.
         -->
         <domain includeSubdomains="false">192.168.1.11</domain>
     </domain-config>

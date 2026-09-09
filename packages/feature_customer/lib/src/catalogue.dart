@@ -12,8 +12,8 @@
 /// is named on every price.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -256,7 +256,7 @@ class ProductCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final product = view.product;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: EdgeInsets.zero,
       onTap: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => ProductScreen(slug: product.slug)),
@@ -266,7 +266,7 @@ class ProductCard extends StatelessWidget {
         children: [
           AspectRatio(
             aspectRatio: 4 / 3,
-            child: AanganMedia(
+            child: InterioBeeMedia(
               src: product.media.isEmpty
                   ? 'ph:default:x'
                   : product.media.first.url,

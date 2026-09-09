@@ -4,7 +4,7 @@ library;
 const hiApp = <String, String>{
   // ---- splash and the locks ----
   'Resolving your session…': 'आपका सेशन देखा जा रहा है…',
-  'Aangan is locked': 'Aangan लॉक है',
+  'InterioBee is locked': 'InterioBee लॉक है',
 
   /// The lock is on the *UI*, not the session. The Hindi has to say the
   /// session is still alive, or somebody reads this as having been signed out
@@ -84,10 +84,10 @@ const hiApp = <String, String>{
       'इन पर अब आपका नाम या नंबर नहीं है।',
 
   // ---- the forced upgrade ----
-  'Update Aangan': 'Aangan अपडेट करें',
+  'Update InterioBee': 'InterioBee अपडेट करें',
   'Open the app store': 'ऐप स्टोर खोलें',
-  'Your account and anything in progress are safe. This build just cannot talk to Aangan any more.':
-      'आपका खाता और चल रहा काम सुरक्षित है। बस यह वर्ज़न अब Aangan से बात नहीं कर सकता।',
-  'Search for "Aangan" in your app store to update.':
-      'अपडेट के लिए अपने ऐप स्टोर में "Aangan" खोजें।',
+  'Your account and anything in progress are safe. This build just cannot talk to InterioBee any more.':
+      'आपका खाता और चल रहा काम सुरक्षित है। बस यह वर्ज़न अब InterioBee से बात नहीं कर सकता।',
+  'Search for "InterioBee" in your app store to update.':
+      'अपडेट के लिए अपने ऐप स्टोर में "InterioBee" खोजें।',
 };

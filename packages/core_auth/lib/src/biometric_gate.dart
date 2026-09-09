@@ -71,7 +71,7 @@ class BiometricGate extends ChangeNotifier {
   final Biometrics _biometrics;
   SharedPreferences? _preferences;
 
-  static const _enabledKey = 'aangan.biometric.enabled';
+  static const _enabledKey = 'interiobee.biometric.enabled';
 
   bool _enabled = false;
   bool get enabled => _enabled;
@@ -114,7 +114,7 @@ class BiometricGate extends ChangeNotifier {
   /// can try again, or sign out deliberately from the locked screen.
   Future<void> unlock() async {
     if (!_locked) return;
-    final ok = await _biometrics.authenticate('Unlock Aangan');
+    final ok = await _biometrics.authenticate('Unlock InterioBee');
     if (!ok) return;
     _locked = false;
     notifyListeners();

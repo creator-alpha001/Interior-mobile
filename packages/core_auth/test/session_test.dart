@@ -4,7 +4,7 @@
 /// both are asserted rather than assumed.
 library;
 
-import 'package:aangan_core_auth/aangan_core_auth.dart';
+import 'package:interiobee_core_auth/interiobee_core_auth.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

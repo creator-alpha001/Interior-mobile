@@ -13,7 +13,7 @@ library;
 
 import 'dart:async';
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart' show PlatformException;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -61,7 +61,7 @@ class SecureSessionStore implements AuthSessionStore {
   /// Called from the interceptor's thread when a 401 arrives.
   OnSessionLost? onLost;
 
-  static const _tokenKey = 'aangan.session.token';
+  static const _tokenKey = 'interiobee.session.token';
 
   /// Cached after the first read.
   ///

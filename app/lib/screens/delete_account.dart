@@ -15,8 +15,8 @@
 /// reachable from a settings screen on a phone, so a mis-tap must not do it.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 
 class DeleteAccountScreen extends StatefulWidget {
@@ -26,7 +26,7 @@ class DeleteAccountScreen extends StatefulWidget {
     required this.onClosed,
   });
 
-  final AanganApi api;
+  final InterioBeeApi api;
 
   /// Called once the server has closed the account, so the app can sign out.
   final Future<void> Function() onClosed;
@@ -116,7 +116,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
         /// their agreement on it would reasonably feel misled. Better to be
         /// exact now.
         SectionHead(context.t('What stays'), eyebrow: context.t('And why')),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -234,7 +234,7 @@ class _DeleteAccountScreenState extends State<DeleteAccountScreen> {
           context.t('What we kept'),
           eyebrow: context.t('As explained'),
         ),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

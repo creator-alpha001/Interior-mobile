@@ -198,14 +198,14 @@ class _Box extends StatelessWidget {
       height: 56,
       alignment: Alignment.center,
       decoration: BoxDecoration(
-        color: AanganColors.chalk,
+        color: InterioBeeColors.chalk,
         borderRadius: Radii.smallRadius,
         border: Border.all(color: border, width: focused ? 1.5 : 1),
       ),
       child: Text(
         digit ?? '',
         // Tabular, so the boxes do not shift as digits land.
-        style: AanganTextStyles.financialNum.copyWith(color: AanganColors.ink),
+        style: InterioBeeTextStyles.financialNum.copyWith(color: InterioBeeColors.ink),
       ),
     );
   }

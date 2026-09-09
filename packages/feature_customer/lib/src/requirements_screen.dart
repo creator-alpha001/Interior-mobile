@@ -10,8 +10,8 @@
 /// platform does not have.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -96,7 +96,7 @@ class RequirementCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +126,7 @@ class RequirementCard extends StatelessWidget {
           ),
 
           const SizedBox(height: Space.md),
-          const AanganDivider(inset: 0),
+          const InterioBeeDivider(inset: 0),
           const SizedBox(height: Space.sm),
 
           // One card per service. Each has its own everything.
@@ -152,7 +152,7 @@ class RequirementCard extends StatelessWidget {
                     const SizedBox(height: Space.xs),
                     Text(
                       context.t('Visits').toUpperCase(),
-                      style: AanganTextStyles.eyebrow.copyWith(
+                      style: InterioBeeTextStyles.eyebrow.copyWith(
                         color: context.colors.onSurfaceVariant,
                       ),
                       semanticsLabel: context.t('Visits'),
@@ -204,7 +204,7 @@ class VisitRow extends ConsumerWidget {
 
     return Padding(
       padding: const EdgeInsets.only(top: Space.xxs),
-      child: AanganCard(
+      child: InterioBeeCard(
         nested: true,
         child: Row(
           children: [

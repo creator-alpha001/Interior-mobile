@@ -13,9 +13,9 @@
 /// connection, and it is covered in `test/requirement_flow_test.dart`.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -454,7 +454,7 @@ class _Detail extends ConsumerWidget {
               ))
                 Padding(
                   padding: const EdgeInsets.only(bottom: Space.xs),
-                  child: AanganCard(
+                  child: InterioBeeCard(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -554,7 +554,7 @@ class _Photographs extends StatelessWidget {
         for (final upload in queue.items)
           Padding(
             padding: const EdgeInsets.only(bottom: Space.xs),
-            child: AanganCard(
+            child: InterioBeeCard(
               child: Row(
                 children: [
                   Icon(
@@ -769,7 +769,7 @@ class _Verify extends StatelessWidget {
           ),
         ),
         const SizedBox(height: Space.lg),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -12,8 +12,8 @@
 /// next before the tap, not after.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -185,7 +185,7 @@ class _QuoteComparisonScreenState extends ConsumerState<QuoteComparisonScreen> {
 
             if (quotes.isEmpty) ...[
               const SizedBox(height: Space.lg),
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Text(
                   context.t(
@@ -229,7 +229,7 @@ class _AtAGlance extends StatelessWidget {
         .map((q) => q.quote.warrantyMonths)
         .reduce((a, b) => a > b ? a : b);
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -243,7 +243,7 @@ class _AtAGlance extends StatelessWidget {
             ],
           ),
           const SizedBox(height: Space.xxs),
-          const AanganDivider(inset: 0),
+          const InterioBeeDivider(inset: 0),
 
           for (final (index, view) in quotes.indexed) ...[
             Padding(
@@ -309,7 +309,7 @@ class _AtAGlance extends StatelessWidget {
                 ],
               ),
             ),
-            if (index < quotes.length - 1) const AanganDivider(inset: 0),
+            if (index < quotes.length - 1) const InterioBeeDivider(inset: 0),
           ],
 
           const SizedBox(height: Space.xs),
@@ -341,7 +341,7 @@ class _Head extends StatelessWidget {
       child: Text(
         label.toUpperCase(),
         textAlign: TextAlign.right,
-        style: AanganTextStyles.eyebrow.copyWith(
+        style: InterioBeeTextStyles.eyebrow.copyWith(
           color: context.colors.onSurfaceVariant,
         ),
         semanticsLabel: label,
@@ -383,7 +383,7 @@ class _Cell extends StatelessWidget {
             value,
             textAlign: TextAlign.right,
             style: tabular
-                ? AanganTextStyles.financialNum.copyWith(
+                ? InterioBeeTextStyles.financialNum.copyWith(
                     fontSize: 15,
                     height: 20 / 15,
                     color: colour,
@@ -394,7 +394,7 @@ class _Cell extends StatelessWidget {
             Text(
               bestLabel.toUpperCase(),
               textAlign: TextAlign.right,
-              style: AanganTextStyles.eyebrow.copyWith(
+              style: InterioBeeTextStyles.eyebrow.copyWith(
                 color: context.colors.primary,
               ),
               semanticsLabel: bestLabel,
@@ -437,7 +437,7 @@ class _QuoteRow extends StatelessWidget {
     final rating = domainRating?.avgRating ?? professional.avgRating;
     final ratingCount = domainRating?.ratingCount ?? professional.ratingCount;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -466,7 +466,7 @@ class _QuoteRow extends StatelessWidget {
                           ),
                         ),
                         if (professional.isVerified)
-                          // Sage: a person at Aangan verified them.
+                          // Sage: a person at InterioBee verified them.
                           StatusPill(
                             context.t('Verified'),
                             tone: StatusTone.verified,
@@ -530,7 +530,7 @@ class _QuoteRow extends StatelessWidget {
 
           if (view.quote.materialsSummary.isNotEmpty) ...[
             const SizedBox(height: Space.sm),
-            const AanganDivider(inset: 0),
+            const InterioBeeDivider(inset: 0),
             const SizedBox(height: Space.sm),
             Text(view.domain.labels.materials, style: context.text.labelMedium),
             const SizedBox(height: Space.xxs),

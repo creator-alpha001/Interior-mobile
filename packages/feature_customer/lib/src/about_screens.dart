@@ -7,11 +7,11 @@
 /// question the product's shape provokes — *why can I not just call the
 /// carpenter?* — and a customer who does not understand the relay reads it as
 /// obstruction rather than as the service. The recruiting page is here because
-/// there is one binary: a professional who installs Aangan lands in the
+/// there is one binary: a professional who installs InterioBee lands in the
 /// customer app, and without this there is nothing telling them where to go.
 library;
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 
 /// One numbered step.
@@ -133,7 +133,7 @@ class HowItWorksScreen extends StatelessWidget {
             /// finding out late — after signing — would be the worst possible
             /// moment.
             const SizedBox(height: Space.md),
-            AanganCard(
+            InterioBeeCard(
               padding: const EdgeInsets.all(Space.cardPaddingWide),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -145,7 +145,7 @@ class HowItWorksScreen extends StatelessWidget {
                   const SizedBox(height: Space.xxs),
                   Text(
                     context.t(
-                      'Aangan does not hold your money or take a cut of what '
+                      'InterioBee does not hold your money or take a cut of what '
                       'you pay. You settle directly with your professional, on '
                       'the terms in the agreement. We are paid a commission by '
                       'them.',
@@ -192,7 +192,7 @@ class _StepRow extends StatelessWidget {
             child: Text(
               '$index',
               // Tabular figures, so the numbers line up down the column.
-              style: AanganTextStyles.financialNum.copyWith(
+              style: InterioBeeTextStyles.financialNum.copyWith(
                 fontSize: 20,
                 color: context.colors.onSurfaceVariant,
               ),
@@ -207,7 +207,7 @@ class _StepRow extends StatelessWidget {
                 Text(context.t(step.body), style: context.text.bodyMedium),
                 if (step.note != null) ...[
                   const SizedBox(height: Space.xs),
-                  AanganCard(
+                  InterioBeeCard(
                     nested: true,
                     child: Text(
                       context.t(step.note!),
@@ -312,7 +312,7 @@ class JoinAsProfessionalScreen extends StatelessWidget {
               ),
 
             const SizedBox(height: Space.lg),
-            AanganCard(
+            InterioBeeCard(
               padding: const EdgeInsets.all(Space.cardPaddingWide),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

@@ -8,12 +8,12 @@
 ///   brief is given the space and the description is offered as context.
 ///
 ///   **There is no way to contact the customer.** No number, no dialer, no
-///   "message the client". The only thread is with Aangan, and the platform
+///   "message the client". The only thread is with InterioBee, and the platform
 ///   carries what matters across. That is the proposition, not a limitation.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -196,7 +196,7 @@ class _DetailState extends ConsumerState<_Detail> {
             context.t('The brief'),
             eyebrow: context.t('Captured on the call'),
           ),
-          AanganCard(
+          InterioBeeCard(
             padding: const EdgeInsets.all(Space.cardPaddingWide),
             child: Text(lead.brief!, style: context.text.bodyLarge),
           ),
@@ -206,7 +206,7 @@ class _DetailState extends ConsumerState<_Detail> {
           context.t('In the customer’s words'),
           eyebrow: context.t('As submitted'),
         ),
-        AanganCard(
+        InterioBeeCard(
           child: Text(lead.description, style: context.text.bodyMedium),
         ),
 
@@ -215,7 +215,7 @@ class _DetailState extends ConsumerState<_Detail> {
             context.t('Site notes'),
             eyebrow: context.t('Access and conditions'),
           ),
-          AanganCard(
+          InterioBeeCard(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -234,7 +234,7 @@ class _DetailState extends ConsumerState<_Detail> {
             context.t('What they picked'),
             eyebrow: context.t('From the catalogue'),
           ),
-          AanganCard(
+          InterioBeeCard(
             padding: const EdgeInsets.symmetric(vertical: Space.xs),
             child: Column(
               children: [
@@ -271,7 +271,7 @@ class _DetailState extends ConsumerState<_Detail> {
                       ],
                     ),
                   ),
-                  if (index < lead.items.length - 1) const AanganDivider(),
+                  if (index < lead.items.length - 1) const InterioBeeDivider(),
                 ],
               ],
             ),
@@ -282,7 +282,7 @@ class _DetailState extends ConsumerState<_Detail> {
           context.t('The job'),
           eyebrow: context.t('Scope and budget'),
         ),
-        AanganCard(
+        InterioBeeCard(
           padding: const EdgeInsets.all(Space.cardPaddingWide),
           child: Column(
             children: [
@@ -323,7 +323,7 @@ class _DetailState extends ConsumerState<_Detail> {
           context.t('Where'),
           eyebrow: context.t('Locality only, for now'),
         ),
-        AanganCard(
+        InterioBeeCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -350,7 +350,7 @@ class _DetailState extends ConsumerState<_Detail> {
         const SizedBox(height: Space.lg),
 
         if (lead.myQuote != null)
-          AanganCard(
+          InterioBeeCard(
             padding: const EdgeInsets.all(Space.cardPaddingWide),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -412,10 +412,10 @@ class _DetailState extends ConsumerState<_Detail> {
             onPressed: () => widget.onOpenThread?.call(lead),
             child: Text(
               lead.unreadMessages > 0
-                  ? context.t('Messages with Aangan ({n})', {
+                  ? context.t('Messages with InterioBee ({n})', {
                       'n': lead.unreadMessages,
                     })
-                  : context.t('Messages with Aangan'),
+                  : context.t('Messages with InterioBee'),
             ),
           ),
         ),
@@ -424,7 +424,7 @@ class _DetailState extends ConsumerState<_Detail> {
           // Said plainly, because a vendor will look for the customer's number
           // and should understand why there isn't one.
           context.t(
-            'Every message goes through Aangan. We carry questions to the '
+            'Every message goes through InterioBee. We carry questions to the '
             'customer and their answers back to you.',
           ),
           style: context.text.bodySmall?.copyWith(

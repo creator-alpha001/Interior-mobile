@@ -12,7 +12,7 @@ import 'package:flutter/material.dart';
 
 import 'tokens.dart';
 
-abstract final class AanganFonts {
+abstract final class InterioBeeFonts {
   /// Bundled as assets rather than fetched through `google_fonts`.
   ///
   /// A vendor standing on a site with no signal should not get a fallback-font
@@ -70,32 +70,32 @@ abstract final class AanganFonts {
 /// Body sizes are left alone. 14 is the readable default at arm's length and
 /// dropping it to the web's 13.5 buys nothing; the problem was never the
 /// prose. Everything changed below is a heading or a figure.
-const aanganTextTheme = TextTheme(
+const interiobeeTextTheme = TextTheme(
   // ---- Newsreader. One display line per screen, at most. ----
   displayLarge: TextStyle(
-    fontFamily: AanganFonts.serif,
-    fontFamilyFallback: AanganFonts.serifFallback,
+    fontFamily: InterioBeeFonts.serif,
+    fontFamilyFallback: InterioBeeFonts.serifFallback,
     fontSize: 28,
     height: 36 / 28,
     fontWeight: FontWeight.w400,
   ),
   headlineLarge: TextStyle(
-    fontFamily: AanganFonts.serif,
-    fontFamilyFallback: AanganFonts.serifFallback,
+    fontFamily: InterioBeeFonts.serif,
+    fontFamilyFallback: InterioBeeFonts.serifFallback,
     fontSize: 23,
     height: 30 / 23,
     fontWeight: FontWeight.w400,
   ),
   headlineMedium: TextStyle(
-    fontFamily: AanganFonts.serif,
-    fontFamilyFallback: AanganFonts.serifFallback,
+    fontFamily: InterioBeeFonts.serif,
+    fontFamilyFallback: InterioBeeFonts.serifFallback,
     fontSize: 20,
     height: 27 / 20,
     fontWeight: FontWeight.w500,
   ),
   headlineSmall: TextStyle(
-    fontFamily: AanganFonts.serif,
-    fontFamilyFallback: AanganFonts.serifFallback,
+    fontFamily: InterioBeeFonts.serif,
+    fontFamilyFallback: InterioBeeFonts.serifFallback,
     fontSize: 17,
     height: 23 / 17,
     fontWeight: FontWeight.w500,
@@ -103,51 +103,51 @@ const aanganTextTheme = TextTheme(
 
   // ---- Manrope. Everything else. ----
   titleLarge: TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 16,
     height: 22 / 16,
     fontWeight: FontWeight.w600,
   ),
   titleMedium: TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 16,
     height: 22 / 16,
     fontWeight: FontWeight.w600,
   ),
   bodyLarge: TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 16,
     height: 26 / 16,
     fontWeight: FontWeight.w400,
   ),
   bodyMedium: TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 14,
     height: 22 / 14,
     fontWeight: FontWeight.w400,
   ),
   bodySmall: TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 12,
     height: 18 / 12,
     fontWeight: FontWeight.w400,
   ),
   labelMedium: TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 12,
     height: 16 / 12,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.48, // +0.04em
   ),
   labelSmall: TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 10,
     height: 14 / 10,
     fontWeight: FontWeight.w700,
@@ -157,10 +157,10 @@ const aanganTextTheme = TextTheme(
 
 /// Styles Material has no role for.
 ///
-/// These hang off [AanganPalette] rather than the text theme, because inventing
+/// These hang off [InterioBeePalette] rather than the text theme, because inventing
 /// a Material role would mean some stock widget eventually picks it up by
 /// accident.
-abstract final class AanganTextStyles {
+abstract final class InterioBeeTextStyles {
   /// Every rupee figure on the platform.
   ///
   /// The tabular figures are not a refinement: without them a column of quotes
@@ -168,8 +168,8 @@ abstract final class AanganTextStyles {
   /// column. Any screen that formats its own currency is how `₹450,000` ships
   /// instead of `₹4,50,000` — see `Rupees.format`.
   static const financialNum = TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 20,
     height: 26 / 20,
     fontWeight: FontWeight.w500,
@@ -182,8 +182,8 @@ abstract final class AanganTextStyles {
   /// Uppercasing is done here, in the style's usage, rather than by
   /// transforming the string — a screen reader should still hear the word.
   static const eyebrow = TextStyle(
-    fontFamily: AanganFonts.sans,
-    fontFamilyFallback: AanganFonts.sansFallback,
+    fontFamily: InterioBeeFonts.sans,
+    fontFamilyFallback: InterioBeeFonts.sansFallback,
     fontSize: 10,
     height: 14 / 10,
     fontWeight: FontWeight.w700,
@@ -193,4 +193,4 @@ abstract final class AanganTextStyles {
 
 /// Applies the ink colour to every role in one place.
 TextTheme tintedTextTheme(TextTheme base) =>
-    base.apply(bodyColor: AanganColors.ink, displayColor: AanganColors.ink);
+    base.apply(bodyColor: InterioBeeColors.ink, displayColor: InterioBeeColors.ink);

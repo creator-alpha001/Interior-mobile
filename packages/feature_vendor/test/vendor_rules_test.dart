@@ -5,10 +5,10 @@
 /// the reasoning attached.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_design/aangan_design.dart';
-import 'package:aangan_feature_vendor/aangan_feature_vendor.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_design/interiobee_design.dart';
+import 'package:interiobee_feature_vendor/interiobee_feature_vendor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -34,7 +34,7 @@ Finder findPill(String label) => find.byWidgetPredicate(
 Future<void> _pumpTall(
   WidgetTester tester,
   Widget child, {
-  AanganApi? api,
+  InterioBeeApi? api,
 }) async {
   tester.view.physicalSize = const Size(1200, 4000);
   tester.view.devicePixelRatio = 1.0;
@@ -42,11 +42,11 @@ Future<void> _pumpTall(
   await _pump(tester, child, api: api);
 }
 
-Future<void> _pump(WidgetTester tester, Widget child, {AanganApi? api}) async {
+Future<void> _pump(WidgetTester tester, Widget child, {InterioBeeApi? api}) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [if (api != null) vendorApiProvider.overrideWithValue(api)],
-      child: MaterialApp(theme: AanganTheme.light, home: child),
+      child: MaterialApp(theme: InterioBeeTheme.light, home: child),
     ),
   );
 }
@@ -146,7 +146,7 @@ void main() {
     ) async {
       // DESIGN.md §1.4, the most important piece of colour in the product:
       // submitted is ochre — waiting on somebody else — and turns sage only
-      // when a person at Aangan approves it. Sage is never decorative.
+      // when a person at InterioBee approves it. Sage is never decorative.
       await _pump(
         tester,
         Scaffold(

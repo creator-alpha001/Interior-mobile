@@ -9,8 +9,8 @@
 /// because that is how leads are ranked and how they reach this vendor.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -93,7 +93,7 @@ class _Link extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       onTap: onTap,
       child: Row(
         children: [
@@ -175,7 +175,7 @@ class _InvoiceCard extends StatelessWidget {
       InvoiceStatus.$unknown => (StatusTone.neutral, null),
     };
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -241,7 +241,7 @@ class PerformanceScreen extends ConsumerWidget {
               ),
               const SizedBox(height: Space.sm),
               for (final row in data.byDomain) ...[
-                AanganCard(
+                InterioBeeCard(
                   padding: const EdgeInsets.all(Space.cardPaddingWide),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -296,7 +296,7 @@ class PerformanceScreen extends ConsumerWidget {
                 context.t('Overall'),
                 eyebrow: context.t('Across every trade'),
               ),
-              AanganCard(
+              InterioBeeCard(
                 padding: const EdgeInsets.all(Space.cardPaddingWide),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -360,7 +360,7 @@ class _ReviewCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final review = entry.review;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -444,7 +444,7 @@ class PortfolioScreen extends ConsumerWidget {
                       const SizedBox(height: Space.sm),
                   itemBuilder: (context, i) {
                     final item = list[i];
-                    return AanganCard(
+                    return InterioBeeCard(
                       padding: const EdgeInsets.all(Space.cardPaddingWide),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,

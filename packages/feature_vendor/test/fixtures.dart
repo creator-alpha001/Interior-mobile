@@ -1,13 +1,13 @@
 /// Shapes the API would send, built once so the tests read as assertions.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:dio/dio.dart';
 
 /// An API that answers nothing. These tests render widgets from fixtures; the
 /// screens that fetch are covered where the fetching is the point.
-AanganApi fixtureApi() =>
-    AanganApi.withDio(Dio(BaseOptions(baseUrl: 'https://test')));
+InterioBeeApi fixtureApi() =>
+    InterioBeeApi.withDio(Dio(BaseOptions(baseUrl: 'https://test')));
 
 const _city = City(
   id: 'city-1',

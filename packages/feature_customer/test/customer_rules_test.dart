@@ -1,9 +1,9 @@
 /// The customer-side rules that are expensive to get wrong.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
-import 'package:aangan_feature_customer/aangan_feature_customer.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -16,11 +16,11 @@ Finder findPill(String label) => find.byWidgetPredicate(
   description: 'status pill "$label"',
 );
 
-Future<void> _pump(WidgetTester tester, Widget child, {AanganApi? api}) async {
+Future<void> _pump(WidgetTester tester, Widget child, {InterioBeeApi? api}) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [if (api != null) customerApiProvider.overrideWithValue(api)],
-      child: MaterialApp(theme: AanganTheme.light, home: child),
+      child: MaterialApp(theme: InterioBeeTheme.light, home: child),
     ),
   );
 }
@@ -81,7 +81,7 @@ void main() {
 
     test('a draft from an older build is discarded, not fatal', () async {
       SharedPreferences.setMockInitialValues({
-        'aangan.requirement.draft': '{not json',
+        'interiobee.requirement.draft': '{not json',
       });
 
       // Losing a draft is bad. Crashing on launch because of one is worse.
@@ -93,7 +93,7 @@ void main() {
       // on a draft written by a newer one.
       final store = RequirementDraftStore();
       SharedPreferences.setMockInitialValues({
-        'aangan.requirement.draft':
+        'interiobee.requirement.draft':
             '{"step":"budget","domainIds":["x"],"materialSource":{"x":"invented"},'
             '"description":"d","photoAssetIds":[],"cityId":"c","locality":"l",'
             '"urgency":"invented","budgetMax":null,"siteTags":["invented"]}',
@@ -149,7 +149,7 @@ void main() {
   group('progress', () {
     testWidgets('has no approve button, of any kind', (tester) async {
       // MOBILE.md §6.1, and the whole guarantee: a stage is done when somebody
-      // at Aangan has checked the photographs. An approve button here would
+      // at InterioBee has checked the photographs. An approve button here would
       // move that verification onto the person least able to perform it.
       await _pump(
         tester,

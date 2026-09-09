@@ -117,8 +117,8 @@ class _Placeholder {
 }
 
 /// One image, however it happens to be sourced.
-class AanganMedia extends StatelessWidget {
-  const AanganMedia({
+class InterioBeeMedia extends StatelessWidget {
+  const InterioBeeMedia({
     super.key,
     required this.src,
     required this.alt,

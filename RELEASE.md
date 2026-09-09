@@ -14,7 +14,7 @@ account, a device, or a decision.
 | | Why it blocks | Rough lead time |
 | --- | --- | --- |
 | **Newsreader and Manrope** | The app does not currently look like the design. Both are open-licence, but the `.ttf` files are not in the repository, so every screen renders in Roboto — and no screenshot is worth taking until they land | An afternoon |
-| **Noto Serif / Sans Devanagari** | The app ships Hindi. Without these it renders in whatever Devanagari the platform happens to have, so it looks like different software in the two languages. `AanganFonts.serifFallback` already names them; only the files are missing | The same afternoon |
+| **Noto Serif / Sans Devanagari** | The app ships Hindi. Without these it renders in whatever Devanagari the platform happens to have, so it looks like different software in the two languages. `InterioBeeFonts.serifFallback` already names them; only the files are missing | The same afternoon |
 | **A Firebase project** | Push is inert without one. Not release-blocking on its own: notifications still go out by SMS | Days |
 | **An R2 bucket** | Photographs work against the API's local driver, which production refuses. Stage proof is the vendor's core action | Days |
 | **DLT registration** | Nobody can sign in without SMS. The longest lead time of the three | Days to weeks |
@@ -87,7 +87,7 @@ please a search index.
 
 ### Name
 
-`Aangan` — 6 characters, no subtitle needed.
+`InterioBee` — 6 characters, no subtitle needed.
 
 ### Subtitle (iOS, 30 characters)
 
@@ -99,7 +99,7 @@ please a search index.
 
 ### Full description
 
-> Aangan connects you to verified professionals for interior design, furniture
+> InterioBee connects you to verified professionals for interior design, furniture
 > work, fabrication and painting — and stays between you for the whole job.
 >
 > **Tell us once.** Describe what you need, add a few photographs, and we take
@@ -119,7 +119,7 @@ please a search index.
 > Our team checks them before the stage counts as done — so progress means
 > somebody looked, not somebody said so.
 >
-> Payments are arranged directly with your professional. Aangan does not handle
+> Payments are arranged directly with your professional. InterioBee does not handle
 > money.
 
 That last line is not a disclaimer to bury. Payments are off-platform, and a
@@ -151,7 +151,7 @@ Two things stay English on purpose and should not read as gaps:
   mean keeping a shadow copy of every sentence the API can produce, and getting
   it out of step would show somebody a *different* reason than the one that
   applied. It is a server change when it happens.
-- **`Aangan`, `OTP`, `GST`, `DELETE`.** The product's name, three loanwords
+- **`InterioBee`, `OTP`, `GST`, `DELETE`.** The product's name, three loanwords
   nobody translates in speech, and one typed confirmation matched against a
   literal in the contract.
 
@@ -189,12 +189,12 @@ The Play form asks the same questions in a different order:
 | Name | Yes | No | So a coordinator and a professional know who they are working for |
 | Address | Yes | With the assigned professional only | Released per service, and only once a visit is confirmed |
 | Photographs | Yes | With professionals quoting that job | Room photographs, and stage proof |
-| Messages | Yes | No | Every thread is with Aangan, never between customer and professional |
+| Messages | Yes | No | Every thread is with InterioBee, never between customer and professional |
 | Crash data | Yes, when a DSN is set | With Sentry | No user record attached |
 
 **Answer "no" to advertising or tracking, honestly.** There is no advertising
 SDK, no attribution SDK, and no third-party analytics. The only network
-destinations are the Aangan API and its object storage.
+destinations are the InterioBee API and its object storage.
 
 **Account deletion:** `Account → Close your account`, in-app, no email required.
 Both stores check this. It clears personal detail and frees the number;
@@ -222,20 +222,20 @@ of why. Never on first launch — it costs a conversion and a review question.
 `GET /app/version` returns `minBuild`, and `MOBILE_MIN_BUILD` on the API is the
 lever. Once a bad build is on somebody's phone it is the only one there is.
 
-- Builds are stamped by `--dart-define=AANGAN_BUILD=<n>`, the same number given
+- Builds are stamped by `--dart-define=INTERIOBEE_BUILD=<n>`, the same number given
   to the store.
 - A build below the floor sees one screen with no way past it.
 - **A build that cannot reach the server is never blocked.** An upgrade gate
   that locks people out because the API is down is a worse outage than the bug
   it guards against.
-- A development build (`AANGAN_BUILD` unset) is not gated, and does not even ask.
+- A development build (`INTERIOBEE_BUILD` unset) is not gated, and does not even ask.
 
 Raising the floor is an environment variable and a restart. Use it for
 data-losing bugs, not for nagging.
 
 **Still to wire:** the store button on the blocked screen needs the real
 listing URLs, which do not exist yet. It currently tells the person to search
-for "Aangan", which is honest rather than a dead button.
+for "InterioBee", which is honest rather than a dead button.
 
 ---
 
@@ -257,7 +257,7 @@ halves — a screenshot and a server log telling the same story.
 
 When it is added:
 
-- Tag the release as `aangan-mobile@<version>+<build>`, matching the store build.
+- Tag the release as `interiobee-mobile@<version>+<build>`, matching the store build.
 - Attach `X-Request-Id` from the response, which the client already reads.
 - Strip bodies, headers and any user record on the way out, matching the API's
   configuration.

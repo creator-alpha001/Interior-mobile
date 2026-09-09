@@ -11,7 +11,7 @@
 /// same table serves a foreground tap, a background tap and a cold start.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:meta/meta.dart';
 
 /// A destination inside the app.

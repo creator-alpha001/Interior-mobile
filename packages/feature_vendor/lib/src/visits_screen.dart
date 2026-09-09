@@ -20,8 +20,8 @@
 /// asserts that every `launchUrl` here is a map.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -104,7 +104,7 @@ class VisitCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -153,7 +153,7 @@ class VisitCard extends StatelessWidget {
           ),
 
           const SizedBox(height: Space.sm),
-          const AanganDivider(inset: 0),
+          const InterioBeeDivider(inset: 0),
           const SizedBox(height: Space.sm),
 
           // The two designs.

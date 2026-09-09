@@ -1,4 +1,4 @@
-package com.aangan.aangan_app
+package com.interiobee.app
 
 import io.flutter.embedding.android.FlutterActivity
 

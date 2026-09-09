@@ -35,8 +35,8 @@ class ApiConfig {
 }
 
 /// Everything the app talks to.
-class AanganApi {
-  AanganApi._(this.dio, this.public, this.customer, this.vendor);
+class InterioBeeApi {
+  InterioBeeApi._(this.dio, this.public, this.customer, this.vendor);
 
   /// Exposed so `core_upload` can PUT bytes at storage on the same client, and
   /// so tests can install an adapter. Screens should not reach for it.
@@ -60,7 +60,7 @@ class AanganApi {
   OfflineCacheInterceptor? get cache => _cache;
   OfflineCacheInterceptor? _cache;
 
-  factory AanganApi(
+  factory InterioBeeApi(
     ApiConfig config, {
     SessionStore session = const NoSession(),
     Directory? cacheDirectory,
@@ -102,7 +102,7 @@ class AanganApi {
       RetryInterceptor(dio),
     ]);
 
-    final api = AanganApi._(
+    final api = InterioBeeApi._(
       dio,
       PublicClient(dio),
       ClientClient(dio),
@@ -113,7 +113,7 @@ class AanganApi {
   }
 
   /// For tests: build against a dio that already has an adapter installed.
-  factory AanganApi.withDio(
+  factory InterioBeeApi.withDio(
     Dio dio, {
     SessionStore session = const NoSession(),
   }) {
@@ -123,7 +123,7 @@ class AanganApi {
       ErrorInterceptor(session),
       RetryInterceptor(dio),
     ]);
-    return AanganApi._(
+    return InterioBeeApi._(
       dio,
       PublicClient(dio),
       ClientClient(dio),

@@ -19,8 +19,8 @@ import 'typography.dart';
 /// theme and reintroduces a shadow the moment anybody passes `elevation`.
 /// DESIGN.md §4 allows exactly one shadow in the whole system and it is not
 /// this one. Raw `Card` should fail review.
-class AanganCard extends StatelessWidget {
-  const AanganCard({
+class InterioBeeCard extends StatelessWidget {
+  const InterioBeeCard({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(Space.cardPadding),
@@ -65,8 +65,8 @@ class AanganCard extends StatelessWidget {
 }
 
 /// Level 2: an overlay. The only place a shadow is permitted.
-class AanganOverlay extends StatelessWidget {
-  const AanganOverlay({
+class InterioBeeOverlay extends StatelessWidget {
+  const InterioBeeOverlay({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(Space.cardPaddingWide),
@@ -80,7 +80,7 @@ class AanganOverlay extends StatelessWidget {
     final palette = context.palette;
     return Container(
       decoration: BoxDecoration(
-        color: AanganColors.chalk,
+        color: InterioBeeColors.chalk,
         border: Border.all(color: palette.inputBorder),
         borderRadius: Radii.panelRadius,
         boxShadow: [palette.overlayShadow],
@@ -97,7 +97,7 @@ class AanganOverlay extends StatelessWidget {
 /// stops sage becoming decorative: a caller has to claim the thing was checked
 /// by a person in order to get the green.
 enum StatusTone {
-  /// Verified, signed, or approved by a person at Aangan. Never decoration.
+  /// Verified, signed, or approved by a person at InterioBee. Never decoration.
   verified,
 
   /// Your turn. The one thing on this screen to act on.
@@ -149,7 +149,7 @@ class StatusPill extends StatelessWidget {
         // Uppercased for display only. The semantics label keeps the original
         // so a screen reader says "verified", not "V-E-R-I-F-I-E-D".
         label.toUpperCase(),
-        style: AanganTextStyles.eyebrow.copyWith(color: foreground),
+        style: InterioBeeTextStyles.eyebrow.copyWith(color: foreground),
         semanticsLabel: label,
       ),
     );
@@ -168,7 +168,7 @@ class MoneyText extends StatelessWidget {
     return Text(
       formatted,
       style: context.palette.financialNum.copyWith(
-        color: tone ?? AanganColors.ink,
+        color: tone ?? InterioBeeColors.ink,
       ),
     );
   }
@@ -178,8 +178,8 @@ class MoneyText extends StatelessWidget {
 ///
 /// Never edge to edge. `height` is pinned because Flutter's default of 16 adds
 /// invisible vertical space that breaks the rhythm on every card it appears in.
-class AanganDivider extends StatelessWidget {
-  const AanganDivider({super.key, this.inset = Space.cardPadding});
+class InterioBeeDivider extends StatelessWidget {
+  const InterioBeeDivider({super.key, this.inset = Space.cardPadding});
 
   final double inset;
 
@@ -271,7 +271,7 @@ class SectionHead extends StatelessWidget {
                 if (eyebrow != null) ...[
                   Text(
                     eyebrow!.toUpperCase(),
-                    style: AanganTextStyles.eyebrow.copyWith(
+                    style: InterioBeeTextStyles.eyebrow.copyWith(
                       color: context.colors.onSurfaceVariant,
                     ),
                     semanticsLabel: eyebrow,

@@ -20,7 +20,7 @@ library;
 
 import 'package:flutter/widgets.dart';
 
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 
 enum EstimatorInputKind { rooms, area, pieces, runningFt }
 

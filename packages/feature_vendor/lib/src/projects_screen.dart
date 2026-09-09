@@ -5,7 +5,7 @@
 ///
 ///   not started  neutral — nothing to do yet
 ///   submitted    **ochre** — waiting on somebody else
-///   approved     **sage** — a person at Aangan checked it
+///   approved     **sage** — a person at InterioBee checked it
 ///   rejected     iron — sent back, and the note says why
 ///
 /// A stage the vendor has uploaded proof for is ochre, never sage. It turns
@@ -13,9 +13,9 @@
 /// "a stage is done when somebody checked", made visible.
 library;
 
-import 'package:aangan_core_api/aangan_core_api.dart';
-import 'package:aangan_core_upload/aangan_core_upload.dart';
-import 'package:aangan_design/aangan_design.dart';
+import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
+import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -99,7 +99,7 @@ class ProjectCard extends StatelessWidget {
         .where((m) => m.verification == MilestoneVerification.approved)
         .length;
 
-    return AanganCard(
+    return InterioBeeCard(
       padding: const EdgeInsets.all(Space.cardPaddingWide),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,7 +150,7 @@ class ProjectCard extends StatelessWidget {
           ),
 
           const SizedBox(height: Space.md),
-          const AanganDivider(inset: 0),
+          const InterioBeeDivider(inset: 0),
           const SizedBox(height: Space.sm),
 
           for (final (index, milestone) in milestones.indexed)
