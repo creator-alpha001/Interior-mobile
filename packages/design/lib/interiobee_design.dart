@@ -1,4 +1,4 @@
-/// The InterioBee design system.
+/// The Decora Shine design system.
 ///
 /// Tokens, theme and the shared widgets. Depends on Flutter and nothing else —
 /// no business logic, no HTTP, no models. That constraint is what lets the

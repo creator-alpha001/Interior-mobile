@@ -5,7 +5,7 @@
 ///
 ///   not started  neutral — nothing to do yet
 ///   submitted    **ochre** — waiting on somebody else
-///   approved     **sage** — a person at InterioBee checked it
+///   approved     **sage** — a person at Decora Shine checked it
 ///   rejected     iron — sent back, and the note says why
 ///
 /// A stage the vendor has uploaded proof for is ochre, never sage. It turns

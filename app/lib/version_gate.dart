@@ -85,7 +85,7 @@ class UpgradeRequiredScreen extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  context.t('Update InterioBee'),
+                  context.t('Update Decora Shine'),
                   style: context.text.displayLarge,
                 ),
                 const SizedBox(height: Space.sm),
@@ -113,7 +113,7 @@ class UpgradeRequiredScreen extends StatelessWidget {
                 Text(
                   context.t(
                     'Your account and anything in progress are safe. This build '
-                    'just cannot talk to InterioBee any more.',
+                    'just cannot talk to Decora Shine any more.',
                   ),
                   style: context.text.bodySmall?.copyWith(
                     color: context.colors.onSurfaceVariant,
@@ -134,7 +134,7 @@ class UpgradeRequiredScreen extends StatelessWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          context.t('Search for "InterioBee" in your app store to update.'),
+          context.t('Search for "Decora Shine" in your app store to update.'),
         ),
       ),
     );

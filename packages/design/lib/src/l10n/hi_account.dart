@@ -27,8 +27,8 @@ const hiAccount = <String, String>{
 
   /// What actually goes into WhatsApp. Written the way somebody would type it
   /// to a friend, not the way a brand would write an advertisement.
-  'I used InterioBee for interior work — they find you three verified professionals and stay between you. Use my code {code}: {url}':
-      'मैंने इंटीरियर के काम के लिए InterioBee इस्तेमाल किया — ये तीन जाँचे हुए कारीगर ढूँढ़ते हैं और बीच में बने रहते हैं। मेरा कोड {code} लगाइए: {url}',
+  'I used Decora Shine for interior work — they find you three verified professionals and stay between you. Use my code {code}: {url}':
+      'मैंने इंटीरियर के काम के लिए Decora Shine इस्तेमाल किया — ये तीन जाँचे हुए कारीगर ढूँढ़ते हैं और बीच में बने रहते हैं। मेरा कोड {code} लगाइए: {url}',
   'How it is going': 'अब तक क्या हुआ',
   'So far': 'अब तक',
   'Invited': 'बुलाए',

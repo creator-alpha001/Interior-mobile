@@ -11,14 +11,14 @@
 library;
 
 enum Flavour {
-  dev('http://10.0.2.2:4000', 'InterioBee (dev)'),
+  dev('http://10.0.2.2:4000', 'Decora Shine (dev)'),
 
   /// `10.0.2.2` is the host machine as seen from the Android emulator. On a
   /// physical device this needs the machine's LAN address instead, which is why
   /// the value is a define rather than a constant.
-  staging('https://staging-api.decorashine.example', 'InterioBee (staging)'),
+  staging('https://staging-api.decorashine.example', 'Decora Shine (staging)'),
 
-  production('https://api.decorashine.com', 'InterioBee');
+  production('https://api.decorashine.com', 'Decora Shine');
 
   const Flavour(this.defaultBaseUrl, this.appName);
 

@@ -136,8 +136,8 @@ const hiVendor = <String, String>{
   'Your quote': 'आपका कोटेशन',
   'Send a quote': 'कोटेशन भेजें',
   'Revise your quote': 'अपना कोटेशन बदलें',
-  'Messages with InterioBee': 'InterioBee के साथ बातचीत',
-  'Messages with InterioBee ({n})': 'InterioBee के साथ बातचीत ({n})',
+  'Messages with Decora Shine': 'Decora Shine के साथ बातचीत',
+  'Messages with Decora Shine ({n})': 'Decora Shine के साथ बातचीत ({n})',
 
   // ---- the quote builder ----
   'New quote': 'नया कोटेशन',
@@ -214,8 +214,8 @@ const hiVendor = <String, String>{
   /// A vendor never talks to the customer. Saying so here is the whole point
   /// of the banner, and it is the sentence a vendor is most likely to test by
   /// trying.
-  'You are talking to InterioBee, not the customer. We carry your questions to them and bring their answers back.':
-      'आप InterioBee से बात कर रहे हैं, ग्राहक से नहीं। आपके सवाल हम उन तक ले जाते हैं और उनके जवाब आप तक लाते हैं।',
+  'You are talking to Decora Shine, not the customer. We carry your questions to them and bring their answers back.':
+      'आप Decora Shine से बात कर रहे हैं, ग्राहक से नहीं। आपके सवाल हम उन तक ले जाते हैं और उनके जवाब आप तक लाते हैं।',
   'Ask the coordinator anything about the scope, the site or the timeline.':
       'काम के दायरे, साइट या समय-सीमा के बारे में को-ऑर्डिनेटर से कुछ भी पूछिए।',
   'Message the coordinator': 'को-ऑर्डिनेटर को संदेश भेजें',
@@ -291,8 +291,8 @@ const hiVendor = <String, String>{
 
   /// The masking rule again, on the screen where a vendor is most likely to
   /// go looking for a phone number.
-  'Every message goes through InterioBee. We carry questions to the customer and their answers back to you.':
-      'हर संदेश InterioBee के ज़रिए जाता है। सवाल हम ग्राहक तक ले जाते हैं और उनके जवाब आप तक लाते हैं।',
+  'Every message goes through Decora Shine. We carry questions to the customer and their answers back to you.':
+      'हर संदेश Decora Shine के ज़रिए जाता है। सवाल हम ग्राहक तक ले जाते हैं और उनके जवाब आप तक लाते हैं।',
 
   // the quote builder's replace dialog
   'Replace quote v{n}?': 'कोटेशन v{n} बदलें?',

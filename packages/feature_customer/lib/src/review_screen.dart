@@ -98,7 +98,7 @@ class _ReviewScreenState extends ConsumerState<ReviewScreen> {
             /// know it does not follow them to carpentry.
             Text(
               context.t(
-                'This rates their {trade} only. Ratings on InterioBee are per '
+                'This rates their {trade} only. Ratings on Decora Shine are per '
                 'trade, so it will not affect their other work.',
                 {'trade': view.domain.name.toLowerCase()},
               ),

@@ -114,7 +114,7 @@ class BiometricGate extends ChangeNotifier {
   /// can try again, or sign out deliberately from the locked screen.
   Future<void> unlock() async {
     if (!_locked) return;
-    final ok = await _biometrics.authenticate('Unlock InterioBee');
+    final ok = await _biometrics.authenticate('Unlock Decora Shine');
     if (!ok) return;
     _locked = false;
     notifyListeners();

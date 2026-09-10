@@ -466,7 +466,7 @@ class _QuoteRow extends StatelessWidget {
                           ),
                         ),
                         if (professional.isVerified)
-                          // Sage: a person at InterioBee verified them.
+                          // Sage: a person at Decora Shine verified them.
                           StatusPill(
                             context.t('Verified'),
                             tone: StatusTone.verified,

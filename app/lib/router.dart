@@ -236,7 +236,7 @@ class _Splash extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Not translated, in any locale. It is the product's name.
-            Text('InterioBee', style: context.text.displayLarge),
+            Text('Decora Shine', style: context.text.displayLarge),
             const SizedBox(height: Space.md),
             Text(
               context.t('Resolving your session…'),
@@ -268,7 +268,7 @@ class _Locked extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                context.t('InterioBee is locked'),
+                context.t('Decora Shine is locked'),
                 style: context.text.headlineLarge,
               ),
               const SizedBox(height: Space.sm),

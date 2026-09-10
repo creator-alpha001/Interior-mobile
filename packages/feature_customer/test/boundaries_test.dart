@@ -94,7 +94,7 @@ void main() {
     );
   });
 
-  /// A stage is done when somebody at InterioBee checked it.
+  /// A stage is done when somebody at Decora Shine checked it.
   ///
   /// The progress screen is read-only by design, and an absence is easy to
   /// erode: an "approve" button looks like an obvious improvement to anybody

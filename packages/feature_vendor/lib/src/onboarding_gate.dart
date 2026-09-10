@@ -228,7 +228,7 @@ class _StepRow extends StatelessWidget {
         children: [
           /// Sage only once it is genuinely done.
           ///
-          /// DESIGN.md §1.4: sage means a person at InterioBee checked something.
+          /// DESIGN.md §1.4: sage means a person at Decora Shine checked something.
           /// A step in progress is ochre, and an optional one not yet started
           /// is neutral — never a hopeful green.
           Icon(

@@ -4,7 +4,7 @@
 ///
 /// **The button says "Submit for approval", not "Mark complete".** §6.2:
 /// *"evidence is not completion, and the screen must not imply it is."* A stage
-/// is done when somebody at InterioBee has checked the photographs — that is a
+/// is done when somebody at Decora Shine has checked the photographs — that is a
 /// platform rule, enforced server-side, and the customer's progress bar moves
 /// on the approval rather than on this submission. Wording it as completion
 /// would teach the vendor something false about how they get paid.

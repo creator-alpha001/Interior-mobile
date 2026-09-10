@@ -149,7 +149,7 @@ void main() {
   group('progress', () {
     testWidgets('has no approve button, of any kind', (tester) async {
       // MOBILE.md §6.1, and the whole guarantee: a stage is done when somebody
-      // at InterioBee has checked the photographs. An approve button here would
+      // at Decora Shine has checked the photographs. An approve button here would
       // move that verification onto the person least able to perform it.
       await _pump(
         tester,

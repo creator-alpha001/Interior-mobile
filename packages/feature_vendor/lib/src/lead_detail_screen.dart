@@ -8,7 +8,7 @@
 ///   brief is given the space and the description is offered as context.
 ///
 ///   **There is no way to contact the customer.** No number, no dialer, no
-///   "message the client". The only thread is with InterioBee, and the platform
+///   "message the client". The only thread is with Decora Shine, and the platform
 ///   carries what matters across. That is the proposition, not a limitation.
 library;
 
@@ -413,10 +413,10 @@ class _DetailState extends ConsumerState<_Detail> {
             onPressed: () => widget.onOpenThread?.call(lead),
             child: Text(
               lead.unreadMessages > 0
-                  ? context.t('Messages with InterioBee ({n})', {
+                  ? context.t('Messages with Decora Shine ({n})', {
                       'n': lead.unreadMessages,
                     })
-                  : context.t('Messages with InterioBee'),
+                  : context.t('Messages with Decora Shine'),
             ),
           ),
         ),
@@ -425,7 +425,7 @@ class _DetailState extends ConsumerState<_Detail> {
           // Said plainly, because a vendor will look for the customer's number
           // and should understand why there isn't one.
           context.t(
-            'Every message goes through InterioBee. We carry questions to the '
+            'Every message goes through Decora Shine. We carry questions to the '
             'customer and their answers back to you.',
           ),
           style: context.text.bodySmall?.copyWith(

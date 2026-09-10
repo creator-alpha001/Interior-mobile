@@ -115,7 +115,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: Space.xxl),
-                  Text('InterioBee', style: context.text.displayLarge),
+                  Text('Decora Shine', style: context.text.displayLarge),
                   const SizedBox(height: Space.xs),
                   Text(
                     switch (state.stage) {

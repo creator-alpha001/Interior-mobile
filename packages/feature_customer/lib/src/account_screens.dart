@@ -286,7 +286,7 @@ class ReferralsScreen extends ConsumerWidget {
                       child: FilledButton.icon(
                         onPressed: () => Share.share(
                           context.t(
-                            'I used InterioBee for interior work — they find you '
+                            'I used Decora Shine for interior work — they find you '
                             'three verified professionals and stay between '
                             'you. Use my code {code}: {url}',
                             {'code': summary.code, 'url': summary.shareUrl},
@@ -540,7 +540,7 @@ class _TicketScreenState extends ConsumerState<TicketScreen> {
                     Padding(
                       padding: const EdgeInsets.only(top: Space.sm),
                       child: InterioBeeCard(
-                        // InterioBee's replies sit on the peach panel; the customer's own
+                        // Decora Shine's replies sit on the peach panel; the customer's own
                         // sit plain, so a thread reads as a conversation.
                         nested:
                             reply.authorRole == TicketReplyAuthorRole.platform,

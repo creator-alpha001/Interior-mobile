@@ -231,7 +231,14 @@ const _notCopyFiles = <String>[
 /// Individually exempt, each with the reason it earns it.
 const _allowed = <String>{
   // The company's name, in either language.
-  'InterioBee',
+  'Decora Shine',
+
+  // Launcher labels, one per flavour. Not copy: the app is called the same
+  // thing in Hindi, and these name the *build* rather than address anybody.
+  // They only became visible to this scan when the brand went from one word to
+  // two — the check counts words, so 'InterioBee (dev)' slipped under it.
+  'Decora Shine (dev)',
+  'Decora Shine (staging)',
 
   // Pure layout: a bullet, a separator, a rating glyph, a locality pair.
   r'• $note',

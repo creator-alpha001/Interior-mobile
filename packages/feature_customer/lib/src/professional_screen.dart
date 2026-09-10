@@ -94,7 +94,7 @@ class _Profile extends StatelessWidget {
               ),
             ),
             if (profile.isVerified)
-              // Sage: a person at InterioBee checked them.
+              // Sage: a person at Decora Shine checked them.
               StatusPill(context.t('Verified'), tone: StatusTone.verified),
           ],
         ),

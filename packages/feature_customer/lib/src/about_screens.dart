@@ -7,7 +7,7 @@
 /// question the product's shape provokes — *why can I not just call the
 /// carpenter?* — and a customer who does not understand the relay reads it as
 /// obstruction rather than as the service. The recruiting page is here because
-/// there is one binary: a professional who installs InterioBee lands in the
+/// there is one binary: a professional who installs Decora Shine lands in the
 /// customer app, and without this there is nothing telling them where to go.
 library;
 
@@ -145,7 +145,7 @@ class HowItWorksScreen extends StatelessWidget {
                   const SizedBox(height: Space.xxs),
                   Text(
                     context.t(
-                      'InterioBee does not hold your money or take a cut of what '
+                      'Decora Shine does not hold your money or take a cut of what '
                       'you pay. You settle directly with your professional, on '
                       'the terms in the agreement. We are paid a commission by '
                       'them.',

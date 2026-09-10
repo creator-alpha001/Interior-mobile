@@ -151,7 +151,7 @@ Map<String, Object?> onboarding({required bool canReceiveLeads}) {
     'terms': {
       'version': '1.0',
       'effectiveFrom': '2026-01-01',
-      'title': 'InterioBee partner terms',
+      'title': 'Decora Shine partner terms',
       'summary': 'How work reaches you, and what commission is charged.',
       'sections': <Object>[],
       'acknowledgements': <Object>[],

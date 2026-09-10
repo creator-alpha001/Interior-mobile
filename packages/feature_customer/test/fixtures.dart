@@ -238,7 +238,7 @@ Notification fixtureNotification({
   id: 'n-1',
   userId: 'u1',
   type: type,
-  title: 'InterioBee replied about your wardrobes',
+  title: 'Decora Shine replied about your wardrobes',
   body: 'The carpenter has answered your question about the board.',
   entityType: entityType,
   entityId: entityId,

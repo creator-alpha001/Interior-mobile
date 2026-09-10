@@ -193,6 +193,6 @@ void main() {
     expect(find.text('Nothing under way yet'), findsNothing);
     expect(find.text('Your work'), findsNothing);
     // The rest of the screen still renders.
-    expect(find.text('InterioBee'), findsOneWidget);
+    expect(find.text('Decora Shine'), findsOneWidget);
   });
 }

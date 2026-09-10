@@ -133,7 +133,7 @@ void main() {
     final (_, api) = await _pump(tester);
 
     expect(find.text('Send code'), findsNothing);
-    expect(find.text('InterioBee'), findsWidgets);
+    expect(find.text('Decora Shine'), findsWidgets);
     expect(
       api.seen.where((r) => r.path == '/me'),
       isEmpty,

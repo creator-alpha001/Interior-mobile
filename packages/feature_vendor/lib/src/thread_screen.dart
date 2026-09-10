@@ -1,4 +1,4 @@
-/// The relay thread — with InterioBee, never with the customer.
+/// The relay thread — with Decora Shine, never with the customer.
 ///
 /// Every message here has the platform on one side of it. That is not a
 /// limitation of the app; it is the platform's proposition, and the schema
@@ -79,7 +79,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('InterioBee'),
+            const Text('Decora Shine'),
             Text(
               context.t('about {title}', {'title': widget.title}),
               style: context.text.bodySmall?.copyWith(
@@ -101,7 +101,7 @@ class _ThreadScreenState extends ConsumerState<ThreadScreen> {
               ),
               child: Text(
                 context.t(
-                  'You are talking to InterioBee, not the customer. We carry your '
+                  'You are talking to Decora Shine, not the customer. We carry your '
                   'questions to them and bring their answers back.',
                 ),
                 style: context.text.bodySmall?.copyWith(
@@ -201,7 +201,7 @@ class _Bubble extends StatelessWidget {
               : CrossAxisAlignment.start,
           children: [
             Text(
-              mine ? context.t('You') : 'InterioBee',
+              mine ? context.t('You') : 'Decora Shine',
               style: context.text.labelMedium?.copyWith(
                 color: context.colors.onSurfaceVariant,
               ),

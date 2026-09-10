@@ -327,7 +327,7 @@ class _AgreementCardState extends ConsumerState<AgreementCard> {
             Text(
               /// The payments line is not boilerplate.
               ///
-              /// InterioBee never handles money, and a Hindi rendering that
+              /// Decora Shine never handles money, and a Hindi rendering that
               /// implied otherwise would be the single most damaging sentence
               /// in the app.
               context.t(

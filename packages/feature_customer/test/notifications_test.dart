@@ -1,6 +1,6 @@
 /// A notification that opens the thing it is about.
 ///
-/// The row used to have no tap at all. "InterioBee replied about your wardrobes"
+/// The row used to have no tap at all. "Decora Shine replied about your wardrobes"
 /// was a sentence and a dead end: the reader had to close the screen, find the
 /// Jobs tab, find the requirement, find the service, and open the thread —
 /// having already been told which one it was.
@@ -61,7 +61,7 @@ void main() {
       requirements: [fixtureRequirement()],
     );
 
-    await tester.tap(find.text('InterioBee replied about your wardrobes'));
+    await tester.tap(find.text('Decora Shine replied about your wardrobes'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ServiceThreadScreen), findsOneWidget);
@@ -88,7 +88,7 @@ void main() {
       ],
     );
 
-    await tester.tap(find.text('InterioBee replied about your wardrobes'));
+    await tester.tap(find.text('Decora Shine replied about your wardrobes'));
     await tester.pumpAndSettle();
 
     expect(find.byType(QuoteComparisonScreen), findsOneWidget);
@@ -111,7 +111,7 @@ void main() {
       requirements: [fixtureRequirement()],
     );
 
-    await tester.tap(find.text('InterioBee replied about your wardrobes'));
+    await tester.tap(find.text('Decora Shine replied about your wardrobes'));
     await tester.pumpAndSettle();
 
     expect(find.byType(QuoteComparisonScreen), findsNothing);
@@ -131,7 +131,7 @@ void main() {
       requirements: [fixtureRequirement()],
     );
 
-    await tester.tap(find.text('InterioBee replied about your wardrobes'));
+    await tester.tap(find.text('Decora Shine replied about your wardrobes'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ServiceThreadScreen), findsNothing);
@@ -143,7 +143,7 @@ void main() {
   ) async {
     await _pump(tester, notifications: [fixtureNotification()]);
 
-    expect(find.text('InterioBee replied about your wardrobes'), findsOneWidget);
+    expect(find.text('Decora Shine replied about your wardrobes'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }

@@ -32,8 +32,8 @@ const hiCommon = <String, String>{
   /// bar the connection exists and still does not work, and telling somebody
   /// they are offline when they can see their signal reads as a lie.
   'No connection': 'कनेक्शन नहीं मिला',
-  'We could not reach InterioBee. Check your signal and try again.':
-      'हम InterioBee तक नहीं पहुँच पाए। अपना सिग्नल देखकर दोबारा कोशिश करें।',
+  'We could not reach Decora Shine. Check your signal and try again.':
+      'हम Decora Shine तक नहीं पहुँच पाए। अपना सिग्नल देखकर दोबारा कोशिश करें।',
 
   /// Never "you do not have access". The API answers 404 for somebody else's
   /// record on purpose, and this side genuinely cannot tell the two apart — so

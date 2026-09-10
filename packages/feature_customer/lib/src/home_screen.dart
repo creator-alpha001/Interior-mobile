@@ -63,7 +63,7 @@ class HomeScreen extends ConsumerWidget {
             children: [
               const SizedBox(height: Space.xl),
               // The product's name. Not translated, in any locale.
-              Text('InterioBee', style: context.text.displayLarge),
+              Text('Decora Shine', style: context.text.displayLarge),
               const SizedBox(height: Space.sm),
               Text(
                 context.t(
@@ -852,7 +852,7 @@ class _Promise extends StatelessWidget {
           Icon(
             Icons.check_circle_outline,
             size: TapTarget.glyph,
-            // Sage: each of these is something a person at InterioBee does.
+            // Sage: each of these is something a person at Decora Shine does.
             color: context.palette.verified,
           ),
           const SizedBox(width: Space.sm),

@@ -6,7 +6,7 @@
 ///
 /// Three sentences carry the weight:
 ///
-///   **"Money is between you and them."** InterioBee holds nothing and takes no cut
+///   **"Money is between you and them."** Decora Shine holds nothing and takes no cut
 ///   of what a customer pays. A Hindi rendering that blurred this into a vague
 ///   `भुगतान की सुविधा` would describe a regulated business the platform
 ///   deliberately is not.
@@ -65,8 +65,8 @@ const hiAbout = <String, String>{
 
   /// The sentence that would do the most damage if it drifted.
   'Money is between you and them': 'पैसा आपके और उनके बीच है',
-  'InterioBee does not hold your money or take a cut of what you pay. You settle directly with your professional, on the terms in the agreement. We are paid a commission by them.':
-      'InterioBee न आपका पैसा रखता है, न आपके भुगतान में से कुछ काटता है। आप सीधे अपने कारीगर से, एग्रीमेंट की शर्तों पर हिसाब करते हैं। हमें कमीशन वे देते हैं।',
+  'Decora Shine does not hold your money or take a cut of what you pay. You settle directly with your professional, on the terms in the agreement. We are paid a commission by them.':
+      'Decora Shine न आपका पैसा रखता है, न आपके भुगतान में से कुछ काटता है। आप सीधे अपने कारीगर से, एग्रीमेंट की शर्तों पर हिसाब करते हैं। हमें कमीशन वे देते हैं।',
 
   // ---- joining ----
   'Work with us': 'हमारे साथ काम कीजिए',

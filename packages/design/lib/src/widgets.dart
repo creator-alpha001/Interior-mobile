@@ -97,7 +97,7 @@ class InterioBeeOverlay extends StatelessWidget {
 /// stops sage becoming decorative: a caller has to claim the thing was checked
 /// by a person in order to get the green.
 enum StatusTone {
-  /// Verified, signed, or approved by a person at InterioBee. Never decoration.
+  /// Verified, signed, or approved by a person at Decora Shine. Never decoration.
   verified,
 
   /// Your turn. The one thing on this screen to act on.

@@ -146,7 +146,7 @@ void main() {
     ) async {
       // DESIGN.md §1.4, the most important piece of colour in the product:
       // submitted is ochre — waiting on somebody else — and turns sage only
-      // when a person at InterioBee approves it. Sage is never decorative.
+      // when a person at Decora Shine approves it. Sage is never decorative.
       await _pump(
         tester,
         Scaffold(

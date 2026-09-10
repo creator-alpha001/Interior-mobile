@@ -4,7 +4,7 @@
 /// §6.1 is explicit: *"Four stages, proof photographs, ochre while submitted,
 /// sage on approval. **No approve button.**"*
 ///
-/// That absence is the product. A stage is done when somebody at InterioBee has
+/// That absence is the product. A stage is done when somebody at Decora Shine has
 /// checked the photographs against it — not when the vendor says so, and not
 /// when the customer says so. Putting an approve button here would move a
 /// verification the platform performs onto the person least able to perform it,

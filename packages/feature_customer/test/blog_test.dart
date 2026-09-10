@@ -211,7 +211,7 @@ void main() {
               ),
             ),
           ],
-          // The InterioBee theme, like every other pump here. Without it
+          // The Decora Shine theme, like every other pump here. Without it
           // `context.palette` is absent and the screen throws a null-check
           // long before it gets anywhere near the failure under test.
           child: MaterialApp(

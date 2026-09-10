@@ -109,7 +109,7 @@ class ApiException implements Exception {
         failure: ApiFailure.network,
         code: 'network_error',
         message:
-            'We could not reach InterioBee. Check your connection and try again.',
+            'We could not reach Decora Shine. Check your connection and try again.',
         requestId: requestId,
       );
     }

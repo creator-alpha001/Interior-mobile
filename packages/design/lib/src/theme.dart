@@ -10,7 +10,7 @@ import 'typography.dart';
 ///
 /// DESIGN.md §1.4 is the rule, and it is load-bearing rather than decorative:
 ///
-///   sage       verified, signed, or approved **by a person at InterioBee**
+///   sage       verified, signed, or approved **by a person at Decora Shine**
 ///   terracotta your turn — the one thing on this screen to act on
 ///   ochre      waiting on somebody else
 ///   burntIron  wrong

@@ -618,7 +618,7 @@ class _MessagesTab extends ConsumerWidget {
                   const SizedBox(height: Space.xxs),
                   Text(
                     // Stated plainly, as MOBILE.md §6.1 asks: one thread per
-                    // service, with InterioBee, and we carry messages both ways.
+                    // service, with Decora Shine, and we carry messages both ways.
                     context.t(
                       'You talk to us, and we talk to the professionals. One '
                       'conversation per job.',
@@ -776,7 +776,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('InterioBee'),
+            const Text('Decora Shine'),
             Text(
               context.t('about your {trade}', {
                 'trade': widget.title.toLowerCase(),
@@ -852,7 +852,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                                     : CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    mine ? context.t('You') : 'InterioBee',
+                                    mine ? context.t('You') : 'Decora Shine',
                                     style: context.text.labelMedium?.copyWith(
                                       color: context.colors.onSurfaceVariant,
                                     ),
@@ -881,7 +881,7 @@ class _ServiceThreadScreenState extends ConsumerState<ServiceThreadScreen> {
                       minLines: 1,
                       maxLines: 4,
                       decoration: InputDecoration(
-                        hintText: context.t('Message InterioBee'),
+                        hintText: context.t('Message Decora Shine'),
                       ),
                       onChanged: (_) => setState(() {}),
                     ),

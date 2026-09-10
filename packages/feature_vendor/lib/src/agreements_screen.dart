@@ -233,7 +233,7 @@ class VendorProfileScreen extends ConsumerWidget {
               /// the web, which has no form for it and no endpoint behind one.
               ///
               /// This is the same rule as trade approval: what a customer sees
-              /// about a professional is changed by a person at InterioBee, not by
+              /// about a professional is changed by a person at Decora Shine, not by
               /// the professional. Saying "not built yet" would have described
               /// a mobile shortfall that does not exist.
               const SizedBox(height: Space.lg),

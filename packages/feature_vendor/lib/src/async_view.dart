@@ -92,7 +92,7 @@ class ErrorState extends StatelessWidget {
         context.t('No connection'),
         context.t(
           context.t(
-            'We could not reach InterioBee. Check your signal and try again.',
+            'We could not reach Decora Shine. Check your signal and try again.',
           ),
         ),
         true,
