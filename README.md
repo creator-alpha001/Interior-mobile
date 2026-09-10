@@ -101,6 +101,21 @@ number creates a customer account, so signing up and signing in are one action.
 Nothing asks for a name until a code has verified for a number the server has
 not seen.
 
+**Google sign-in asks for a city, not a phone number.** It used to do the
+opposite: an unlinked Google account came back with a link token, the state
+moved to the phone stage, and somebody who had just authenticated was shown a
+number field with no way past it — because the server's `users.mobile` was NOT
+NULL. Both that column and `users.city_id` are nullable now, so
+`profile_required` goes to `SignInStage.welcome`, which asks for a name and a
+city and has a skip button beside Continue that is the same size.
+
+The number is asked for *after* the account exists, through `/me/mobile/request`
+and `/me/mobile/confirm` — deliberately not the sign-in pair. Those ask "who is
+this", and an unknown number becomes an account; these ask "is this number
+yours" on behalf of a session, so a code can never create or switch one.
+`AuthController.setupIncomplete` is what a screen reads to decide whether to
+offer either question again; it is an invitation, never a gate.
+
 The six-digit field is **one `TextField` with six boxes drawn over it**, never
 six fields. SMS autofill and a clipboard paste both deliver all six digits to
 whichever field has focus, so six one-character fields keep the first and

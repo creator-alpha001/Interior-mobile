@@ -14,6 +14,8 @@ import '../models/blog_post_view.dart';
 import '../models/blog_tag.dart';
 import '../models/catalogue_count.dart';
 import '../models/city.dart';
+import '../models/complete_google_sign_up_body.dart';
+import '../models/confirm_mobile_verification_body.dart';
 import '../models/create_upload_ticket_body.dart';
 import '../models/delete_account_body.dart';
 import '../models/domain.dart';
@@ -38,6 +40,7 @@ import '../models/session_user.dart';
 import '../models/sort.dart';
 import '../models/staff_login_body.dart';
 import '../models/testimonial.dart';
+import '../models/update_profile_body.dart';
 import '../models/upload_ticket.dart';
 import '../models/verify_otp_body.dart';
 
@@ -53,12 +56,20 @@ abstract class PublicClient {
   @POST('/auth/otp/request')
   Future<OtpChallenge> requestOtp({@Body() required RequestOtpBody body});
 
-  /// Sign in with a Google ID token, or be asked for a mobile number first.
+  /// Sign in with a Google ID token, or be told an account still has to be made.
   ///
-  /// Sign in with a Google ID token, or be asked for a mobile number first No session required.
+  /// Sign in with a Google ID token, or be told an account still has to be made No session required.
   @POST('/auth/google')
   Future<GoogleSignInResult> googleSignIn({
     @Body() required GoogleSignInBody body,
+  });
+
+  /// Create the account behind a verified Google identity and sign in.
+  ///
+  /// Create the account behind a verified Google identity and sign in No session required.
+  @POST('/auth/google/complete')
+  Future<AuthSession> completeGoogleSignUp({
+    @Body() required CompleteGoogleSignUpBody body,
   });
 
   /// Exchange a code for a session cookie, creating the account if new.
@@ -84,6 +95,28 @@ abstract class PublicClient {
   /// The signed-in actor, or 401 No session required.
   @GET('/me')
   Future<SessionUser> me();
+
+  /// Set or change the name and city on the signed-in account.
+  ///
+  /// Set or change the name and city on the signed-in account No session required.
+  @PATCH('/me/profile')
+  Future<SessionUser> updateProfile({@Body() required UpdateProfileBody body});
+
+  /// Send a code to a number the signed-in person wants to add.
+  ///
+  /// Send a code to a number the signed-in person wants to add No session required.
+  @POST('/me/mobile/request')
+  Future<OtpChallenge> requestMobileVerification({
+    @Body() required RequestOtpBody body,
+  });
+
+  /// Prove that number and attach it to the signed-in account.
+  ///
+  /// Prove that number and attach it to the signed-in account No session required.
+  @POST('/me/mobile/confirm')
+  Future<SessionUser> confirmMobileVerification({
+    @Body() required ConfirmMobileVerificationBody body,
+  });
 
   /// Register this handset for push, against the current session.
   ///

@@ -50,6 +50,16 @@ enum SignInStage {
 
   /// The code verified, the number was new, and the account needs a name.
   profile,
+
+  /// Google said who they are, and there is no account here yet.
+  ///
+  /// Asks for a name and a city — and takes "not now" for an answer on the
+  /// city. It used to send them to [phone] instead, with a link token and no
+  /// way out: the server's `users.mobile` was NOT NULL, so somebody who had
+  /// just authenticated with Google was shown a phone field they could not get
+  /// past. The number is optional now and is asked for after the account
+  /// exists, where declining costs nothing.
+  welcome,
 }
 
 @immutable
@@ -298,15 +308,177 @@ class AuthController extends ChangeNotifier {
     }
   }
 
-  /// Signs in with Google, or falls through to the code stage.
+  /// Turns a proved Google identity into an account.
+  ///
+  /// `cityId` is optional and the button that omits it is a real button, not
+  /// small print. Skipping is the same call with one argument missing rather
+  /// than a separate path, so it cannot rot into a second-class route that
+  /// quietly stops working while the happy path stays green.
+  ///
+  /// No mobile number anywhere in here. That is the whole point: the account
+  /// exists after this call, and the number is asked for afterwards by
+  /// [requestMyMobileCode], where closing the app costs nothing.
+  Future<void> completeGoogleSignUp({String? name, String? cityId}) async {
+    final linkToken = _signIn.googleLinkToken;
+    if (linkToken == null) return;
+
+    _signIn = _signIn.copyWith(busy: true, clearError: true, clearRetry: true);
+    notifyListeners();
+
+    try {
+      final session = await _api.public
+          .completeGoogleSignUp(
+            body: CompleteGoogleSignUpBody(
+              linkToken: linkToken,
+              // What they typed wins over the Google profile name.
+              name: name ?? _signIn.googleName,
+              cityId: cityId,
+            ),
+          )
+          .orThrow();
+
+      final token = _tokenOf(session);
+      if (token == null) {
+        // Same reasoning as verifyCode: the API only returns a token when it
+        // sees `X-Client: mobile`, and without one the app would be "signed in"
+        // with nothing to authenticate the next request.
+        _signIn = _signIn.copyWith(
+          busy: false,
+          error: 'Sign-in did not return a session. Please try again.',
+        );
+        notifyListeners();
+        return;
+      }
+
+      await _session.save(token);
+
+      final me = await _api.public.me().orThrow();
+      _signIn = const SignInState();
+      _adopt(me);
+    } on ApiException catch (error) {
+      _signIn = _signIn.copyWith(
+        busy: false,
+        error: error.message,
+        retryAfter: error.retryAfter,
+      );
+      notifyListeners();
+    }
+  }
+
+  /* ---------------- filling in what signup did not ask ---------------- */
+
+  /// The cities somebody can pick from.
+  ///
+  /// On this controller rather than a catalogue provider because the sign-in
+  /// screen's only dependency is this object, and the welcome stage has to ask
+  /// where somebody is before there is a session or a shell to hang a provider
+  /// off. Active cities only — offering one the platform does not serve would
+  /// collect an answer that has to be taken away again.
+  Future<List<City>> cities() async {
+    try {
+      return await _api.public.listCities().orThrow();
+    } on ApiException {
+      // A city list that will not load must not block a signup. The screen
+      // renders the skip path alone, which is a supported answer anyway.
+      return const [];
+    }
+  }
+
+
+  /// Sets or clears the city on the signed-in account.
+  ///
+  /// `null` clears it, and that direction matters as much as the other: a
+  /// person who picked a city to see its prices and then moved should be able
+  /// to go back to seeing everything. A setting that can only narrow is one
+  /// people stop touching.
+  ///
+  /// Returns the error to show, or null on success.
+  Future<String?> setMyCity(String? cityId) async {
+    try {
+      final me = await _api.public
+          .updateProfile(body: UpdateProfileBody(cityId: cityId))
+          .orThrow();
+      _user = me;
+      notifyListeners();
+      return null;
+    } on ApiException catch (error) {
+      return error.message;
+    }
+  }
+
+  /// Sends a code to a number the signed-in person wants to add.
+  ///
+  /// Deliberately not [requestCode]. That one asks "who is this", and an
+  /// unknown number becomes an account; this asks "is this number yours", on
+  /// behalf of a session — so it can never create or switch one. A number
+  /// already on another account is refused here, before the SMS goes out,
+  /// rather than after six digits have been typed back in.
+  Future<OtpChallenge?> requestMyMobileCode(String mobile) async {
+    _mobileError = null;
+    try {
+      final challenge = await _api.public
+          .requestMobileVerification(body: RequestOtpBody(mobile: mobile))
+          .orThrow();
+      notifyListeners();
+      return challenge;
+    } on ApiException catch (error) {
+      _mobileError = error.message;
+      notifyListeners();
+      return null;
+    }
+  }
+
+  /// Proves that number and attaches it to the signed-in account.
+  Future<bool> confirmMyMobile({
+    required String challengeId,
+    required String code,
+  }) async {
+    _mobileError = null;
+    try {
+      final me = await _api.public
+          .confirmMobileVerification(
+            body: ConfirmMobileVerificationBody(
+              challengeId: challengeId,
+              code: code,
+            ),
+          )
+          .orThrow();
+      _user = me;
+      notifyListeners();
+      return true;
+    } on ApiException catch (error) {
+      _mobileError = error.message;
+      notifyListeners();
+      return false;
+    }
+  }
+
+  /// Whatever went wrong the last time a number was offered, for the screen.
+  String? _mobileError;
+  String? get mobileError => _mobileError;
+
+  /// True when there is still something signup was allowed to skip.
+  ///
+  /// Read by the customer shell to decide whether to offer the prompts at all.
+  /// Both are genuinely optional, so this is an invitation and never a gate.
+  bool get setupIncomplete {
+    final me = _user;
+    if (me == null) return false;
+    return me.cityId == null || me.mobile == null || !me.mobileVerified;
+  }
+
+  /// Signs in with Google, or falls through to the welcome stage.
   ///
   /// Two outcomes, and the second is the interesting one. A Google account that
   /// somebody has already linked is a complete sign-in. One that nobody has
-  /// linked cannot be, because the server's `users.mobile` is NOT NULL and ops
-  /// ring every customer about their lead — so it arrives back with a link
-  /// token, the state moves to the phone stage, and the ordinary OTP screens
-  /// finish the job. That is deliberate reuse: there is one place in this app
-  /// that verifies a code, and Google does not get a second one.
+  /// linked has no account here yet, so it arrives back with a link token and
+  /// the state moves to [SignInStage.welcome] — a name, a city, and a button
+  /// that skips the city.
+  ///
+  /// It used to move to the phone stage instead and demand a verified number,
+  /// because the server's `users.mobile` was NOT NULL. That cost the signup of
+  /// anyone unwilling to hand a phone number to an app they were still deciding
+  /// about, to buy a number ops confirm on the scoping call anyway.
   ///
   /// `serverClientId` is the **web** OAuth client id, not the Android one. It
   /// is what makes Google mint an ID token addressed to the backend; without it
@@ -340,9 +512,9 @@ class AuthController extends ChangeNotifier {
           .googleSignIn(body: GoogleSignInBody(idToken: idToken))
           .orThrow();
 
-      if (result.status == GoogleSignInResultStatus.mobileRequired) {
+      if (result.status == GoogleSignInResultStatus.profileRequired) {
         _signIn = _signIn.copyWith(
-          stage: SignInStage.phone,
+          stage: SignInStage.welcome,
           busy: false,
           googleLinkToken: result.linkToken,
           googleEmail: result.email,

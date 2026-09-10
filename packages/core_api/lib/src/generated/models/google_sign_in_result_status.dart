@@ -8,8 +8,8 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 enum GoogleSignInResultStatus {
   @JsonValue('signed_in')
   signedIn('signed_in'),
-  @JsonValue('mobile_required')
-  mobileRequired('mobile_required'),
+  @JsonValue('profile_required')
+  profileRequired('profile_required'),
 
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);

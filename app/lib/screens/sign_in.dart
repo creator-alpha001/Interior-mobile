@@ -7,6 +7,7 @@
 /// the server has not seen before.
 library;
 
+import 'package:interiobee_core_api/interiobee_core_api.dart' show City;
 import 'package:interiobee_core_auth/interiobee_core_auth.dart';
 import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
@@ -37,6 +38,22 @@ class _SignInScreenState extends State<SignInScreen> {
   final _mobile = TextEditingController();
   final _name = TextEditingController();
 
+  /// Google's name, copied in once when the welcome stage first appears.
+  ///
+  /// Guarded by a flag rather than written on every build: the field is
+  /// editable, and re-seeding it would undo what somebody was in the middle of
+  /// typing on the next rebuild — of which there is one per keystroke.
+  bool _seededGoogleName = false;
+
+  void _seedName(SignInState state) {
+    if (_seededGoogleName || state.stage != SignInStage.welcome) return;
+    final fromGoogle = state.googleName;
+    if (fromGoogle != null && fromGoogle.isNotEmpty && _name.text.isEmpty) {
+      _name.text = fromGoogle;
+    }
+    _seededGoogleName = true;
+  }
+
   @override
   void dispose() {
     _mobile.dispose();
@@ -66,6 +83,7 @@ class _SignInScreenState extends State<SignInScreen> {
       animation: widget.auth,
       builder: (context, _) {
         final state = widget.auth.signIn;
+        _seedName(state);
         _closeOnSuccess();
 
         return Scaffold(
@@ -96,6 +114,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       SignInStage.profile => context.t(
                         'Your number is verified. Two things and you are in.',
+                      ),
+                      // A placeholder rather than interpolation: the address
+                      // does not sit in the same place in both languages.
+                      SignInStage.welcome => context.t(
+                        'Google confirmed {email}. Two questions and your '
+                        'account is ready.',
+                        {'email': state.googleEmail ?? ''},
                       ),
                     },
                     style: context.text.bodyLarge?.copyWith(
@@ -140,6 +165,13 @@ class _SignInScreenState extends State<SignInScreen> {
                       onSubmit: (name) =>
                           widget.auth.verifyCode('', name: name),
                     ),
+                    SignInStage.welcome => _WelcomeStage(
+                      name: _name,
+                      state: state,
+                      cities: widget.auth.cities,
+                      onSubmit: (name, cityId) => widget.auth
+                          .completeGoogleSignUp(name: name, cityId: cityId),
+                    ),
                   },
 
                   const SizedBox(height: Space.xxl),
@@ -175,25 +207,11 @@ class _PhoneStage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // A Google account carries a verified email and a name, never a phone,
-        // and ops ring every customer about their lead. So this is the one
-        // number they will be asked for, and saying why is better than a form
-        // that appears to have gone backwards.
-        if (state.linkingGoogle) ...[
-          Text(
-            context.t('Signed in with Google. One number and you are done.'),
-            style: context.text.titleMedium,
-          ),
-          const SizedBox(height: Space.xs),
-          Text(
-            context.t('We use it to reach you about your quotes, nothing else.'),
-            style: context.text.bodySmall?.copyWith(
-              color: context.colors.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: Space.md),
-        ],
-
+        // There is deliberately no "signed in with Google, now give us a
+        // number" banner here any more. A Google sign-in with no account
+        // behind it goes to SignInStage.welcome, which asks for a city and
+        // takes no for an answer — this stage is only ever reached by somebody
+        // who chose to sign in with a number in the first place.
         TextField(
           controller: controller,
           enabled: !state.busy,
@@ -387,6 +405,144 @@ class _ProfileStage extends StatelessWidget {
             child: state.busy ? const _Spinner() : Text(context.t('Continue')),
           ),
         ),
+      ],
+    );
+  }
+}
+
+/// Name and city, before there is an account.
+///
+/// The screen that replaced a phone field somebody could not get past. What it
+/// asks for now is one dropdown, and even that has a button beside it that
+/// declines — because a city genuinely changes what the app can show, and a
+/// phone number genuinely does not need to be handed over to find that out.
+///
+/// The reason is the point of the copy, not the requirement. "Your city" with
+/// an asterisk teaches somebody that this app collects things; the actual
+/// consequence — that every price and every professional is per city, so
+/// without one they are looking at all of them at once — is a reason to answer,
+/// and it stays true whether or not they do.
+class _WelcomeStage extends StatefulWidget {
+  const _WelcomeStage({
+    required this.name,
+    required this.state,
+    required this.cities,
+    required this.onSubmit,
+  });
+
+  final TextEditingController name;
+  final SignInState state;
+  final Future<List<City>> Function() cities;
+
+  /// `cityId` is null when they skipped. Deliberately the same callback as
+  /// Continue, so skipping cannot become a second-class path that quietly stops
+  /// working while the happy one stays green.
+  final void Function(String name, String? cityId) onSubmit;
+
+  @override
+  State<_WelcomeStage> createState() => _WelcomeStageState();
+}
+
+class _WelcomeStageState extends State<_WelcomeStage> {
+  late final Future<List<City>> _cities = widget.cities();
+  String? _cityId;
+
+  @override
+  Widget build(BuildContext context) {
+    final state = widget.state;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        FutureBuilder<List<City>>(
+          future: _cities,
+          builder: (context, snapshot) {
+            final cities = snapshot.data ?? const <City>[];
+
+            // No list yet, or none arrived. Either way the city question cannot
+            // be asked, and it was never the thing standing between somebody
+            // and an account — so the rest of the form carries on without it.
+            if (cities.isEmpty) return const SizedBox.shrink();
+
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                DropdownButtonFormField<String?>(
+                  initialValue: _cityId,
+                  decoration: InputDecoration(
+                    labelText: context.t('Where are you?'),
+                  ),
+                  items: [
+                    DropdownMenuItem<String?>(
+                      value: null,
+                      child: Text(context.t('Choose your city')),
+                    ),
+                    for (final city in cities)
+                      DropdownMenuItem<String?>(
+                        value: city.id,
+                        child: Text('${city.name}, ${city.state}'),
+                      ),
+                  ],
+                  onChanged: state.busy
+                      ? null
+                      : (value) => setState(() => _cityId = value),
+                ),
+                const SizedBox(height: Space.xs),
+                Text(
+                  context.t(
+                    'Prices, professionals and availability are all set per '
+                    'city. Tell us yours and the app shows rates that apply to '
+                    'your job and vendors who can come out to it.',
+                  ),
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+                const SizedBox(height: Space.md),
+              ],
+            );
+          },
+        ),
+
+        TextField(
+          controller: widget.name,
+          enabled: !state.busy,
+          textCapitalization: TextCapitalization.words,
+          autofillHints: const [AutofillHints.name],
+          decoration: InputDecoration(labelText: context.t('Your name')),
+        ),
+
+        if (state.error != null) ...[
+          const SizedBox(height: Space.xs),
+          _ErrorLine(state: state),
+        ],
+
+        const SizedBox(height: Space.md),
+        SizedBox(
+          width: double.infinity,
+          child: FilledButton(
+            onPressed: state.busy
+                ? null
+                : () => widget.onSubmit(widget.name.text, _cityId),
+            child: state.busy ? const _Spinner() : Text(context.t('Continue')),
+          ),
+        ),
+
+        // A real second option, not small print. If skipping is allowed it
+        // should look allowed — a greyed-out link under a full-width button
+        // reads as the thing you are not supposed to press.
+        if (_cityId == null) ...[
+          const SizedBox(height: Space.xs),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton(
+              onPressed: state.busy
+                  ? null
+                  : () => widget.onSubmit(widget.name.text, null),
+              child: Text(context.t('Skip — show me every city')),
+            ),
+          ),
+        ],
       ],
     );
   }

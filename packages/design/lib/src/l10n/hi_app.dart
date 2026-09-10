@@ -34,14 +34,20 @@ const hiApp = <String, String>{
   'or': 'या',
   'Continue with Google': 'Google से जारी रखें',
 
-  /// Google gives a verified email and a name, never a phone number, and ops
-  /// ring every customer about their lead. The Hindi says why the number is
-  /// wanted rather than simply asking again, which would read as a form that
-  /// had gone backwards.
-  'Signed in with Google. One number and you are done.':
-      'Google से साइन इन हो गया। बस एक नंबर और, फिर काम पूरा।',
-  'We use it to reach you about your quotes, nothing else.':
-      'इसका इस्तेमाल सिर्फ़ आपके कोटेशन के बारे में बात करने के लिए होगा, और किसी काम के लिए नहीं।',
+  /// The welcome stage, after Google and before there is an account.
+  ///
+  /// It used to demand a phone number here and the Hindi had to talk somebody
+  /// through why. It does not any more: the only question that changes what the
+  /// app can show is the city, so the Hindi gives the same reason the English
+  /// does — and the skip reads as a real choice, not an apology.
+  'Google confirmed {email}. Two questions and your account is ready.':
+      'Google ने {email} की पुष्टि कर दी। दो सवाल, और आपका खाता तैयार है।',
+  'Where are you?': 'आप कहाँ हैं?',
+  'Choose your city': 'अपना शहर चुनें',
+  'Prices, professionals and availability are all set per city. Tell us yours and the app shows rates that apply to your job and vendors who can come out to it.':
+      'दाम, पेशेवर और उपलब्धता — सब शहर के हिसाब से तय होते हैं। अपना शहर बताइए, फिर ऐप वही दरें दिखाएगा जो आपके काम पर लागू हों, और वही वेंडर जो आप तक आ सकें।',
+  'Skip — show me every city': 'अभी रहने दें — मुझे सभी शहर दिखाइए',
+
   'We sent a code to {number}.': 'हमने {number} पर कोड भेजा है।',
   'Send again': 'दोबारा भेजें',
   'Change number': 'नंबर बदलें',

@@ -15,9 +15,9 @@ abstract class ClientSummary with _$ClientSummary {
     required String id,
     required String userId,
     required String name,
-    required String mobile,
+    required String? mobile,
     required String? email,
-    required City city,
+    required City? city,
     required String? address,
   }) = _ClientSummary;
 

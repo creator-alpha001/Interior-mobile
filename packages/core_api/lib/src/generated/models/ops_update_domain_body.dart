@@ -17,6 +17,8 @@ abstract class OpsUpdateDomainBody with _$OpsUpdateDomainBody {
     String? name,
     int? defaultCommissionPercent,
     DomainLabelsInput? labels,
+    String? bannerMediaId,
+    String? iconKey,
     bool? isActive,
   }) = _OpsUpdateDomainBody;
 

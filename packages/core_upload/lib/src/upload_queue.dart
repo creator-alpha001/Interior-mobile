@@ -26,7 +26,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:interiobee_core_api/interiobee_core_api.dart';
+// `Options` is a name both libraries use: dio's request options, and a
+// generated model for a catalogue item's option groups. Only dio's is wanted
+// here, so the contract's is hidden rather than prefixed — this file talks to
+// storage, not to the API, and a prefix would suggest otherwise.
+import 'package:interiobee_core_api/interiobee_core_api.dart' hide Options;
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';

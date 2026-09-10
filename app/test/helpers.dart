@@ -63,10 +63,18 @@ InterioBeeApi apiWith(StubApi stub, SessionStore session) {
 }
 
 /// A `SessionUser` body, as the API would send it.
+/// `mobile` and `cityId` are nullable on purpose, and default to set.
+///
+/// Most tests want an ordinary, fully set-up account and should not have to say
+/// so. The tests that care about somebody who signed up with Google and gave
+/// neither pass `mobile: null, cityId: null` — which is a real state now, not a
+/// malformed fixture.
 Map<String, Object?> sessionUser({
   required String role,
   String name = 'Priya Sharma',
-  String mobile = '919839012477',
+  String? mobile = '919839012477',
+  String? cityId = 'city-luc',
+  bool? mobileVerified,
 }) {
   return {
     'actor': switch (role) {
@@ -85,6 +93,10 @@ Map<String, Object?> sessionUser({
     },
     'name': name,
     'mobile': mobile,
+    // Having a number and having proved it are separate answers, so the default
+    // follows the number rather than being hard-coded true.
+    'mobileVerified': mobileVerified ?? (mobile != null),
+    'cityId': cityId,
     'avatarUrl': null,
   };
 }

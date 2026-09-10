@@ -320,4 +320,180 @@ void main() {
       expect(api.seen.single.headers['x-client'], 'mobile');
     });
   });
+
+  /// What signup is allowed to leave unanswered, and how it gets answered.
+  ///
+  /// These are regression tests for a product failure rather than a feature.
+  /// A first Google sign-in used to end on the phone stage with a link token
+  /// and no way past it, because the server's `users.mobile` was NOT NULL —
+  /// somebody who had just authenticated was stuck. Both fields are optional
+  /// now, and what has to keep working is the *afterwards*: the promise that
+  /// they can be answered later is only honest if these calls exist.
+  ///
+  /// The Google welcome stage itself is not covered here. Reaching it needs a
+  /// real ID token from the Google plugin, which a widget test cannot mint;
+  /// `completeGoogleSignUp` is exercised against the API in the web
+  /// repository's `optional-contact.test.ts` instead.
+  group('what signup did not ask for', () {
+    /// Signs in by code, so there is a session to hang the rest off.
+    Future<(AuthController, StubApi)> signedIn(
+      WidgetTester tester, {
+      String? mobile = '919839012477',
+      String? cityId = 'city-luc',
+    }) async {
+      final (auth, api) = await _pump(tester);
+      api.on('POST', '/auth/otp/request', {
+        'challengeId': 'ch-1',
+        'expiresInSeconds': 300,
+      });
+      api.on(
+        'POST',
+        '/auth/otp/verify',
+        authSession(role: 'client', token: 'tok-1'),
+      );
+      api.on(
+        'GET',
+        '/me',
+        sessionUser(role: 'client', mobile: mobile, cityId: cityId),
+      );
+
+      await tester.enterText(find.byType(TextField), '9839012477');
+      await _act(tester, () => tester.tap(find.text('Send code')));
+      await _act(
+        tester,
+        () => tester.enterText(find.byType(TextField), '484220'),
+      );
+
+      return (auth, api);
+    }
+
+    testWidgets('an account with neither a number nor a city is a real one', (
+      tester,
+    ) async {
+      // Not a broken session, not a half-made account: signed in, in the
+      // customer shell, with both answers outstanding.
+      final (auth, _) = await signedIn(tester, mobile: null, cityId: null);
+
+      expect(auth.shell, Shell.customer);
+      expect(auth.user?.mobile, isNull);
+      expect(auth.user?.mobileVerified, isFalse);
+      expect(auth.user?.cityId, isNull);
+      expect(auth.setupIncomplete, isTrue);
+    });
+
+    testWidgets('nothing is outstanding once both are answered', (
+      tester,
+    ) async {
+      final (auth, _) = await signedIn(tester);
+      expect(auth.setupIncomplete, isFalse);
+    });
+
+    testWidgets('a number on file but unproved still counts as outstanding', (
+      tester,
+    ) async {
+      // Ops type numbers in from a phone call. One somebody else typed is
+      // exactly the one worth re-checking before it is used to authenticate,
+      // so having a number is not the same as having proved it.
+      final (auth, api) = await _pump(tester);
+      api.on('POST', '/auth/otp/request', {
+        'challengeId': 'ch-1',
+        'expiresInSeconds': 300,
+      });
+      api.on(
+        'POST',
+        '/auth/otp/verify',
+        authSession(role: 'client', token: 'tok-1'),
+      );
+      api.on(
+        'GET',
+        '/me',
+        sessionUser(
+          role: 'client',
+          mobile: '919839012477',
+          mobileVerified: false,
+        ),
+      );
+
+      await tester.enterText(find.byType(TextField), '9839012477');
+      await _act(tester, () => tester.tap(find.text('Send code')));
+      await _act(
+        tester,
+        () => tester.enterText(find.byType(TextField), '484220'),
+      );
+
+      expect(auth.setupIncomplete, isTrue);
+    });
+
+    testWidgets('setting a city afterwards updates the session', (
+      tester,
+    ) async {
+      final (auth, api) = await signedIn(tester, cityId: null);
+      expect(auth.setupIncomplete, isTrue);
+
+      api.on(
+        'PATCH',
+        '/me/profile',
+        sessionUser(role: 'client', cityId: 'city-blr'),
+      );
+
+      String? error;
+      await tester.runAsync(() async {
+        error = await auth.setMyCity('city-blr');
+      });
+
+      expect(error, isNull);
+      expect(auth.user?.cityId, 'city-blr');
+    });
+
+    testWidgets('a number attached afterwards comes back verified', (
+      tester,
+    ) async {
+      final (auth, api) = await signedIn(tester, mobile: null);
+
+      api.on('POST', '/me/mobile/request', {
+        'challengeId': 'ch-2',
+        'expiresInSeconds': 300,
+      });
+      api.on(
+        'POST',
+        '/me/mobile/confirm',
+        sessionUser(role: 'client', mobile: '919839012477'),
+      );
+
+      late final bool attached;
+      await tester.runAsync(() async {
+        final challenge = await auth.requestMyMobileCode('9839012477');
+        expect(challenge?.challengeId, 'ch-2');
+        attached = await auth.confirmMyMobile(
+          challengeId: 'ch-2',
+          code: '484220',
+        );
+      });
+
+      expect(attached, isTrue);
+      expect(auth.user?.mobile, '919839012477');
+      expect(auth.user?.mobileVerified, isTrue);
+      expect(auth.setupIncomplete, isFalse);
+    });
+
+    testWidgets('a number already on another account is refused, not hidden', (
+      tester,
+    ) async {
+      // The server checks before the SMS goes out. Failing afterwards would
+      // mean paying for the whole round trip to be told it was never going to
+      // work — so what has to survive here is the server's own sentence.
+      final (auth, api) = await signedIn(tester, mobile: null);
+
+      api.on('POST', '/me/mobile/request', {
+        'code': 'conflict',
+        'message': 'That number is already on another account.',
+      }, status: 409);
+
+      await tester.runAsync(() async {
+        expect(await auth.requestMyMobileCode('9839012477'), isNull);
+      });
+
+      expect(auth.mobileError, contains('already on another account'));
+    });
+  });
 }

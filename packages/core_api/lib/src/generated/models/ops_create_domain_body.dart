@@ -15,6 +15,8 @@ abstract class OpsCreateDomainBody with _$OpsCreateDomainBody {
     required String name,
     required int defaultCommissionPercent,
     required DomainLabelsInput labels,
+    String? bannerMediaId,
+    String? iconKey,
     @Default('') String tagline,
     @Default('') String description,
   }) = _OpsCreateDomainBody;

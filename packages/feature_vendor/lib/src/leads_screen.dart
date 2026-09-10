@@ -18,6 +18,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'async_view.dart';
 import 'providers.dart';
+import 'where_client_is.dart';
 
 class LeadsScreen extends ConsumerWidget {
   const LeadsScreen({super.key, this.onOpen});
@@ -197,7 +198,7 @@ class LeadCard extends StatelessWidget {
                     ),
                     const SizedBox(height: Space.xxs),
                     Text(
-                      '${lead.client.locality} · ${lead.client.city.name}',
+                      whereClientIs(lead.client, separator: ' · '),
                       style: context.text.bodySmall?.copyWith(
                         color: context.colors.onSurfaceVariant,
                       ),

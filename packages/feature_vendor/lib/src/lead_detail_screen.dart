@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'async_view.dart';
 import 'providers.dart';
 import 'quote_builder.dart';
+import 'where_client_is.dart';
 
 class LeadDetailScreen extends ConsumerWidget {
   const LeadDetailScreen({
@@ -328,7 +329,7 @@ class _DetailState extends ConsumerState<_Detail> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                '${lead.client.locality}, ${lead.client.city.name}',
+                whereClientIs(lead.client),
                 style: context.text.titleLarge,
               ),
               const SizedBox(height: Space.xxs),

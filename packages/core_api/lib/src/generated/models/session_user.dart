@@ -14,7 +14,9 @@ abstract class SessionUser with _$SessionUser {
   const factory SessionUser({
     required Actor actor,
     required String name,
-    required String mobile,
+    required String? mobile,
+    required bool mobileVerified,
+    required String? cityId,
     required String? avatarUrl,
   }) = _SessionUser;
 

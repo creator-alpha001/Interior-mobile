@@ -13,7 +13,7 @@ part 'masked_client_summary.g.dart';
 abstract class MaskedClientSummary with _$MaskedClientSummary {
   const factory MaskedClientSummary({
     required String displayName,
-    required City city,
+    required City? city,
     required String locality,
     required String? address,
 

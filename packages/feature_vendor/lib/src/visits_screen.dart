@@ -29,6 +29,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'async_view.dart';
 import 'providers.dart';
+import 'where_client_is.dart';
 
 class VisitsScreen extends ConsumerWidget {
   const VisitsScreen({super.key});
@@ -277,7 +278,7 @@ class _SealedAddress extends StatelessWidget {
           ),
           const SizedBox(height: Space.xs),
           Text(
-            '${visit.client.locality}, ${visit.client.city.name}',
+            whereClientIs(visit.client),
             style: context.text.titleLarge,
           ),
           const SizedBox(height: Space.xxs),

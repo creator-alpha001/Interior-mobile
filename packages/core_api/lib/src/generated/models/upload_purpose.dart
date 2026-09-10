@@ -14,6 +14,8 @@ enum UploadPurpose {
   portfolioItem('portfolio_item'),
   @JsonValue('vendor_document')
   vendorDocument('vendor_document'),
+  @JsonValue('catalogue_image')
+  catalogueImage('catalogue_image'),
 
   /// Default value for all unparsed values, allows backward compatibility when adding new values on the backend.
   $unknown(null);

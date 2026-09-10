@@ -18,10 +18,11 @@ abstract class User with _$User {
     required String? deletedAt,
     required String id,
     required String name,
-    required String mobile,
+    required String? mobile,
+    required String? mobileVerifiedAt,
     required String? email,
     required UserRole role,
-    required String cityId,
+    required String? cityId,
     required UserStatus status,
     required String? avatarUrl,
   }) = _User;
