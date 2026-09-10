@@ -16,9 +16,9 @@ enum Flavour {
   /// `10.0.2.2` is the host machine as seen from the Android emulator. On a
   /// physical device this needs the machine's LAN address instead, which is why
   /// the value is a define rather than a constant.
-  staging('https://staging-api.interiobee.example', 'InterioBee (staging)'),
+  staging('https://staging-api.decorashine.example', 'InterioBee (staging)'),
 
-  production('https://api.interiobee.com', 'InterioBee');
+  production('https://api.decorashine.com', 'InterioBee');
 
   const Flavour(this.defaultBaseUrl, this.appName);
 

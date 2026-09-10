@@ -8,10 +8,25 @@
 library;
 
 import 'package:interiobee_core_api/interiobee_core_api.dart' show City;
+import 'package:interiobee_feature_customer/interiobee_feature_customer.dart'
+    show BecomeProfessionalScreen;
 import 'package:interiobee_core_auth/interiobee_core_auth.dart';
 import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+/// Who says they are signing in.
+///
+/// The credential is the same either way — a code to a mobile number, and the
+/// account's own role decides which shell opens. So this is not a second
+/// sign-in; it is the screen saying which of the two audiences it is talking
+/// to, and offering the registration route that belongs to them, which is
+/// where the two genuinely differ. It matches the tabs on the web's `/login`.
+///
+/// It grants nothing. A customer's number picked with `professional` selected
+/// still signs in as a customer — the role comes from the server — and the
+/// footer under this tab is what tells them so.
+enum SignInAudience { customer, professional }
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({super.key, required this.auth, this.dismissible = false});
@@ -44,6 +59,8 @@ class _SignInScreenState extends State<SignInScreen> {
   /// editable, and re-seeding it would undo what somebody was in the middle of
   /// typing on the next rebuild — of which there is one per keystroke.
   bool _seededGoogleName = false;
+
+  SignInAudience _audience = SignInAudience.customer;
 
   void _seedName(SignInState state) {
     if (_seededGoogleName || state.stage != SignInStage.welcome) return;
@@ -102,10 +119,18 @@ class _SignInScreenState extends State<SignInScreen> {
                   const SizedBox(height: Space.xs),
                   Text(
                     switch (state.stage) {
-                      SignInStage.phone => context.t(
-                        'Interior design, furniture, fabrication and painting — '
-                        'with one person who answers.',
-                      ),
+                      SignInStage.phone =>
+                        _audience == SignInAudience.professional
+                            ? context.t(
+                                'Your leads, quotes, site visits and commission '
+                                'live in the professional portal. The code goes '
+                                'to the number your account is registered '
+                                'against.',
+                              )
+                            : context.t(
+                                'Interior design, furniture, fabrication and '
+                                'painting — with one person who answers.',
+                              ),
                       // A placeholder rather than interpolation: the number
                       // does not sit in the same place in both languages.
                       SignInStage.code => context.t(
@@ -143,15 +168,36 @@ class _SignInScreenState extends State<SignInScreen> {
                     ),
                   ],
 
+                  /// Only while a number is being chosen.
+                  ///
+                  /// Once a code is on its way the question is answered and the
+                  /// tabs would just be a way to lose the challenge that is
+                  /// already in flight.
+                  if (state.stage == SignInStage.phone) ...[
+                    const SizedBox(height: Space.lg),
+                    _AudienceTabs(
+                      audience: _audience,
+                      onChanged: state.busy
+                          ? null
+                          : (next) => setState(() => _audience = next),
+                    ),
+                  ],
+
                   const SizedBox(height: Space.xl),
 
                   switch (state.stage) {
                     SignInStage.phone => _PhoneStage(
                       controller: _mobile,
                       state: state,
+                      audience: _audience,
                       onSubmit: (value) => widget.auth.requestCode(value),
                       googleAvailable: widget.auth.googleAvailable,
                       onGoogle: widget.auth.signInWithGoogle,
+                      onApply: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const BecomeProfessionalScreen(),
+                        ),
+                      ),
                     ),
                     SignInStage.code => _CodeStage(
                       state: state,
@@ -185,18 +231,55 @@ class _SignInScreenState extends State<SignInScreen> {
   }
 }
 
+/// The customer / professional choice, as two tabs.
+class _AudienceTabs extends StatelessWidget {
+  const _AudienceTabs({required this.audience, required this.onChanged});
+
+  final SignInAudience audience;
+
+  /// Null while a request is in flight, which disables both.
+  final ValueChanged<SignInAudience>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SegmentedButton<SignInAudience>(
+      segments: [
+        ButtonSegment(
+          value: SignInAudience.customer,
+          label: Text(context.t("I'm a customer")),
+        ),
+        ButtonSegment(
+          value: SignInAudience.professional,
+          label: Text(context.t("I'm a professional")),
+        ),
+      ],
+      selected: {audience},
+      showSelectedIcon: false,
+      onSelectionChanged: onChanged == null
+          ? null
+          : (selection) => onChanged!(selection.first),
+    );
+  }
+}
+
 class _PhoneStage extends StatelessWidget {
   const _PhoneStage({
     required this.controller,
     required this.state,
+    required this.audience,
     required this.onSubmit,
     required this.googleAvailable,
     required this.onGoogle,
+    required this.onApply,
   });
 
   final TextEditingController controller;
   final SignInState state;
+  final SignInAudience audience;
   final ValueChanged<String> onSubmit;
+
+  /// Opens the application form, for a tradesperson with no vendor account.
+  final VoidCallback onApply;
 
   /// False when the build carries no Google client id, which is the default.
   final bool googleAvailable;
@@ -277,16 +360,42 @@ class _PhoneStage extends StatelessWidget {
         ],
 
         const SizedBox(height: Space.md),
-        Text(
-          // No "Sign up" anywhere. Saying this plainly is what replaces it.
-          context.t(
-            'New here? Entering your number is all it takes — we will set the '
-            'account up as you go.',
+        if (audience == SignInAudience.professional) ...[
+          /*
+           * The one thing the two audiences genuinely differ on.
+           *
+           * A customer's account is made by entering a number. A vendor's is
+           * not, and cannot be: it is created when our team approves an
+           * application. Saying so here is what stops the professional tab
+           * being the lie it is on any site that offers it and then quietly
+           * signs you in as a customer.
+           */
+          Text(
+            context.t(
+              'Professional accounts are created by our team after an '
+              'application is approved — signing in with a number we have not '
+              'approved will open the customer view.',
+            ),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
           ),
-          style: context.text.bodySmall?.copyWith(
-            color: context.colors.onSurfaceVariant,
+          const SizedBox(height: Space.xs),
+          TextButton(
+            onPressed: state.busy ? null : onApply,
+            child: Text(context.t('Not registered yet? Apply to join')),
           ),
-        ),
+        ] else
+          Text(
+            // No "Sign up" anywhere. Saying this plainly is what replaces it.
+            context.t(
+              'New here? Entering your number is all it takes — we will set '
+              'the account up as you go.',
+            ),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
       ],
     );
   }
