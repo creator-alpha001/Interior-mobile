@@ -104,6 +104,7 @@ const hiAbout = <String, String>{
       'वे शहर और इलाक़े जहाँ आप सचमुच जाते हैं।',
 
   'How to start': 'शुरू कैसे करें',
-  'Sign in with the mobile number you registered with us. Once our team has approved you, this same app opens on your leads instead of the customer view.':
-      'जिस मोबाइल नंबर से आपने हमारे यहाँ रजिस्टर किया है, उसी से साइन इन कीजिए। हमारी टीम की मंज़ूरी के बाद यही ऐप ग्राहक वाले हिस्से के बजाय आपकी लीड पर खुलेगा।',
+  'Tell us about your business and the trades you work in. Our team reads every application and rings you back, usually within two working days. Once you are approved this same app opens on your leads instead of the customer view.':
+      'अपने काम और जिन ट्रेड में आप काम करते हैं, उनके बारे में बताइए। हमारी टीम हर आवेदन पढ़ती है और आम तौर पर दो कामकाजी दिन के अंदर फ़ोन करती है। मंज़ूरी मिलने के बाद यही ऐप ग्राहक वाले हिस्से के बजाय आपकी लीड पर खुलेगा।',
+  'Apply to join': 'आवेदन करें',
 };

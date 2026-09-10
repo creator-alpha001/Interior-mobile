@@ -19,6 +19,7 @@ library;
 
 import 'hi_about.dart';
 import 'hi_account.dart';
+import 'hi_apply.dart';
 import 'hi_app.dart';
 import 'hi_catalogue.dart';
 import 'hi_common.dart';
@@ -28,6 +29,7 @@ import 'hi_vendor.dart';
 
 export 'hi_about.dart';
 export 'hi_account.dart';
+export 'hi_apply.dart';
 export 'hi_app.dart';
 export 'hi_catalogue.dart';
 export 'hi_common.dart';
@@ -44,6 +46,7 @@ const hindi = <String, String>{
   ...hiCommon,
   ...hiAbout,
   ...hiAccount,
+  ...hiApply,
   ...hiApp,
   ...hiCatalogue,
   ...hiCustomer,

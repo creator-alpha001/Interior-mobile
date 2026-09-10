@@ -403,6 +403,7 @@ void main() {
       'hiCommon': hiCommon,
       'hiAbout': hiAbout,
       'hiAccount': hiAccount,
+      'hiApply': hiApply,
       'hiApp': hiApp,
       'hiCatalogue': hiCatalogue,
       'hiCustomer': hiCustomer,
