@@ -29,6 +29,11 @@ dependencies:
   # Gates the UI on resume, never the session itself. See BiometricGate.
   local_auth: ^2.3.0
 
+  # Google sign-in. Configured with the *web* client id as `serverClientId`, so
+  # the plugin returns an ID token our backend can verify rather than one
+  # addressed to the app itself.
+  google_sign_in: ^7.1.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

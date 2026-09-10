@@ -20,6 +20,8 @@ import '../models/domain.dart';
 import '../models/get_posts_response.dart';
 import '../models/get_products_response.dart';
 import '../models/get_professionals_response.dart';
+import '../models/google_sign_in_body.dart';
+import '../models/google_sign_in_result.dart';
 import '../models/ok.dart';
 import '../models/otp_challenge.dart';
 import '../models/package_view.dart';
@@ -50,6 +52,14 @@ abstract class PublicClient {
   /// Send a six-digit code to a mobile number No session required.
   @POST('/auth/otp/request')
   Future<OtpChallenge> requestOtp({@Body() required RequestOtpBody body});
+
+  /// Sign in with a Google ID token, or be asked for a mobile number first.
+  ///
+  /// Sign in with a Google ID token, or be asked for a mobile number first No session required.
+  @POST('/auth/google')
+  Future<GoogleSignInResult> googleSignIn({
+    @Body() required GoogleSignInBody body,
+  });
 
   /// Exchange a code for a session cookie, creating the account if new.
   ///

@@ -18,7 +18,7 @@ enum Flavour {
   /// the value is a define rather than a constant.
   staging('https://staging-api.interiobee.example', 'InterioBee (staging)'),
 
-  production('https://api.interiobee.example', 'InterioBee');
+  production('https://api.interiobee.com', 'InterioBee');
 
   const Flavour(this.defaultBaseUrl, this.appName);
 
@@ -45,6 +45,20 @@ abstract final class Env {
       _baseUrlOverride.isEmpty ? flavour.defaultBaseUrl : _baseUrlOverride;
 
   static bool get isProduction => flavour == Flavour.production;
+
+  /// The Google OAuth **web** client id, not the Android or iOS one.
+  ///
+  /// Counter-intuitive but correct: passed as `serverClientId`, it is what
+  /// makes Google mint an ID token addressed to our backend, which is the only
+  /// thing the backend can verify. Give it the Android client id instead and
+  /// the plugin returns a token for the app itself, and the server rejects
+  /// every sign-in with a message about the wrong audience.
+  ///
+  /// Empty turns Google sign-in off, which is the default. The OTP path does
+  /// not depend on it.
+  static const googleServerClientId = String.fromEnvironment(
+    'INTERIOBEE_GOOGLE_SERVER_CLIENT_ID',
+  );
 
   /// The component gallery ships only in non-production builds.
   ///

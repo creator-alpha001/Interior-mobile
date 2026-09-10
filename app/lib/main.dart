@@ -97,6 +97,9 @@ Future<void> main() async {
   final auth = AuthController(
     api: api,
     session: session,
+    // Empty unless the build was given one, which turns the Google button off
+    // and leaves the OTP path exactly as it was.
+    googleServerClientId: Env.googleServerClientId,
     onSignedIn: () async {
       resetSession();
       await devices.register();

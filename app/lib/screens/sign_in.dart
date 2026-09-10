@@ -125,6 +125,8 @@ class _SignInScreenState extends State<SignInScreen> {
                       controller: _mobile,
                       state: state,
                       onSubmit: (value) => widget.auth.requestCode(value),
+                      googleAvailable: widget.auth.googleAvailable,
+                      onGoogle: widget.auth.signInWithGoogle,
                     ),
                     SignInStage.code => _CodeStage(
                       state: state,
@@ -156,17 +158,42 @@ class _PhoneStage extends StatelessWidget {
     required this.controller,
     required this.state,
     required this.onSubmit,
+    required this.googleAvailable,
+    required this.onGoogle,
   });
 
   final TextEditingController controller;
   final SignInState state;
   final ValueChanged<String> onSubmit;
 
+  /// False when the build carries no Google client id, which is the default.
+  final bool googleAvailable;
+  final Future<void> Function() onGoogle;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // A Google account carries a verified email and a name, never a phone,
+        // and ops ring every customer about their lead. So this is the one
+        // number they will be asked for, and saying why is better than a form
+        // that appears to have gone backwards.
+        if (state.linkingGoogle) ...[
+          Text(
+            context.t('Signed in with Google. One number and you are done.'),
+            style: context.text.titleMedium,
+          ),
+          const SizedBox(height: Space.xs),
+          Text(
+            context.t('We use it to reach you about your quotes, nothing else.'),
+            style: context.text.bodySmall?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: Space.md),
+        ],
+
         TextField(
           controller: controller,
           enabled: !state.busy,
@@ -199,6 +226,37 @@ class _PhoneStage extends StatelessWidget {
             child: state.busy ? const _Spinner() : Text(context.t('Send code')),
           ),
         ),
+
+        // Hidden once a Google sign-in is already waiting on a number:
+        // offering the same button again invites going round in a circle
+        // rather than finishing the one step left.
+        if (googleAvailable && !state.linkingGoogle) ...[
+          const SizedBox(height: Space.md),
+          Row(
+            children: [
+              const Expanded(child: Divider()),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: Space.sm),
+                child: Text(
+                  context.t('or'),
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.colors.onSurfaceVariant,
+                  ),
+                ),
+              ),
+              const Expanded(child: Divider()),
+            ],
+          ),
+          const SizedBox(height: Space.md),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: state.busy ? null : () => onGoogle(),
+              icon: const Icon(Icons.g_mobiledata, size: 28),
+              label: Text(context.t('Continue with Google')),
+            ),
+          ),
+        ],
 
         const SizedBox(height: Space.md),
         Text(

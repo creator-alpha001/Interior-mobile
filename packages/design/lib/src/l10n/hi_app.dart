@@ -31,6 +31,17 @@ const hiApp = <String, String>{
   'Send code': 'कोड भेजें',
   'New here? Entering your number is all it takes — we will set the account up as you go.':
       'पहली बार आए हैं? बस अपना नंबर डालिए — खाता हम साथ-साथ बना देंगे।',
+  'or': 'या',
+  'Continue with Google': 'Google से जारी रखें',
+
+  /// Google gives a verified email and a name, never a phone number, and ops
+  /// ring every customer about their lead. The Hindi says why the number is
+  /// wanted rather than simply asking again, which would read as a form that
+  /// had gone backwards.
+  'Signed in with Google. One number and you are done.':
+      'Google से साइन इन हो गया। बस एक नंबर और, फिर काम पूरा।',
+  'We use it to reach you about your quotes, nothing else.':
+      'इसका इस्तेमाल सिर्फ़ आपके कोटेशन के बारे में बात करने के लिए होगा, और किसी काम के लिए नहीं।',
   'We sent a code to {number}.': 'हमने {number} पर कोड भेजा है।',
   'Send again': 'दोबारा भेजें',
   'Change number': 'नंबर बदलें',

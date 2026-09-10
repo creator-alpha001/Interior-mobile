@@ -17,6 +17,7 @@ import 'dart:async';
 
 import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import 'secure_session.dart';
 
@@ -62,6 +63,9 @@ class SignInState {
     this.busy = false,
     this.error,
     this.retryAfter,
+    this.googleLinkToken,
+    this.googleEmail,
+    this.googleName,
   });
 
   final SignInStage stage;
@@ -79,6 +83,18 @@ class SignInState {
   /// Set on a 429. Shown as-is; see [AuthController.requestCode].
   final Duration? retryAfter;
 
+  /// A verified Google account waiting for its first mobile number.
+  ///
+  /// Google gives a verified email and a name, never a phone, and `users.mobile`
+  /// on the server is NOT NULL because ops ring every customer about their
+  /// lead. So the first Google sign-in falls into the ordinary code stage
+  /// carrying this, and after that one code it is never asked for again.
+  final String? googleLinkToken;
+  final String? googleEmail;
+  final String? googleName;
+
+  bool get linkingGoogle => googleLinkToken != null;
+
   SignInState copyWith({
     SignInStage? stage,
     String? mobile,
@@ -88,6 +104,9 @@ class SignInState {
     bool? busy,
     String? error,
     Duration? retryAfter,
+    String? googleLinkToken,
+    String? googleEmail,
+    String? googleName,
     bool clearError = false,
     bool clearRetry = false,
   }) {
@@ -100,6 +119,9 @@ class SignInState {
       busy: busy ?? this.busy,
       error: clearError ? null : (error ?? this.error),
       retryAfter: clearRetry ? null : (retryAfter ?? this.retryAfter),
+      googleLinkToken: googleLinkToken ?? this.googleLinkToken,
+      googleEmail: googleEmail ?? this.googleEmail,
+      googleName: googleName ?? this.googleName,
     );
   }
 }
@@ -108,6 +130,7 @@ class AuthController extends ChangeNotifier {
   AuthController({
     required InterioBeeApi api,
     required AuthSessionStore session,
+    this.googleServerClientId = '',
     this.onSignedIn,
     this.onSigningOut,
   }) : _api = api,
@@ -119,6 +142,15 @@ class AuthController extends ChangeNotifier {
   final AuthSessionStore _session;
 
   /// Called once a session exists. Where device registration happens.
+  /// The Google OAuth **web** client id. Empty means Google sign-in is off.
+  ///
+  /// Injected rather than read from a define here, because this package cannot
+  /// see the app's `Env` and should not learn how the app is configured.
+  final String googleServerClientId;
+
+  /// Whether to offer the Google button at all.
+  bool get googleAvailable => googleServerClientId.isNotEmpty;
+
   final Future<void> Function()? onSignedIn;
 
   /// Called *before* the session is cleared, and awaited.
@@ -228,8 +260,11 @@ class AuthController extends ChangeNotifier {
             body: VerifyOtpBody(
               challengeId: challengeId,
               code: code,
-              name: name,
+              // What they typed wins over the Google profile name.
+              name: name ?? _signIn.googleName,
               cityId: cityId,
+              // Present only on the one code that finishes a Google sign-in.
+              linkToken: _signIn.googleLinkToken,
             ),
           )
           .orThrow();
@@ -261,6 +296,96 @@ class AuthController extends ChangeNotifier {
       );
       notifyListeners();
     }
+  }
+
+  /// Signs in with Google, or falls through to the code stage.
+  ///
+  /// Two outcomes, and the second is the interesting one. A Google account that
+  /// somebody has already linked is a complete sign-in. One that nobody has
+  /// linked cannot be, because the server's `users.mobile` is NOT NULL and ops
+  /// ring every customer about their lead — so it arrives back with a link
+  /// token, the state moves to the phone stage, and the ordinary OTP screens
+  /// finish the job. That is deliberate reuse: there is one place in this app
+  /// that verifies a code, and Google does not get a second one.
+  ///
+  /// `serverClientId` is the **web** OAuth client id, not the Android one. It
+  /// is what makes Google mint an ID token addressed to the backend; without it
+  /// the plugin returns an access token the server has no way to verify, which
+  /// fails in a way that looks like a server bug.
+  Future<void> signInWithGoogle() async {
+    _signIn = _signIn.copyWith(busy: true, clearError: true, clearRetry: true);
+    notifyListeners();
+
+    final String? idToken;
+    try {
+      idToken = await _googleIdToken();
+    } catch (error) {
+      _signIn = _signIn.copyWith(
+        busy: false,
+        error: 'Google sign-in did not work. Please use your mobile number.',
+      );
+      notifyListeners();
+      return;
+    }
+
+    if (idToken == null) {
+      // Dismissed the sheet. Not an error, and saying so would be wrong.
+      _signIn = _signIn.copyWith(busy: false);
+      notifyListeners();
+      return;
+    }
+
+    try {
+      final result = await _api.public
+          .googleSignIn(body: GoogleSignInBody(idToken: idToken))
+          .orThrow();
+
+      if (result.status == GoogleSignInResultStatus.mobileRequired) {
+        _signIn = _signIn.copyWith(
+          stage: SignInStage.phone,
+          busy: false,
+          googleLinkToken: result.linkToken,
+          googleEmail: result.email,
+          googleName: result.name,
+        );
+        notifyListeners();
+        return;
+      }
+
+      final session = result.session;
+      final token = session == null ? null : _tokenOf(session);
+      if (token == null) {
+        // Same reasoning as verifyCode: without a token the app would be
+        // "signed in" with nothing to authenticate the next request.
+        _signIn = _signIn.copyWith(
+          busy: false,
+          error: 'Sign-in did not return a session. Please try again.',
+        );
+        notifyListeners();
+        return;
+      }
+
+      await _session.save(token);
+      final me = await _api.public.me().orThrow();
+      _signIn = const SignInState();
+      _adopt(me);
+    } on ApiException catch (error) {
+      _signIn = _signIn.copyWith(
+        busy: false,
+        error: error.message,
+        retryAfter: error.retryAfter,
+      );
+      notifyListeners();
+    }
+  }
+
+  /// Asks Google for an ID token, or null if the person backed out.
+  Future<String?> _googleIdToken() async {
+    final signIn = GoogleSignIn.instance;
+    await signIn.initialize(serverClientId: googleServerClientId);
+
+    final account = await signIn.authenticate();
+    return account.authentication.idToken;
   }
 
   /// The number verified but the account is new and has no name yet.
