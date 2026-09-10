@@ -138,6 +138,15 @@ final referralsProvider = FutureProvider<ReferralSummary>(
   (ref) => _me(ref).referrals().orThrow(),
 );
 
+/// This account's request to become a vendor, or null if they never made one.
+///
+/// Null is the ordinary answer rather than an error — most customers never
+/// apply — so the screen branches on it instead of treating it as a failure.
+final professionalApplicationProvider =
+    FutureProvider<ProfessionalApplicationView?>(
+      (ref) => _me(ref).myProfessionalApplication().orThrow(),
+    );
+
 /// One thread per service, and the platform is on the other side of it.
 final serviceThreadProvider = FutureProvider.family<List<Message>, String>(
   (ref, leadDomainId) =>
@@ -184,6 +193,7 @@ final customerSessionProviders = <ProviderOrFamily>[
   ticketsProvider,
   referralsProvider,
   serviceThreadProvider,
+  professionalApplicationProvider,
 ];
 
 void resetCustomerSession(ProviderContainer container) {

@@ -9,6 +9,7 @@ library;
 export 'src/about_screens.dart';
 export 'src/account_screens.dart';
 export 'src/agreements_screen.dart';
+export 'src/become_professional_screen.dart';
 export 'src/async_view.dart';
 export 'src/blog_screen.dart';
 export 'src/catalogue.dart';

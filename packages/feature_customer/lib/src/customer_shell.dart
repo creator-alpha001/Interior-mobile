@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'about_screens.dart';
 import 'account_screens.dart';
 import 'agreements_screen.dart';
+import 'become_professional_screen.dart';
 import 'blog_screen.dart';
 import 'catalogue.dart';
 import 'packages_screen.dart';
@@ -1032,7 +1033,26 @@ class _AccountTab extends ConsumerWidget {
               subtitle: context.t('For carpenters, painters and fabricators'),
               onTap: () => Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => const JoinAsProfessionalScreen(),
+                  builder: (_) => JoinAsProfessionalScreen(
+                    /*
+                     * Applying needs an account, because the application is
+                     * attached to one — so a signed-out tradesperson is taken
+                     * through sign-in first and lands on the form, rather than
+                     * being told to come back later.
+                     */
+                    onApply: () async {
+                      if (!signedIn) {
+                        final ok = await onSignIn?.call() ?? false;
+                        if (!ok || !context.mounted) return;
+                      }
+                      if (!context.mounted) return;
+                      await Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const BecomeProfessionalScreen(),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),

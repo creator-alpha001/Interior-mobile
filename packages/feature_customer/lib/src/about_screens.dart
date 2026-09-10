@@ -226,7 +226,15 @@ class _StepRow extends StatelessWidget {
 
 /// Why a professional would want to be on the platform, and what it costs.
 class JoinAsProfessionalScreen extends StatelessWidget {
-  const JoinAsProfessionalScreen({super.key});
+  const JoinAsProfessionalScreen({super.key, this.onApply});
+
+  /// Starts an application, signing the person in first if they are not.
+  ///
+  /// Null only where there is nothing to start from — the gallery. Without it
+  /// this screen is what it used to be everywhere: an argument for joining,
+  /// ending in an instruction to sign in with a number that our team had
+  /// somehow already approved, and no way to get one approved.
+  final Future<void> Function()? onApply;
 
   @override
   Widget build(BuildContext context) {
@@ -324,17 +332,25 @@ class JoinAsProfessionalScreen extends StatelessWidget {
                   const SizedBox(height: Space.xxs),
 
                   /// There is one binary, so a professional is already in the
-                  /// right app — they simply have to sign in with a number our
-                  /// team has approved. Saying so is the whole point of this
-                  /// screen existing here.
+                  /// right app. What was missing was the first step: telling us
+                  /// about the business at all.
                   Text(
                     context.t(
-                      'Sign in with the mobile number you registered with us. '
-                      'Once our team has approved you, this same app opens on '
-                      'your leads instead of the customer view.',
+                      'Tell us about your business and the trades you work in. '
+                      'Our team reads every application and rings you back, '
+                      'usually within two working days. Once you are approved '
+                      'this same app opens on your leads instead of the '
+                      'customer view.',
                     ),
                     style: context.text.bodyMedium,
                   ),
+                  if (onApply case final apply?) ...[
+                    const SizedBox(height: Space.md),
+                    FilledButton(
+                      onPressed: apply,
+                      child: Text(context.t('Apply to join')),
+                    ),
+                  ],
                 ],
               ),
             ),
