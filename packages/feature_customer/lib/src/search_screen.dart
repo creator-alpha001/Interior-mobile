@@ -245,12 +245,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           professional.companyName,
                           style: context.text.titleLarge,
                         ),
-                        Text(
-                          professional.city.name,
-                          style: context.text.bodySmall?.copyWith(
-                            color: context.colors.onSurfaceVariant,
+                        // Omitted rather than rendered blank when nothing on
+                        // record says where they are.
+                        if (professional.city != null)
+                          Text(
+                            professional.city!.name,
+                            style: context.text.bodySmall?.copyWith(
+                              color: context.colors.onSurfaceVariant,
+                            ),
                           ),
-                        ),
                       ],
                     ),
                   ),

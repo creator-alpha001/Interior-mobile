@@ -100,10 +100,12 @@ class _Profile extends StatelessWidget {
         ),
         const SizedBox(height: Space.xs),
         Text(
-          context.t('{city} · {n} years', {
-            'city': profile.city.name,
-            'n': profile.experienceYears.round(),
-          }),
+          profile.city == null
+              ? context.t('{n} years', {'n': profile.experienceYears.round()})
+              : context.t('{city} · {n} years', {
+                  'city': profile.city!.name,
+                  'n': profile.experienceYears.round(),
+                }),
           style: context.text.bodyMedium?.copyWith(
             color: context.colors.onSurfaceVariant,
           ),

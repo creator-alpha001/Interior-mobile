@@ -548,10 +548,14 @@ class ProfessionalCard extends StatelessWidget {
           ),
           const SizedBox(height: Space.xxs),
           Text(
-            context.t('{city} · {n} years', {
-              'city': professional.city.name,
-              'n': professional.experienceYears,
-            }),
+            // A vendor with no city on record still belongs on the card; the
+            // line just says less about them. See ProfessionalSummary.city.
+            professional.city == null
+                ? context.t('{n} years', {'n': professional.experienceYears})
+                : context.t('{city} · {n} years', {
+                    'city': professional.city!.name,
+                    'n': professional.experienceYears,
+                  }),
             style: context.text.bodySmall?.copyWith(
               color: context.colors.onSurfaceVariant,
             ),

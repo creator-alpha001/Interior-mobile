@@ -18,6 +18,9 @@ const hiCommon = <String, String>{
   'Camera': 'कैमरा',
   'Gallery': 'गैलरी',
   'Description': 'ब्यौरा',
+  // Both shells: the vendor's own profile, and a customer's card for one whose
+  // city is not on record.
+  '{n} years': '{n} साल',
   'Note': 'नोट',
   'Photographs': 'तस्वीरें',
   // The photo viewer's counter.

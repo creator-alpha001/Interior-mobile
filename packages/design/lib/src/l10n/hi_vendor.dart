@@ -260,7 +260,6 @@ const hiVendor = <String, String>{
   'Jobs completed': 'पूरे किए गए काम',
   'Median response': 'जवाब देने का औसत समय',
   '{n} year': '{n} साल',
-  '{n} years': '{n} साल',
   '{n} hour': '{n} घंटा',
   '{n} hours': '{n} घंटे',
 

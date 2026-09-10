@@ -38,6 +38,18 @@ final _variantOf = <String, String>{
   'auth_session_professional.dart': 'auth_session.dart',
   'auth_session_sales_agent.dart': 'auth_session.dart',
   'auth_session_admin.dart': 'auth_session.dart',
+  // The reviewer's decision on an application to become a vendor. Same shape
+  // as the two above: `oneOf` + a discriminator on `action`, so the variants
+  // have to exist as components for the mapping to point at, and swagger_parser
+  // emits them twice.
+  'ops_decide_professional_application_body_start_review.dart':
+      'ops_decide_professional_application_body.dart',
+  'ops_decide_professional_application_body_request_changes.dart':
+      'ops_decide_professional_application_body.dart',
+  'ops_decide_professional_application_body_reject.dart':
+      'ops_decide_professional_application_body.dart',
+  'ops_decide_professional_application_body_approve.dart':
+      'ops_decide_professional_application_body.dart',
 };
 
 void main() {

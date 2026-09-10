@@ -23,7 +23,7 @@ abstract class ProfessionalProfile with _$ProfessionalProfile {
     required String name,
     required String companyName,
     required String? avatarUrl,
-    required City city,
+    required City? city,
     required num experienceYears,
     required int completedProjects,
     required num avgRating,

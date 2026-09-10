@@ -14,12 +14,14 @@ import '../models/lead_view.dart';
 import '../models/meeting.dart';
 import '../models/message.dart';
 import '../models/notification.dart';
+import '../models/professional_application_view.dart';
 import '../models/project_view.dart';
 import '../models/referral_summary.dart';
 import '../models/request_reschedule_body.dart';
 import '../models/review.dart';
 import '../models/select_quote_body.dart';
 import '../models/send_service_message_body.dart';
+import '../models/submit_professional_application_body.dart';
 import '../models/submit_review_body.dart';
 import '../models/support_ticket.dart';
 import '../models/ticket_reply.dart';
@@ -147,6 +149,26 @@ abstract class ClientClient {
     @Path('id') required String id,
     @Body() required SendServiceMessageBody body,
   });
+
+  /// myProfessionalApplication.
+  ///
+  /// Requires a signed-in customer.
+  @GET('/me/professional-application')
+  Future<ProfessionalApplicationView?> myProfessionalApplication();
+
+  /// submitProfessionalApplication.
+  ///
+  /// Requires a signed-in customer.
+  @POST('/me/professional-application')
+  Future<ProfessionalApplicationView> submitProfessionalApplication({
+    @Body() required SubmitProfessionalApplicationBody body,
+  });
+
+  /// withdrawProfessionalApplication.
+  ///
+  /// Requires a signed-in customer.
+  @DELETE('/me/professional-application')
+  Future<ProfessionalApplicationView?> withdrawProfessionalApplication();
 
   /// referrals.
   ///
