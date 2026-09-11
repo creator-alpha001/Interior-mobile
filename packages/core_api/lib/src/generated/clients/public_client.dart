@@ -50,9 +50,9 @@ part 'public_client.g.dart';
 abstract class PublicClient {
   factory PublicClient(Dio dio, {String? baseUrl}) = _PublicClient;
 
-  /// Send a six-digit code to a mobile number.
+  /// Send a six-digit code to a mobile number, on WhatsApp or by SMS.
   ///
-  /// Send a six-digit code to a mobile number No session required.
+  /// Send a six-digit code to a mobile number, on WhatsApp or by SMS No session required.
   @POST('/auth/otp/request')
   Future<OtpChallenge> requestOtp({@Body() required RequestOtpBody body});
 

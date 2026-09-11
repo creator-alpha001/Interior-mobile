@@ -4,6 +4,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'otp_challenge_channel.dart';
+
 part 'otp_challenge.freezed.dart';
 part 'otp_challenge.g.dart';
 
@@ -12,6 +14,7 @@ abstract class OtpChallenge with _$OtpChallenge {
   const factory OtpChallenge({
     required String challengeId,
     required int expiresInSeconds,
+    OtpChallengeChannel? channel,
     String? devCode,
   }) = _OtpChallenge;
 

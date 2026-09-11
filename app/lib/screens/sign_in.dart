@@ -7,7 +7,8 @@
 /// the server has not seen before.
 library;
 
-import 'package:interiobee_core_api/interiobee_core_api.dart' show City;
+import 'package:interiobee_core_api/interiobee_core_api.dart'
+    show City, OtpChallengeChannel;
 import 'package:interiobee_feature_customer/interiobee_feature_customer.dart'
     show BecomeProfessionalScreen;
 import 'package:interiobee_core_auth/interiobee_core_auth.dart';
@@ -133,10 +134,22 @@ class _SignInScreenState extends State<SignInScreen> {
                               ),
                       // A placeholder rather than interpolation: the number
                       // does not sit in the same place in both languages.
-                      SignInStage.code => context.t(
-                        'We sent a code to {number}.',
-                        {'number': state.mobile},
-                      ),
+                      SignInStage.code => switch (state.channel) {
+                        OtpChallengeChannel.whatsapp => context.t(
+                          'We sent a code on WhatsApp to {number}.',
+                          {'number': state.mobile},
+                        ),
+                        OtpChallengeChannel.sms => context.t(
+                          'We sent a code by SMS to {number}.',
+                          {'number': state.mobile},
+                        ),
+                        // An API too old to say. Naming no channel beats
+                        // sending somebody to look in the wrong app.
+                        _ => context.t(
+                          'We sent a code to {number}.',
+                          {'number': state.mobile},
+                        ),
+                      },
                       SignInStage.profile => context.t(
                         'Your number is verified. Two things and you are in.',
                       ),
@@ -202,7 +215,15 @@ class _SignInScreenState extends State<SignInScreen> {
                     SignInStage.code => _CodeStage(
                       state: state,
                       onSubmit: widget.auth.verifyCode,
-                      onResend: () => widget.auth.requestCode(state.mobile),
+                      // A resend stays on the channel the last code went on.
+                      onResend: () => widget.auth.requestCode(
+                        state.mobile,
+                        channel: state.channel,
+                      ),
+                      onSwitchChannel: (channel) => widget.auth.requestCode(
+                        state.mobile,
+                        channel: channel,
+                      ),
                       onChangeNumber: widget.auth.restart,
                     ),
                     SignInStage.profile => _ProfileStage(
@@ -306,6 +327,9 @@ class _PhoneStage extends StatelessWidget {
           ],
           decoration: InputDecoration(
             labelText: context.t('Mobile number'),
+            // Said before the code is sent, so nobody waits at their SMS
+            // inbox. The code screen offers SMS instead.
+            helperText: context.t('We send the code on WhatsApp.'),
             // Neither of these is copy. The dialling code and a sample number
             // are the same digits in every language.
             prefixText: '+91  ',
@@ -406,12 +430,16 @@ class _CodeStage extends StatefulWidget {
     required this.state,
     required this.onSubmit,
     required this.onResend,
+    required this.onSwitchChannel,
     required this.onChangeNumber,
   });
 
   final SignInState state;
   final void Function(String code, {String? name, String? cityId}) onSubmit;
   final VoidCallback onResend;
+
+  /// Sends a fresh code on the channel given, which retires the last one.
+  final ValueChanged<OtpChallengeChannel> onSwitchChannel;
   final VoidCallback onChangeNumber;
 
   @override
@@ -460,6 +488,21 @@ class _CodeStageState extends State<_CodeStage> {
           ),
         ],
 
+        // Offered at once rather than after a wait: somebody with no WhatsApp
+        // on this number receives nothing by waiting. The server's per-number
+        // limit is what stops it being pressed on repeat.
+        if (_otherChannel(state.channel) case final other?) ...[
+          const SizedBox(height: Space.md),
+          TextButton(
+            onPressed: state.busy ? null : () => widget.onSwitchChannel(other),
+            child: Text(
+              other == OtpChallengeChannel.sms
+                  ? context.t('Send by SMS instead')
+                  : context.t('Send on WhatsApp instead'),
+            ),
+          ),
+        ],
+
         const SizedBox(height: Space.lg),
         Row(
           children: [
@@ -478,6 +521,15 @@ class _CodeStageState extends State<_CodeStage> {
     );
   }
 }
+
+/// The channel a switch would send on, or null when the last code's channel is
+/// unknown — there is then nothing honest to offer the other side of.
+OtpChallengeChannel? _otherChannel(OtpChallengeChannel? channel) =>
+    switch (channel) {
+      OtpChallengeChannel.whatsapp => OtpChallengeChannel.sms,
+      OtpChallengeChannel.sms => OtpChallengeChannel.whatsapp,
+      _ => null,
+    };
 
 class _ProfileStage extends StatelessWidget {
   const _ProfileStage({

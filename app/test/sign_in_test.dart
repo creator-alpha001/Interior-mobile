@@ -6,6 +6,8 @@
 /// at least once.
 library;
 
+import 'dart:convert';
+
 import 'package:interiobee_app/screens/sign_in.dart';
 import 'package:interiobee_core_auth/interiobee_core_auth.dart';
 import 'package:interiobee_design/interiobee_design.dart';
@@ -75,6 +77,41 @@ void main() {
 
       expect(find.textContaining('We sent a code'), findsOneWidget);
       expect(find.byType(OtpField), findsOneWidget);
+    });
+
+    testWidgets('says which app the code went to, and switches on request', (
+      tester,
+    ) async {
+      // A screen saying "check WhatsApp" for a code that went by SMS strands
+      // somebody as surely as no code at all. And somebody with no WhatsApp on
+      // this number must be able to ask for SMS without waiting for anything.
+      final (_, api) = await _pump(tester);
+      api.on('POST', '/auth/otp/request', {
+        'challengeId': 'ch-1',
+        'expiresInSeconds': 300,
+        'channel': 'whatsapp',
+      });
+
+      await tester.enterText(find.byType(TextField), '9839012477');
+      await _act(tester, () => tester.tap(find.text('Send code')));
+
+      expect(find.textContaining('on WhatsApp'), findsOneWidget);
+
+      api.on('POST', '/auth/otp/request', {
+        'challengeId': 'ch-2',
+        'expiresInSeconds': 300,
+        'channel': 'sms',
+      });
+      await _act(tester, () => tester.tap(find.text('Send by SMS instead')));
+
+      // As encoded, because the wire form is what the server reads; the body
+      // Dio holds before encoding carries the enum, not its JSON value.
+      expect(
+        jsonDecode(jsonEncode(api.seen.last.data)),
+        containsPair('channel', 'sms'),
+      );
+      expect(find.textContaining('by SMS'), findsOneWidget);
+      expect(find.text('Send on WhatsApp instead'), findsOneWidget);
     });
 
     testWidgets('renders the server rate limit honestly', (tester) async {

@@ -29,6 +29,7 @@ const hiApp = <String, String>{
       'इंटीरियर डिज़ाइन, फ़र्नीचर, फ़ैब्रिकेशन और पेंटिंग — और एक इंसान जो जवाब देता है।',
   'Mobile number': 'मोबाइल नंबर',
   'Send code': 'कोड भेजें',
+  'We send the code on WhatsApp.': 'हम कोड WhatsApp पर भेजते हैं।',
   'New here? Entering your number is all it takes — we will set the account up as you go.':
       'पहली बार आए हैं? बस अपना नंबर डालिए — खाता हम साथ-साथ बना देंगे।',
   'or': 'या',
@@ -49,6 +50,14 @@ const hiApp = <String, String>{
   'Skip — show me every city': 'अभी रहने दें — मुझे सभी शहर दिखाइए',
 
   'We sent a code to {number}.': 'हमने {number} पर कोड भेजा है।',
+
+  /// WhatsApp and SMS stay in Latin script, like Google above: they are the
+  /// names on the icon somebody is about to go and tap.
+  'We sent a code on WhatsApp to {number}.':
+      'हमने {number} पर WhatsApp से कोड भेजा है।',
+  'We sent a code by SMS to {number}.': 'हमने {number} पर SMS से कोड भेजा है।',
+  'Send by SMS instead': 'इसके बजाय SMS से भेजें',
+  'Send on WhatsApp instead': 'इसके बजाय WhatsApp पर भेजें',
   'Send again': 'दोबारा भेजें',
   'Change number': 'नंबर बदलें',
   'Your number is verified. Two things and you are in.':

@@ -69,6 +69,7 @@ class SignInState {
     this.mobile = '',
     this.challengeId,
     this.expiresInSeconds,
+    this.channel,
     this.devCode,
     this.busy = false,
     this.error,
@@ -82,6 +83,11 @@ class SignInState {
   final String mobile;
   final String? challengeId;
   final int? expiresInSeconds;
+
+  /// Where the code went: WhatsApp, unless SMS was asked for or the server
+  /// swapped a channel that is not live on it. Null from an API too old to say,
+  /// in which case the screen names no channel rather than guessing the app.
+  final OtpChallengeChannel? channel;
 
   /// Only ever present in development: the API echoes the code when
   /// `OTP_DEV_ECHO` is on, and its config refuses to allow that in production.
@@ -110,6 +116,7 @@ class SignInState {
     String? mobile,
     String? challengeId,
     int? expiresInSeconds,
+    OtpChallengeChannel? channel,
     String? devCode,
     bool? busy,
     String? error,
@@ -125,6 +132,7 @@ class SignInState {
       mobile: mobile ?? this.mobile,
       challengeId: challengeId ?? this.challengeId,
       expiresInSeconds: expiresInSeconds ?? this.expiresInSeconds,
+      channel: channel ?? this.channel,
       devCode: devCode ?? this.devCode,
       busy: busy ?? this.busy,
       error: clearError ? null : (error ?? this.error),
@@ -221,7 +229,13 @@ class AuthController extends ChangeNotifier {
   /// IP. A client-side counter would eventually disagree with them, and the
   /// disagreement always favours the client, so there is none: a 429 is
   /// rendered honestly with the time the server gave.
-  Future<void> requestCode(String mobile) async {
+  ///
+  /// `channel` omitted means WhatsApp. The screen passes the channel the last
+  /// code went on to resend it, and the other one to switch.
+  Future<void> requestCode(
+    String mobile, {
+    OtpChallengeChannel? channel,
+  }) async {
     _signIn = _signIn.copyWith(
       busy: true,
       mobile: mobile,
@@ -232,13 +246,19 @@ class AuthController extends ChangeNotifier {
 
     try {
       final challenge = await _api.public
-          .requestOtp(body: RequestOtpBody(mobile: mobile))
+          .requestOtp(
+            body: RequestOtpBody(
+              mobile: mobile,
+              channel: _requestChannel(channel),
+            ),
+          )
           .orThrow();
 
       _signIn = _signIn.copyWith(
         stage: SignInStage.code,
         challengeId: challenge.challengeId,
         expiresInSeconds: challenge.expiresInSeconds.toInt(),
+        channel: challenge.channel,
         devCode: challenge.devCode,
         busy: false,
       );
@@ -413,11 +433,19 @@ class AuthController extends ChangeNotifier {
   /// behalf of a session — so it can never create or switch one. A number
   /// already on another account is refused here, before the SMS goes out,
   /// rather than after six digits have been typed back in.
-  Future<OtpChallenge?> requestMyMobileCode(String mobile) async {
+  Future<OtpChallenge?> requestMyMobileCode(
+    String mobile, {
+    OtpChallengeChannel? channel,
+  }) async {
     _mobileError = null;
     try {
       final challenge = await _api.public
-          .requestMobileVerification(body: RequestOtpBody(mobile: mobile))
+          .requestMobileVerification(
+            body: RequestOtpBody(
+              mobile: mobile,
+              channel: _requestChannel(channel),
+            ),
+          )
           .orThrow();
       notifyListeners();
       return challenge;
@@ -585,6 +613,19 @@ class AuthController extends ChangeNotifier {
     _user = null;
     await _session.clear();
   }
+
+  /// The request's channel from the response's.
+  ///
+  /// The contract names the field on each object separately, so it generates
+  /// two enums for one vocabulary. Mapped case by case rather than by string, so
+  /// a third channel added to the contract stops this compiling instead of
+  /// quietly sending nothing.
+  RequestOtpBodyChannel? _requestChannel(OtpChallengeChannel? channel) =>
+      switch (channel) {
+        OtpChallengeChannel.whatsapp => RequestOtpBodyChannel.whatsapp,
+        OtpChallengeChannel.sms => RequestOtpBodyChannel.sms,
+        OtpChallengeChannel.$unknown || null => null,
+      };
 
   /// `sessionToken` lives on each variant of the union rather than on a shared
   /// base, so it is read per-branch. The `switch` is exhaustive, so a fifth
