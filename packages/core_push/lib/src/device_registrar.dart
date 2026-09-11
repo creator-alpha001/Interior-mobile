@@ -129,6 +129,8 @@ class DeviceRegistrar {
   Future<bool> requestPermission() => _tokens.requestPermission();
 
   RegisterDeviceBodyPlatform get _platform {
+    // First, because `Platform` throws on the web rather than answering false.
+    if (kIsWeb) return RegisterDeviceBodyPlatform.web;
     if (Platform.isAndroid) return RegisterDeviceBodyPlatform.android;
     if (Platform.isIOS) return RegisterDeviceBodyPlatform.ios;
     return RegisterDeviceBodyPlatform.web;

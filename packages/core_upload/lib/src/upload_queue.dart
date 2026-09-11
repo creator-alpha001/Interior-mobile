@@ -228,7 +228,8 @@ class UploadQueue extends ChangeNotifier {
       localPath: localPath,
       purpose: purpose,
       contentType: contentType,
-      originalBytes: File(localPath).existsSync()
+      // On the web the path is a blob URL, which `File` cannot open.
+      originalBytes: !kIsWeb && File(localPath).existsSync()
           ? File(localPath).lengthSync()
           : null,
     );
@@ -281,8 +282,7 @@ class UploadQueue extends ChangeNotifier {
     _update(item.copyWith(state: UploadState.uploading, clearError: true));
 
     try {
-      final file = File(item.localPath);
-      if (!file.existsSync()) {
+      if (!kIsWeb && !File(item.localPath).existsSync()) {
         throw const FileSystemException(
           'The photograph is no longer on the device',
         );
@@ -300,7 +300,10 @@ class UploadQueue extends ChangeNotifier {
           .createUploadTicket(
             body: CreateUploadTicketBody(
               purpose: item.purpose,
-              fileName: item.localPath.split(Platform.pathSeparator).last,
+              // A blob URL ends in a bare uuid, with no extension to keep.
+              fileName: kIsWeb
+                  ? 'photo-${item.id}.jpg'
+                  : item.localPath.split(Platform.pathSeparator).last,
               contentType: item.contentType,
               sizeBytes: bytes.length,
             ),
@@ -363,6 +366,10 @@ class FlutterImageCompressor implements ImageCompressor {
 
   @override
   Future<Uint8List> compress(String path) async {
+    // The plugin cannot compress by path on the web. The picker's own
+    // `maxWidth` has already downscaled, so the original is sent.
+    if (kIsWeb) return XFile(path).readAsBytes();
+
     final result = await FlutterImageCompress.compressWithFile(
       path,
       minWidth: kMaxEdge,
