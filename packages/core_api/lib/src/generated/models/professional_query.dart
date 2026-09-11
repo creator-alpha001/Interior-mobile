@@ -4,6 +4,8 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'professional_query_sort.dart';
+
 part 'professional_query.freezed.dart';
 part 'professional_query.g.dart';
 
@@ -15,7 +17,10 @@ abstract class ProfessionalQuery with _$ProfessionalQuery {
     String? city,
     String? search,
     dynamic verifiedOnly,
+    num? minRating,
+    int? minExperience,
     @Default(24) int limit,
+    @Default(ProfessionalQuerySort.rating) ProfessionalQuerySort sort,
   }) = _ProfessionalQuery;
 
   factory ProfessionalQuery.fromJson(Map<String, Object?> json) =>

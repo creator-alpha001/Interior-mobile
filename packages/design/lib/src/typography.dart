@@ -1,8 +1,10 @@
 /// The type scale.
 ///
-/// Two families with no overlap in job: Newsreader is the editorial serif and
-/// carries display and headings only; Manrope carries everything else,
-/// including every numeral.
+/// One family, Inter, on the phone and the website alike. Headings used to be
+/// an editorial serif (Newsreader) over a separate sans (Manrope); neither was
+/// ever bundled, so the app actually rendered in whatever the platform had, and
+/// the website has since moved to Inter throughout. Headings are told apart by
+/// weight now, not by a second typeface.
 ///
 /// These are DESIGN.md's `-mobile` sizes, not the desktop ones. `display-lg` at
 /// 56px is a 1440px figure and will not fit a 360dp screen.
@@ -13,141 +15,102 @@ import 'package:flutter/material.dart';
 import 'tokens.dart';
 
 abstract final class InterioBeeFonts {
-  /// Bundled as assets rather than fetched through `google_fonts`.
-  ///
-  /// A vendor standing on a site with no signal should not get a fallback-font
-  /// first paint.
-  static const serif = 'Newsreader';
-  static const sans = 'Manrope';
+  /// Bundled in this package's `pubspec.yaml`, so a text style names the
+  /// package as well as the family — otherwise Flutter looks for an app-level
+  /// font of that name and silently falls back to the platform's.
+  static const family = 'Inter';
+  static const package = 'interiobee_design';
 
-  /// Neither family carries Devanagari, and the app ships Hindi.
+  /// Inter carries no Devanagari, and the app ships Hindi.
   ///
-  /// Without these, every Hindi string falls through to whatever the platform
-  /// happens to have — Noto on Android, Nirmala UI on Windows, Devanagari
-  /// Sangam MN on iOS — which means the app looks like a different piece of
-  /// software in Hindi than it does in English. Naming the fallback pins it to
-  /// one pair chosen to sit with Newsreader and Manrope.
-  ///
-  /// **A name here is a request, not a guarantee.** Flutter looks for a
-  /// bundled family first and silently continues down the list, so listing a
-  /// family that is not in `pubspec.yaml` costs nothing and breaks nothing —
-  /// it just does not take effect yet. The `.ttf` files are still outstanding;
-  /// RELEASE.md tracks them alongside Newsreader and Manrope themselves, which
-  /// are equally unbundled today.
-  ///
-  /// Devanagari also sits taller than Latin: the शिरोरेखा and the vowel marks
-  /// above it want more line height than the same size in English. The scale
-  /// below is generous enough at body sizes, but the display and headline
-  /// roles need an optical check once the files land, rather than a check that
-  /// the glyphs merely appear.
-  static const List<String> serifFallback = <String>['Noto Serif Devanagari'];
-
-  static const List<String> sansFallback = <String>['Noto Sans Devanagari'];
-
-  /// Kept for callers that want "whatever renders Devanagari", regardless of
-  /// which half of the pairing they are in.
-  static const List<String> devanagariFallback = <String>[
-    ...serifFallback,
-    ...sansFallback,
-  ];
+  /// Without a named fallback every Hindi string falls through to whatever the
+  /// platform happens to have — Noto on Android, Nirmala UI on Windows,
+  /// Devanagari Sangam MN on iOS. **A name here is a request, not a
+  /// guarantee**: the `.ttf` is not bundled yet (RELEASE.md), and Flutter
+  /// silently continues down the list when a family is missing.
+  static const List<String> fallback = <String>['Noto Sans Devanagari'];
 }
+
+/// Inter at a given size, line height and weight, with the Hindi fallback.
+///
+/// `package` is set on every style rather than once on the theme, because a
+/// style copied out of this theme into a widget that is not under it would
+/// otherwise lose the family.
+const _inter = TextStyle(
+  fontFamily: InterioBeeFonts.family,
+  package: InterioBeeFonts.package,
+  fontFamilyFallback: InterioBeeFonts.fallback,
+);
 
 /// The Material text theme, in the platform's own role names.
 ///
-/// Mapped so a stock Material widget picks the right family without being told:
-/// `headlineSmall` on a card title is Newsreader because that is what a card
-/// title is, not because the widget was overridden at the call site.
-/// **Sized against the web, which is where these roles came from.**
+/// **Sized against the web, which is where these roles came from.** The first
+/// version took MOBILE.md §3.4's table literally and shipped a 38/30/28/22
+/// heading ramp; on a 360dp screen "Compare quotes" filled a third of the
+/// viewport before a single quote appeared. A phone is held closer than a
+/// monitor, so headings can be *smaller* relative to body text, not larger.
 ///
-/// The first version took MOBILE.md §3.4's table literally and shipped a
-/// 38/30/28/22 heading ramp. On a 360dp screen that is enormous: "Compare
-/// quotes" filled a third of the viewport before a single quote appeared, and
-/// a card title was 22 where the same card on the web is **15**. The whole
-/// ramp ran about 1.4x the web's for identical roles, which is backwards — a
-/// phone is held closer than a monitor, so headings can be *smaller* relative
-/// to body text, not larger.
-///
-/// Body sizes are left alone. 14 is the readable default at arm's length and
-/// dropping it to the web's 13.5 buys nothing; the problem was never the
-/// prose. Everything changed below is a heading or a figure.
-const interiobeeTextTheme = TextTheme(
-  // ---- Newsreader. One display line per screen, at most. ----
-  displayLarge: TextStyle(
-    fontFamily: InterioBeeFonts.serif,
-    fontFamilyFallback: InterioBeeFonts.serifFallback,
+/// Body sizes are left alone. 14 is the readable default at arm's length.
+final interiobeeTextTheme = TextTheme(
+  // ---- Headings: semibold, tightened a little, as the website sets them. ----
+  displayLarge: _inter.copyWith(
     fontSize: 28,
-    height: 36 / 28,
-    fontWeight: FontWeight.w400,
+    height: 34 / 28,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.6,
   ),
-  headlineLarge: TextStyle(
-    fontFamily: InterioBeeFonts.serif,
-    fontFamilyFallback: InterioBeeFonts.serifFallback,
+  headlineLarge: _inter.copyWith(
     fontSize: 23,
-    height: 30 / 23,
-    fontWeight: FontWeight.w400,
+    height: 29 / 23,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.4,
   ),
-  headlineMedium: TextStyle(
-    fontFamily: InterioBeeFonts.serif,
-    fontFamilyFallback: InterioBeeFonts.serifFallback,
+  headlineMedium: _inter.copyWith(
     fontSize: 20,
-    height: 27 / 20,
-    fontWeight: FontWeight.w500,
+    height: 26 / 20,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.3,
   ),
-  headlineSmall: TextStyle(
-    fontFamily: InterioBeeFonts.serif,
-    fontFamilyFallback: InterioBeeFonts.serifFallback,
+  headlineSmall: _inter.copyWith(
     fontSize: 17,
     height: 23 / 17,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
+    letterSpacing: -0.2,
   ),
 
-  // ---- Manrope. Everything else. ----
-  titleLarge: TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  // ---- Everything else. ----
+  titleLarge: _inter.copyWith(
     fontSize: 16,
     height: 22 / 16,
     fontWeight: FontWeight.w600,
   ),
-  titleMedium: TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  titleMedium: _inter.copyWith(
     fontSize: 16,
     height: 22 / 16,
     fontWeight: FontWeight.w600,
   ),
-  bodyLarge: TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  bodyLarge: _inter.copyWith(
     fontSize: 16,
     height: 26 / 16,
     fontWeight: FontWeight.w400,
   ),
-  bodyMedium: TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  bodyMedium: _inter.copyWith(
     fontSize: 14,
     height: 22 / 14,
     fontWeight: FontWeight.w400,
   ),
-  bodySmall: TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  bodySmall: _inter.copyWith(
     fontSize: 12,
     height: 18 / 12,
     fontWeight: FontWeight.w400,
   ),
-  labelMedium: TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  labelMedium: _inter.copyWith(
     fontSize: 12,
     height: 16 / 12,
     fontWeight: FontWeight.w600,
     letterSpacing: 0.48, // +0.04em
   ),
-  labelSmall: TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  labelSmall: _inter.copyWith(
     fontSize: 10,
     height: 14 / 10,
     fontWeight: FontWeight.w700,
@@ -167,23 +130,19 @@ abstract final class InterioBeeTextStyles {
   /// does not align, and the quote-comparison screen is three prices in a
   /// column. Any screen that formats its own currency is how `₹450,000` ships
   /// instead of `₹4,50,000` — see `Rupees.format`.
-  static const financialNum = TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  static final financialNum = _inter.copyWith(
     fontSize: 20,
     height: 26 / 20,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w600,
     letterSpacing: -0.48,
-    fontFeatures: [FontFeature.tabularFigures()],
+    fontFeatures: const [FontFeature.tabularFigures()],
   );
 
   /// The uppercase eyebrow on a status pill.
   ///
   /// Uppercasing is done here, in the style's usage, rather than by
   /// transforming the string — a screen reader should still hear the word.
-  static const eyebrow = TextStyle(
-    fontFamily: InterioBeeFonts.sans,
-    fontFamilyFallback: InterioBeeFonts.sansFallback,
+  static final eyebrow = _inter.copyWith(
     fontSize: 10,
     height: 14 / 10,
     fontWeight: FontWeight.w700,
@@ -192,5 +151,7 @@ abstract final class InterioBeeTextStyles {
 }
 
 /// Applies the ink colour to every role in one place.
-TextTheme tintedTextTheme(TextTheme base) =>
-    base.apply(bodyColor: InterioBeeColors.ink, displayColor: InterioBeeColors.ink);
+TextTheme tintedTextTheme(TextTheme base) => base.apply(
+  bodyColor: InterioBeeColors.ink,
+  displayColor: InterioBeeColors.ink,
+);

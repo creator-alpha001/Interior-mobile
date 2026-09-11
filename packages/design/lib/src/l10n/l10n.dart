@@ -37,8 +37,10 @@ const interiobeeSupportedLocales = <Locale>[Locale('en'), Locale('hi')];
 /// should be able to work from one table rather than from a Dart API.
 @immutable
 class InterioBeeL10n {
-  const InterioBeeL10n({required this.locale, required Map<String, String> table})
-    : _table = table;
+  const InterioBeeL10n({
+    required this.locale,
+    required Map<String, String> table,
+  }) : _table = table;
 
   /// English, which needs no table: the key is already the string.
   static const english = InterioBeeL10n(
@@ -78,18 +80,20 @@ class InterioBeeL10n {
   static InterioBeeL10n of(BuildContext context) =>
       Localizations.of<InterioBeeL10n>(context, InterioBeeL10n) ?? english;
 
-  static InterioBeeL10n forLocale(Locale locale) => switch (locale.languageCode) {
-    'hi' => const InterioBeeL10n(locale: Locale('hi'), table: hindi),
-    _ => english,
-  };
+  static InterioBeeL10n forLocale(Locale locale) =>
+      switch (locale.languageCode) {
+        'hi' => const InterioBeeL10n(locale: Locale('hi'), table: hindi),
+        _ => english,
+      };
 }
 
 class InterioBeeL10nDelegate extends LocalizationsDelegate<InterioBeeL10n> {
   const InterioBeeL10nDelegate();
 
   @override
-  bool isSupported(Locale locale) =>
-      interiobeeSupportedLocales.any((l) => l.languageCode == locale.languageCode);
+  bool isSupported(Locale locale) => interiobeeSupportedLocales.any(
+    (l) => l.languageCode == locale.languageCode,
+  );
 
   /// Synchronous, because the table is compiled in.
   ///

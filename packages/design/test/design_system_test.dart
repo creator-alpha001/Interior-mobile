@@ -82,13 +82,19 @@ void main() {
       // Loading the theme's own front matter verbatim puts ink in `primary` and
       // the action colour in `secondary`, and every FilledButton comes out
       // black. This asserts the remap survived.
-      expect(InterioBeeTheme.light.colorScheme.primary, InterioBeeColors.terracotta);
+      expect(
+        InterioBeeTheme.light.colorScheme.primary,
+        InterioBeeColors.terracotta,
+      );
       expect(InterioBeeTheme.light.colorScheme.secondary, InterioBeeColors.ink);
     });
 
     test('type is espresso, never pure black', () {
       expect(InterioBeeColors.ink, isNot(const Color(0xFF000000)));
-      expect(InterioBeeTheme.light.textTheme.bodyMedium?.color, InterioBeeColors.ink);
+      expect(
+        InterioBeeTheme.light.textTheme.bodyMedium?.color,
+        InterioBeeColors.ink,
+      );
     });
   });
 

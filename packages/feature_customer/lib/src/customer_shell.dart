@@ -26,6 +26,7 @@ import 'packages_screen.dart';
 import 'professional_screen.dart';
 import 'search_screen.dart';
 import 'estimator_screen.dart';
+import 'filter_choices.dart';
 import 'async_view.dart';
 import 'home_screen.dart';
 import 'projects_screen.dart';
@@ -41,9 +42,19 @@ class CustomerShell extends ConsumerStatefulWidget {
     required this.isSignedIn,
     required this.verify,
     this.onSignOut,
+    this.setupNeeds,
+    this.onFinishSetup,
   });
 
   final UploadQueue queue;
+
+  /// What signup let the signed-in customer skip, asked afresh on each build
+  /// so the home strip goes away the moment it is answered.
+  final SetupNeeds? Function()? setupNeeds;
+
+  /// Opens the screen that asks for a city and a number. The app owns it,
+  /// because adding a number runs through the auth controller.
+  final Future<void> Function(BuildContext context)? onFinishSetup;
 
   /// Fires when somebody signs in or out.
   ///
@@ -114,6 +125,10 @@ class _CustomerShellState extends ConsumerState<CustomerShell> {
         onStart: _startRequirement,
         onOpenJobs: () => setState(() => _tab = 2),
         onSignIn: signedIn ? null : _signIn,
+        setup: signedIn ? widget.setupNeeds?.call() : null,
+        onFinishSetup: widget.onFinishSetup == null
+            ? null
+            : () => widget.onFinishSetup!(context),
       ),
       _ExploreTab(onStart: _startRequirement),
       if (signedIn)
@@ -331,11 +346,7 @@ class _ExploreTab extends ConsumerWidget {
                           icon: Icons.grid_view_outlined,
                           title: context.t('Catalogue'),
                           subtitle: context.t('What we make'),
-                          onTap: () => Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const CatalogueScreen(),
-                            ),
-                          ),
+                          onTap: () => openCatalogue(context, ref),
                         ),
                       ),
                       const SizedBox(width: Space.xs),
@@ -411,9 +422,38 @@ class _ExploreTab extends ConsumerWidget {
             const SizedBox(height: Space.lg),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      context.t('Professionals'),
+                      style: context.text.headlineLarge,
+                    ),
+                  ),
+
+                  /// City, verification, rating and experience, behind one
+                  /// button that counts them — the web's filter sidebar folded
+                  /// into a sheet. Four more rows of chips stacked here would
+                  /// push the directory off the first screen again.
+                  OutlinedButton.icon(
+                    onPressed: () => _showProfessionalFilters(context),
+                    icon: Badge(
+                      isLabelVisible: filters.activeCount > 0,
+                      label: Text('${filters.activeCount}'),
+                      child: const Icon(Icons.tune, size: TapTarget.glyph),
+                    ),
+                    label: Text(context.t('Filter')),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
               child: Text(
-                context.t('Professionals'),
-                style: context.text.headlineLarge,
+                context.t('Rated per trade, badged when verified'),
+                style: context.text.bodyMedium?.copyWith(
+                  color: context.colors.onSurfaceVariant,
+                ),
               ),
             ),
             const SizedBox(height: Space.xs),
@@ -434,32 +474,36 @@ class _ExploreTab extends ConsumerWidget {
                     data: (list) => [for (final d in list) (d.slug, d.name)],
                     orElse: () => const <(String, String)>[],
                   ),
-              onSelect: (slug) =>
-                  ref
-                      .read(professionalFiltersProvider.notifier)
-                      .state = ProfessionalFilters(
-                    domainSlug: slug,
-                    cityId: filters.cityId,
-                  ),
+              onSelect: (slug) => ref
+                  .read(professionalFiltersProvider.notifier)
+                  .update((f) => f.copyWith(domainSlug: slug)),
             ),
-            const SizedBox(height: Space.xxs),
-            FilterRow(
-              label: context.t('City'),
-              allLabel: context.t('All cities'),
-              selected: filters.cityId,
-              options: ref
-                  .watch(citiesProvider)
-                  .maybeWhen(
-                    data: (list) => [for (final c in list) (c.id, c.name)],
-                    orElse: () => const <(String, String)>[],
+            _ProfessionalSorts(
+              selected: filters.sort,
+              onSelect: (sort) => ref
+                  .read(professionalFiltersProvider.notifier)
+                  .update((f) => f.copyWith(sort: sort)),
+            ),
+            professionals.maybeWhen(
+              data: (page) => Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Space.gutter,
+                  Space.xs,
+                  Space.gutter,
+                  0,
+                ),
+                child: Text(
+                  context.l10n.plural(
+                    page.items.length,
+                    '{n} professional',
+                    '{n} professionals',
                   ),
-              onSelect: (id) =>
-                  ref
-                      .read(professionalFiltersProvider.notifier)
-                      .state = ProfessionalFilters(
-                    domainSlug: filters.domainSlug,
-                    cityId: id,
+                  style: context.text.bodySmall?.copyWith(
+                    color: context.colors.onSurfaceVariant,
                   ),
+                ),
+              ),
+              orElse: () => const SizedBox.shrink(),
             ),
 
             const SizedBox(height: Space.sm),
@@ -478,15 +522,16 @@ class _ExploreTab extends ConsumerWidget {
                       // different things from the reader. Saying "once they
                       // are verified" under a filter somebody just set would
                       // blame the pool for their own narrowing.
-                      body: filters.domainSlug != null || filters.cityId != null
+                      body:
+                          filters.domainSlug != null || filters.activeCount > 0
                           ? context.t(
-                              'Nobody matches this trade and city yet. We '
-                              'source and verify professionals for new areas '
+                              'Nobody matches these filters yet. We source '
+                              'and verify professionals for new areas '
                               'continuously — tell us what you need anyway.',
                             )
                           : context.t(
-                              'Professionals appear here once they are '
-                              'verified.',
+                              'Professionals appear here once our team '
+                              'approves them.',
                             ),
                     )
                   : Padding(
@@ -512,10 +557,166 @@ class _ExploreTab extends ConsumerWidget {
   }
 }
 
+/// The directory's three sorts, in the web's order.
+class _ProfessionalSorts extends StatelessWidget {
+  const _ProfessionalSorts({required this.selected, required this.onSelect});
+
+  final Sort2 selected;
+  final ValueChanged<Sort2> onSelect;
+
+  static const _order = <Sort2>[Sort2.rating, Sort2.experience, Sort2.projects];
+
+  /// Literals at the call site, for the same reason as the catalogue's sorts:
+  /// `l10n_test.dart` can only see a string written inside `context.t(`.
+  static String _label(BuildContext context, Sort2 sort) => switch (sort) {
+    Sort2.rating => context.t('Top rated'),
+    Sort2.experience => context.t('Most experienced'),
+    Sort2.projects => context.t('Most projects'),
+    Sort2.$unknown => context.t('Top rated'),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: TapTarget.minimum,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+        children: [
+          for (final sort in _order) ...[
+            ChoiceChip(
+              label: Text(_label(context, sort)),
+              selected: selected == sort,
+              onSelected: (_) => onSelect(sort),
+            ),
+            const SizedBox(width: Space.xs),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+Future<void> _showProfessionalFilters(BuildContext context) {
+  return showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    backgroundColor: context.colors.surface,
+    builder: (_) => const _ProfessionalFilterSheet(),
+  );
+}
+
+/// The web's filter sidebar for `/professionals`, section for section.
+class _ProfessionalFilterSheet extends ConsumerWidget {
+  const _ProfessionalFilterSheet();
+
+  static const _ratings = <double>[4.5, 4, 3.5];
+  static const _experience = <int>[10, 5, 2];
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filters = ref.watch(professionalFiltersProvider);
+    final notifier = ref.read(professionalFiltersProvider.notifier);
+    final cities = ref
+        .watch(citiesProvider)
+        .maybeWhen(data: (list) => list, orElse: () => const <City>[]);
+
+    return SafeArea(
+      child: ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+        children: [
+          const SizedBox(height: Space.md),
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  context.t('Filter'),
+                  style: context.text.headlineSmall,
+                ),
+              ),
+              if (filters.activeCount > 0)
+                TextButton(
+                  onPressed: () {
+                    notifier.state = ProfessionalFilters(
+                      domainSlug: filters.domainSlug,
+                      sort: filters.sort,
+                    );
+                    Navigator.of(context).pop();
+                  },
+                  child: Text(context.t('Clear all')),
+                ),
+            ],
+          ),
+          SectionHead(context.t('City')),
+          FilterChoices<String>(
+            options: [
+              (null, context.t('All cities')),
+              for (final city in cities) (city.id, city.name),
+            ],
+            selected: filters.cityId,
+            onSelect: (id) => notifier.update((f) => f.copyWith(cityId: id)),
+          ),
+          SectionHead(context.t('Verification')),
+          FilterChoices<bool>(
+            options: [
+              (false, context.t('All approved professionals')),
+              (true, context.t('Verified only')),
+            ],
+            selected: filters.verifiedOnly,
+            onSelect: (on) =>
+                notifier.update((f) => f.copyWith(verifiedOnly: on ?? false)),
+          ),
+          SectionHead(context.t('Rating')),
+          FilterChoices<double>(
+            options: [
+              (null, context.t('Any rating')),
+              for (final r in _ratings)
+                (
+                  r,
+                  context.t('{rating} ★ and above', {'rating': ratingFloor(r)}),
+                ),
+            ],
+            selected: filters.minRating,
+            onSelect: (r) => notifier.update((f) => f.copyWith(minRating: r)),
+          ),
+          SectionHead(context.t('Experience')),
+          FilterChoices<int>(
+            options: [
+              (null, context.t('Any experience')),
+              for (final n in _experience)
+                (n, context.t('{n}+ years', {'n': n})),
+            ],
+            selected: filters.minExperience,
+            onSelect: (n) =>
+                notifier.update((f) => f.copyWith(minExperience: n)),
+          ),
+          const SizedBox(height: Space.lg),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(context.t('Show results')),
+            ),
+          ),
+          const SizedBox(height: Space.xxxl),
+        ],
+      ),
+    );
+  }
+}
+
+/// One professional, drawn as the web's card is.
+///
+/// A photograph of their trade across the top, their mark overlapping its
+/// lower edge, and the name *below* it on the card — never over the
+/// photograph, where a busy room made it unreadable.
 class ProfessionalCard extends StatelessWidget {
   const ProfessionalCard({super.key, required this.professional});
 
   final ProfessionalSummary professional;
+
+  static const _avatar = 56.0;
 
   @override
   Widget build(BuildContext context) {
@@ -523,8 +724,12 @@ class ProfessionalCard extends StatelessWidget {
     final rating = domainRating?.avgRating ?? professional.avgRating;
     final count = domainRating?.ratingCount ?? professional.ratingCount;
 
+    /// Keyed to the professional, so the same person always gets the same
+    /// photograph, from the pool for their first trade.
+    final trade = professional.domains.firstOrNull?.slug ?? 'default';
+
     return InterioBeeCard(
-      padding: const EdgeInsets.all(Space.cardPaddingWide),
+      padding: EdgeInsets.zero,
       // The directory used to be a dead end: a list of names with nothing
       // behind them, while `getProfessional` was reachable from nowhere.
       onTap: () => Navigator.of(context).push(
@@ -535,59 +740,160 @@ class ProfessionalCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Stack(
+            clipBehavior: Clip.none,
             children: [
-              Expanded(
-                child: Text(
-                  professional.companyName,
-                  style: context.text.headlineSmall,
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(Radii.panel),
+                ),
+                child: AspectRatio(
+                  aspectRatio: 16 / 7,
+                  child: InterioBeeMedia(
+                    src: 'ph:$trade:${professional.id}',
+                    alt: professional.companyName,
+                    rounded: false,
+                  ),
                 ),
               ),
-              if (professional.isVerified)
-                StatusPill(context.t('Verified'), tone: StatusTone.verified),
+              Positioned(
+                left: Space.cardPaddingWide,
+                bottom: -_avatar / 2,
+                child: _Avatar(professional: professional, size: _avatar),
+              ),
             ],
           ),
-          const SizedBox(height: Space.xxs),
-          Text(
-            // A vendor with no city on record still belongs on the card; the
-            // line just says less about them. See ProfessionalSummary.city.
-            professional.city == null
-                ? context.t('{n} years', {'n': professional.experienceYears})
-                : context.t('{city} · {n} years', {
-                    'city': professional.city!.name,
-                    'n': professional.experienceYears,
-                  }),
-            style: context.text.bodySmall?.copyWith(
-              color: context.colors.onSurfaceVariant,
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+              Space.cardPaddingWide,
+              _avatar / 2 + Space.xs,
+              Space.cardPaddingWide,
+              Space.cardPaddingWide,
             ),
-          ),
-          const SizedBox(height: Space.xs),
-          Text(
-            // Says which trade the rating is for, always.
-            count == 0
-                ? context.t('No reviews yet')
-                : domainRating == null
-                ? context.t('{rating} ★ · {n} reviews across all trades', {
-                    'rating': rating.toStringAsFixed(1),
-                    'n': count,
-                  })
-                : context.t('{rating} ★ · {n} reviews', {
-                    'rating': rating.toStringAsFixed(1),
-                    'n': count,
-                  }),
-            style: context.text.bodyMedium,
-          ),
-          const SizedBox(height: Space.xs),
-          Wrap(
-            spacing: Space.xxs,
-            runSpacing: Space.xxs,
-            children: [
-              for (final domain in professional.domains)
-                StatusPill(domain.name, tone: StatusTone.neutral),
-            ],
+            child: _ProfessionalDetails(
+              professional: professional,
+              rating: rating,
+              count: count,
+            ),
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Their photograph when they have one, the first letter of the firm when not.
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.professional, required this.size});
+
+  final ProfessionalSummary professional;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final url = professional.avatarUrl;
+    final name = professional.companyName.trim();
+
+    return Container(
+      width: size,
+      height: size,
+      clipBehavior: Clip.antiAlias,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: context.colors.primaryContainer,
+        border: Border.all(color: InterioBeeColors.chalk, width: 3),
+      ),
+      child: url != null && url.isNotEmpty
+          ? SizedBox.expand(
+              child: InterioBeeMedia(
+                src: url,
+                alt: professional.companyName,
+                rounded: false,
+              ),
+            )
+          : ExcludeSemantics(
+              child: Text(
+                name.isEmpty ? '' : name[0].toUpperCase(),
+                style: context.text.headlineSmall?.copyWith(
+                  color: context.colors.onPrimaryContainer,
+                ),
+              ),
+            ),
+    );
+  }
+}
+
+class _ProfessionalDetails extends StatelessWidget {
+  const _ProfessionalDetails({
+    required this.professional,
+    required this.rating,
+    required this.count,
+  });
+
+  final ProfessionalSummary professional;
+  final num rating;
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final domainRating = professional.domainRating;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                professional.companyName,
+                style: context.text.headlineSmall,
+              ),
+            ),
+            if (professional.isVerified)
+              StatusPill(context.t('Verified'), tone: StatusTone.verified),
+          ],
+        ),
+        const SizedBox(height: Space.xxs),
+        Text(
+          // A vendor with no city on record still belongs on the card; the
+          // line just says less about them. See ProfessionalSummary.city.
+          professional.city == null
+              ? context.t('{n} years', {'n': professional.experienceYears})
+              : context.t('{city} · {n} years', {
+                  'city': professional.city!.name,
+                  'n': professional.experienceYears,
+                }),
+          style: context.text.bodySmall?.copyWith(
+            color: context.colors.onSurfaceVariant,
+          ),
+        ),
+        const SizedBox(height: Space.xs),
+        Text(
+          // Says which trade the rating is for, always.
+          count == 0
+              ? context.t('No reviews yet')
+              : domainRating == null
+              ? context.t('{rating} ★ · {n} reviews across all trades', {
+                  'rating': rating.toStringAsFixed(1),
+                  'n': count,
+                })
+              : context.t('{rating} ★ · {n} reviews', {
+                  'rating': rating.toStringAsFixed(1),
+                  'n': count,
+                }),
+          style: context.text.bodyMedium,
+        ),
+        const SizedBox(height: Space.xs),
+        Wrap(
+          spacing: Space.xxs,
+          runSpacing: Space.xxs,
+          children: [
+            for (final domain in professional.domains)
+              StatusPill(domain.name, tone: StatusTone.neutral),
+          ],
+        ),
+      ],
     );
   }
 }

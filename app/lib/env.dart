@@ -46,6 +46,23 @@ abstract final class Env {
 
   static bool get isProduction => flavour == Flavour.production;
 
+  /// The website's origin, which serves the stock photographs `ph:` tokens
+  /// stand for.
+  ///
+  /// The public site in every flavour, and deliberately so: these are static,
+  /// read-only files identical everywhere, unlike the API, where a dev build
+  /// must never reach production data. A laptop on the same wifi can be named
+  /// instead with `--dart-define=INTERIOBEE_WEB_URL=http://192.168.1.20:3001`.
+  ///
+  /// **`www`, not the bare domain.** `decorashine.com` answers with a 308 to
+  /// `www.decorashine.com`, and that redirect carries no CORS header — so the
+  /// browser build refused every photograph, though the file it redirects to
+  /// allows any origin. Naming the final host skips the hop on phones too.
+  static const _webUrlOverride = String.fromEnvironment('INTERIOBEE_WEB_URL');
+
+  static String get webBaseUrl =>
+      _webUrlOverride.isEmpty ? 'https://www.decorashine.com' : _webUrlOverride;
+
   /// The Google OAuth **web** client id, not the Android or iOS one.
   ///
   /// Counter-intuitive but correct: passed as `serverClientId`, it is what

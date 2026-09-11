@@ -28,6 +28,11 @@ import 'version_gate.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  /// Placeholder images become the website's stock photographs from here on.
+  /// Set before anything draws, and only here — widget tests leave it unset and
+  /// get the drawn tiles, with nothing fetched.
+  StockPhotos.baseUrl = Env.webBaseUrl;
+
   final session = SecureSessionStore();
 
   /// The read cache lives beside the upload queue, in support rather than
@@ -174,7 +179,8 @@ class InterioBeeApp extends StatefulWidget {
   State<InterioBeeApp> createState() => _InterioBeeAppState();
 }
 
-class _InterioBeeAppState extends State<InterioBeeApp> with WidgetsBindingObserver {
+class _InterioBeeAppState extends State<InterioBeeApp>
+    with WidgetsBindingObserver {
   /// One upload queue per stage.
   ///
   /// Held here rather than inside the screen, so a vendor can leave the stage,

@@ -155,6 +155,10 @@ Map<String, Object?> onboarding({required bool canReceiveLeads}) {
       'summary': 'How work reaches you, and what commission is charged.',
       'sections': <Object>[],
       'acknowledgements': <Object>[],
+      // Vendor verification added both. Missing, the non-null instructions
+      // failed the decode and every vendor route test saw an error screen.
+      'documentUrl': null,
+      'hardcopyInstructions': 'Sign each page and upload a scan.',
     },
   };
 }

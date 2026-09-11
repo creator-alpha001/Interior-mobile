@@ -141,4 +141,27 @@ const hiCatalogue = <String, String>{
       'हमारी टीम की मंज़ूरी के बाद काम यहाँ दिखने लगता है।',
   'Jobs already finished, photographed on site. Every one was checked by our team before it appeared here.':
       'पूरे हो चुके काम, साइट पर ली गई तस्वीरों के साथ। यहाँ आने से पहले हर एक को हमारी टीम ने जाँचा है।',
+  'Recommended': 'सुझाए गए',
+  'Top-rated professionals': 'सबसे अच्छी रेटिंग वाले कारीगर',
+  'Most experienced teams': 'सबसे अनुभवी टीमें',
+
+  /// City and rating belong to the professional, not the piece of work, and
+  /// the heading says whose rating it is.
+  'Professional’s rating': 'कारीगर की रेटिंग',
+  '{n} project': '{n} प्रोजेक्ट',
+  '{n} projects': '{n} प्रोजेक्ट',
+  'Nothing matches these filters yet. Try clearing one, or tell us what you need.':
+      'इन फ़िल्टर से अभी कुछ नहीं मिला। कोई फ़िल्टर हटाइए, या हमें बताइए कि आपको क्या चाहिए।',
+
+  // ---- the catalogue's price and rating filters ----
+  ///
+  /// Bands are drawn from the trade's own prices, so the figures change from
+  /// trade to trade; only the frame around them is copy.
+  'Any price': 'कोई भी दाम',
+  'Under {price}': '{price} से कम',
+  '{from} – {to}': '{from} से {to}',
+  '{price} and above': '{price} और उससे ज़्यादा',
+  'Minimum': 'कम से कम',
+  'Maximum': 'ज़्यादा से ज़्यादा',
+  'Customer rating': 'ग्राहकों की रेटिंग',
 };

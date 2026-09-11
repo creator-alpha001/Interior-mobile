@@ -258,6 +258,11 @@ const _allowed = <String>{
   r'${testimonial.rating.toStringAsFixed(1)} ★',
   r'${review.review.rating} ★',
 
+  // Stock-photograph tokens. A `ph:` seed picks a picture and is never read by
+  // anybody; the words in these are the seed's own, not copy.
+  r'ph:${domain.slug}:home-${domain.id}',
+  r'ph:default:${testimonial.id}',
+
   // The maps launcher's URL.
   r'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
 

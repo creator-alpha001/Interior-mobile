@@ -14,6 +14,8 @@ enum UploadPurpose {
   portfolioItem('portfolio_item'),
   @JsonValue('vendor_document')
   vendorDocument('vendor_document'),
+  @JsonValue('agreement_template')
+  agreementTemplate('agreement_template'),
   @JsonValue('catalogue_image')
   catalogueImage('catalogue_image'),
 

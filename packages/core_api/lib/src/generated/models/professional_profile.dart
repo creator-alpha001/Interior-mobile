@@ -12,6 +12,7 @@ import 'professional.dart';
 import 'professional_domain.dart';
 import 'review_view.dart';
 import 'user.dart';
+import 'vendor_achievement.dart';
 
 part 'professional_profile.freezed.dart';
 part 'professional_profile.g.dart';
@@ -39,6 +40,7 @@ abstract class ProfessionalProfile with _$ProfessionalProfile {
     required List<City> serviceCities,
     required List<PortfolioItem> portfolio,
     required List<ReviewView> reviews,
+    required List<VendorAchievement> achievements,
     DomainRating? domainRating,
   }) = _ProfessionalProfile;
 

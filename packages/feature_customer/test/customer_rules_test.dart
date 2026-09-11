@@ -16,7 +16,11 @@ Finder findPill(String label) => find.byWidgetPredicate(
   description: 'status pill "$label"',
 );
 
-Future<void> _pump(WidgetTester tester, Widget child, {InterioBeeApi? api}) async {
+Future<void> _pump(
+  WidgetTester tester,
+  Widget child, {
+  InterioBeeApi? api,
+}) async {
   await tester.pumpWidget(
     ProviderScope(
       overrides: [if (api != null) customerApiProvider.overrideWithValue(api)],

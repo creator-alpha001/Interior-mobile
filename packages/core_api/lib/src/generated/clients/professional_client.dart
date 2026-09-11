@@ -5,16 +5,23 @@
 import 'package:dio/dio.dart';
 import 'package:retrofit/retrofit.dart';
 
+import '../models/add_achievement_body.dart';
+import '../models/add_portfolio_item_body.dart';
 import '../models/lead_filter.dart';
 import '../models/message.dart';
+import '../models/ok.dart';
 import '../models/partner_agreement.dart';
 import '../models/portfolio_item.dart';
 import '../models/quote.dart';
+import '../models/report_hardcopy_body.dart';
 import '../models/respond_to_lead_body.dart';
 import '../models/send_service_message_body.dart';
 import '../models/sign_partner_agreement_body.dart';
 import '../models/submit_milestone_proof_body.dart';
 import '../models/submit_quote_body.dart';
+import '../models/submit_signed_copy_body.dart';
+import '../models/submit_vendor_document_body.dart';
+import '../models/vendor_achievement.dart';
 import '../models/vendor_agreement_view.dart';
 import '../models/vendor_dashboard.dart';
 import '../models/vendor_invoice_view.dart';
@@ -22,6 +29,7 @@ import '../models/vendor_lead_card.dart';
 import '../models/vendor_onboarding.dart';
 import '../models/vendor_performance.dart';
 import '../models/vendor_project_view.dart';
+import '../models/vendor_verification.dart';
 import '../models/vendor_visit_view.dart';
 
 part 'professional_client.g.dart';
@@ -129,6 +137,40 @@ abstract class ProfessionalClient {
   @GET('/vendor/portfolio')
   Future<List<PortfolioItem>> vendorPortfolio();
 
+  /// addPortfolioItem.
+  ///
+  /// Requires a signed-in professional.
+  @POST('/vendor/portfolio')
+  Future<PortfolioItem> addPortfolioItem({
+    @Body() required AddPortfolioItemBody body,
+  });
+
+  /// removePortfolioItem.
+  ///
+  /// Requires a signed-in professional.
+  @DELETE('/vendor/portfolio/{id}')
+  Future<Ok> removePortfolioItem({@Path('id') required String id});
+
+  /// vendorAchievements.
+  ///
+  /// Requires a signed-in professional.
+  @GET('/vendor/achievements')
+  Future<List<VendorAchievement>> vendorAchievements();
+
+  /// addAchievement.
+  ///
+  /// Requires a signed-in professional.
+  @POST('/vendor/achievements')
+  Future<VendorAchievement> addAchievement({
+    @Body() required AddAchievementBody body,
+  });
+
+  /// removeAchievement.
+  ///
+  /// Requires a signed-in professional.
+  @DELETE('/vendor/achievements/{id}')
+  Future<Ok> removeAchievement({@Path('id') required String id});
+
   /// vendorOnboarding.
   ///
   /// Requires a signed-in professional.
@@ -141,5 +183,35 @@ abstract class ProfessionalClient {
   @POST('/vendor/onboarding/agreement')
   Future<PartnerAgreement> signPartnerAgreement({
     @Body() required SignPartnerAgreementBody body,
+  });
+
+  /// vendorVerification.
+  ///
+  /// Requires a signed-in professional.
+  @GET('/vendor/verification')
+  Future<VendorVerification> vendorVerification();
+
+  /// submitSignedCopy.
+  ///
+  /// Requires a signed-in professional.
+  @POST('/vendor/verification/signed-copy')
+  Future<VendorVerification> submitSignedCopy({
+    @Body() required SubmitSignedCopyBody body,
+  });
+
+  /// reportHardcopy.
+  ///
+  /// Requires a signed-in professional.
+  @POST('/vendor/verification/hardcopy')
+  Future<VendorVerification> reportHardcopy({
+    @Body() required ReportHardcopyBody body,
+  });
+
+  /// submitVendorDocument.
+  ///
+  /// Requires a signed-in professional.
+  @POST('/vendor/verification/documents')
+  Future<VendorVerification> submitVendorDocument({
+    @Body() required SubmitVendorDocumentBody body,
   });
 }

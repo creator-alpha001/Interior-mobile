@@ -143,7 +143,10 @@ void main() {
   ) async {
     await _pump(tester, notifications: [fixtureNotification()]);
 
-    expect(find.text('Decora Shine replied about your wardrobes'), findsOneWidget);
+    expect(
+      find.text('Decora Shine replied about your wardrobes'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 }

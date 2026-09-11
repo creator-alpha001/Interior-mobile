@@ -67,6 +67,13 @@ const hiApp = <String, String>{
   '{error} Try again in {n}s.': '{error} {n} सेकंड बाद दोबारा कोशिश करें।',
   'You were signed out': 'आपको साइन आउट कर दिया गया था',
 
+  // ---- finishing setup ----
+  'Finish setting up': 'सेटअप पूरा करें',
+  'Both are optional, and neither is ever shared with professionals.':
+      'दोनों ज़रूरी नहीं हैं, और इनमें से कोई भी कारीगरों के साथ साझा नहीं होता।',
+  'Your city': 'आपका शहर',
+  'For calls about your quotes': 'कोटेशन के बारे में फ़ोन के लिए',
+
   // ---- language ----
   'Language': 'भाषा',
 

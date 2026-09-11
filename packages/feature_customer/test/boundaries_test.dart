@@ -31,7 +31,9 @@ void main() {
   test('never imports the vendor shell', () {
     final offenders = [
       for (final file in _sources())
-        if (file.readAsStringSync().contains('package:interiobee_feature_vendor'))
+        if (file.readAsStringSync().contains(
+          'package:interiobee_feature_vendor',
+        ))
           file.path,
     ];
 
@@ -45,7 +47,9 @@ void main() {
   test('the dependency is absent from the manifest too', () {
     // An import is the symptom; the dependency is what makes it possible.
     expect(
-      File('pubspec.yaml').readAsStringSync().contains('interiobee_feature_vendor'),
+      File(
+        'pubspec.yaml',
+      ).readAsStringSync().contains('interiobee_feature_vendor'),
       isFalse,
     );
   });

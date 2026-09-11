@@ -205,7 +205,9 @@ class _Box extends StatelessWidget {
       child: Text(
         digit ?? '',
         // Tabular, so the boxes do not shift as digits land.
-        style: InterioBeeTextStyles.financialNum.copyWith(color: InterioBeeColors.ink),
+        style: InterioBeeTextStyles.financialNum.copyWith(
+          color: InterioBeeColors.ink,
+        ),
       ),
     );
   }

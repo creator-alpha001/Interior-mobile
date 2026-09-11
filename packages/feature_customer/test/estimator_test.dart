@@ -23,7 +23,9 @@ Future<void> _pump(WidgetTester tester, Widget home) async {
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
 
-  await tester.pumpWidget(MaterialApp(theme: InterioBeeTheme.light, home: home));
+  await tester.pumpWidget(
+    MaterialApp(theme: InterioBeeTheme.light, home: home),
+  );
   await tester.pumpAndSettle();
 }
 

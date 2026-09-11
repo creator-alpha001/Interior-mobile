@@ -116,7 +116,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   const SizedBox(height: Space.xxl),
-                  Text('Decora Shine', style: context.text.displayLarge),
+                  const DecoraShineLogo(height: 44),
                   const SizedBox(height: Space.xs),
                   Text(
                     switch (state.stage) {
@@ -145,10 +145,9 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                         // An API too old to say. Naming no channel beats
                         // sending somebody to look in the wrong app.
-                        _ => context.t(
-                          'We sent a code to {number}.',
-                          {'number': state.mobile},
-                        ),
+                        _ => context.t('We sent a code to {number}.', {
+                          'number': state.mobile,
+                        }),
                       },
                       SignInStage.profile => context.t(
                         'Your number is verified. Two things and you are in.',

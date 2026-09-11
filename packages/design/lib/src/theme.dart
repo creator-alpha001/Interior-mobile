@@ -60,7 +60,7 @@ class InterioBeePalette extends ThemeExtension<InterioBeePalette> {
   /// Every rupee figure. Tabular, so a column of quotes aligns.
   final TextStyle financialNum;
 
-  static const light = InterioBeePalette(
+  static final light = InterioBeePalette(
     verified: InterioBeeColors.sage,
     verifiedContainer: InterioBeeColors.sageContainer,
     onVerifiedContainer: InterioBeeColors.onSageContainer,
@@ -128,7 +128,8 @@ class InterioBeePalette extends ThemeExtension<InterioBeePalette> {
 
 /// Reads the palette without the ceremony.
 extension InterioBeePaletteAccess on BuildContext {
-  InterioBeePalette get palette => Theme.of(this).extension<InterioBeePalette>()!;
+  InterioBeePalette get palette =>
+      Theme.of(this).extension<InterioBeePalette>()!;
   ColorScheme get colors => Theme.of(this).colorScheme;
   TextTheme get text => Theme.of(this).textTheme;
 }
@@ -209,10 +210,11 @@ abstract final class InterioBeeTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: scheme.surface,
       textTheme: text,
-      fontFamily: InterioBeeFonts.sans,
-      fontFamilyFallback: InterioBeeFonts.devanagariFallback,
+      fontFamily: InterioBeeFonts.family,
+      package: InterioBeeFonts.package,
+      fontFamilyFallback: InterioBeeFonts.fallback,
       splashFactory: InkSparkle.splashFactory,
-      extensions: const [InterioBeePalette.light],
+      extensions: [InterioBeePalette.light],
 
       appBarTheme: AppBarTheme(
         backgroundColor: scheme.surface,

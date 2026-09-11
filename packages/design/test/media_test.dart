@@ -67,6 +67,44 @@ void main() {
     });
   });
 
+  group('the stock photograph a token stands for', () {
+    tearDown(() => StockPhotos.baseUrl = null);
+
+    /// Expected paths follow from the web's own hashes above and its pool size
+    /// of eight: `hash % 8 + 1`. The same product must ask for the same file
+    /// the website shows, or the two catalogues disagree about what it is.
+    test('picks the file the web picks', () {
+      StockPhotos.baseUrl = 'https://decorashine.com';
+
+      // 1335769669 % 8 == 5
+      expect(
+        StockPhotos.urlFor('furniture', 'wardrobe'),
+        'https://decorashine.com/images/stock/furniture/6.jpg',
+      );
+      // 49524601 % 8 == 1
+      expect(
+        StockPhotos.urlFor('default', 'x'),
+        'https://decorashine.com/images/stock/default/2.jpg',
+      );
+    });
+
+    test('maps the interior-design slug, and unknown trades, to a pool', () {
+      StockPhotos.baseUrl = 'https://decorashine.com/';
+
+      // 1258003364 % 8 == 4. The trailing slash on the origin is dropped.
+      expect(
+        StockPhotos.urlFor('interior-design', 'kitchen-modular'),
+        'https://decorashine.com/images/stock/interior/5.jpg',
+      );
+      expect(StockPhotos.poolFor('plumbing'), 'default');
+    });
+
+    test('asks for nothing when no origin is configured', () {
+      expect(StockPhotos.urlFor('painting', 'p1'), isNull);
+      expect(StockPhotos.hero(1), isNull);
+    });
+  });
+
   group('the widget', () {
     testWidgets('draws a tile for a ph: token, and fetches nothing', (
       tester,
@@ -94,7 +132,10 @@ void main() {
     ) async {
       await _pump(
         tester,
-        const InterioBeeMedia(src: 'ph:plumbing:x', alt: 'A trade we do not have'),
+        const InterioBeeMedia(
+          src: 'ph:plumbing:x',
+          alt: 'A trade we do not have',
+        ),
       );
       expect(tester.takeException(), isNull);
     });
@@ -105,7 +146,10 @@ void main() {
       final handle = tester.ensureSemantics();
       await _pump(
         tester,
-        const InterioBeeMedia(src: 'ph:interior:kitchen', alt: 'Modular kitchen'),
+        const InterioBeeMedia(
+          src: 'ph:interior:kitchen',
+          alt: 'Modular kitchen',
+        ),
       );
 
       expect(find.bySemanticsLabel('Modular kitchen'), findsOneWidget);

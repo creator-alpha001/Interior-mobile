@@ -124,10 +124,23 @@ void main() {
     // alone they bury a real warning in generated code under noise. Suppressed
     // in the generated files themselves rather than repo-wide, so the same
     // warning still surfaces in hand-written code.
-    updated = updated.replaceFirst(
-      '// ignore_for_file: type=lint, unused_import, invalid_annotation_target, unnecessary_import',
-      '// ignore_for_file: type=lint, unused_import, invalid_annotation_target, '
-          'unnecessary_import, unnecessary_cast',
+    //
+    // Added only when missing. Matching the line's prefix and appending made a
+    // file that already carried the name come out with it twice — the two
+    // review-decision bodies did — and the analyser reports the repeat as
+    // `duplicate_ignore`, which `--fatal-infos` turns into a failed build.
+    updated = updated.replaceFirstMapped(
+      RegExp(r'^// ignore_for_file: (type=lint.*)$', multiLine: true),
+      (match) {
+        final names = match
+            .group(1)!
+            .split(',')
+            .map((name) => name.trim())
+            .where((name) => name.isNotEmpty)
+            .toList();
+        if (!names.contains('unnecessary_cast')) names.add('unnecessary_cast');
+        return '// ignore_for_file: ${names.toSet().join(', ')}';
+      },
     );
 
     if (updated != original) {

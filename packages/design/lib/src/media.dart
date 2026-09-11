@@ -2,20 +2,15 @@
 ///
 /// A direct port of `packages/ui/src/media.tsx`, and the port has to be exact
 /// rather than approximate. Both platforms render the same catalogue from the
-/// same rows, so a product whose tile is a warm diagonal on the web and a cool
-/// circle motif on the phone reads as two different products — and the tiles
-/// are the only thing distinguishing most of the catalogue, because almost none
-/// of it has been photographed yet.
+/// same rows, so a product that shows one photograph on the web and a different
+/// one on the phone reads as two different products.
 ///
-/// **Most sources are not photographs.** A `ph:<domain>:<seed>` token means
-/// "nobody has taken this picture", and the answer is a designed, deterministic
-/// tile rather than a broken image or a grey rectangle. The web's home page puts
-/// the reasoning better than a comment here could:
-///
-/// > Ruled cells rather than four image cards. The images here were
-/// > placeholders standing in for photographs nobody has taken, and a trade is
-/// > better identified by its name and a colour than by a gradient pretending
-/// > to be a room.
+/// **Most sources are not photographs of the real thing.** A `ph:<domain>:<seed>`
+/// token means "nobody has photographed this yet". The web answers with a
+/// licence-free stock photograph from a small pool per trade, picked by the
+/// seed's hash, and this does the same — asking the website for the very file
+/// it would show. Underneath sits the designed, deterministic tile, which is
+/// what appears offline, while the photograph loads, and in every widget test.
 ///
 /// When real photography lands it changes the URLs in the data layer and
 /// nothing here: anything that is not a `ph:` token is fetched and cached.
@@ -70,6 +65,66 @@ int mediaHash(String seed) {
   return h.abs();
 }
 
+/// The stock photographs standing in for `ph:` tokens, as the web serves them.
+///
+/// The website keeps a pool per trade under `public/images/stock/<pool>/<n>.jpg`
+/// and picks one with `stockPhotoFor` in `media.tsx`. The same pool sizes and
+/// the same hash here mean the phone asks for exactly that file.
+abstract final class StockPhotos {
+  /// The website's origin, set once at startup from the build's environment.
+  ///
+  /// Null by default, and that default is what widget tests run with: a token
+  /// then draws its tile and nothing is fetched.
+  static String? baseUrl;
+
+  /// How many photographs each pool holds. Must match `photoPools` in
+  /// `media.tsx`, and the files the website actually carries.
+  static const _pools = <String, int>{
+    'interior': 8,
+    'furniture': 8,
+    'fabrication': 8,
+    'painting': 8,
+    'default': 8,
+  };
+
+  /// A token's domain as a pool name. Interior design predates its slug by
+  /// one name, and anything unrecognised is the neutral pool.
+  static String poolFor(String domain) {
+    if (domain == 'interior-design') return 'interior';
+    return _pools.containsKey(domain) ? domain : 'default';
+  }
+
+  static String? _origin() {
+    final base = baseUrl;
+    if (base == null || base.isEmpty) return null;
+    return base.endsWith('/') ? base.substring(0, base.length - 1) : base;
+  }
+
+  /// The photograph a `ph:<domain>:<seed>` token stands for, or null when no
+  /// origin is configured.
+  static String? urlFor(String domain, String seed) {
+    final origin = _origin();
+    if (origin == null) return null;
+    final pool = poolFor(domain);
+    final n = mediaHash(seed) % _pools[pool]! + 1;
+    return '$origin/images/stock/$pool/$n.jpg';
+  }
+
+  /// One of the website's large room photographs, for a hero. 1 to 3.
+  static String? hero(int n) {
+    final origin = _origin();
+    return origin == null ? null : '$origin/images/stock/hero/$n.jpg';
+  }
+}
+
+/// A token split into its domain and seed, with the web's defaults.
+(String, String) _parseToken(String src) {
+  final parts = src.split(':');
+  final domain = parts.length > 1 && parts[1].isNotEmpty ? parts[1] : 'default';
+  final seed = parts.length > 2 && parts[2].isNotEmpty ? parts[2] : 'x';
+  return (domain, seed);
+}
+
 /// The tile a `ph:` token describes, worked out once.
 @immutable
 class _Placeholder {
@@ -84,13 +139,10 @@ class _Placeholder {
   });
 
   factory _Placeholder.fromToken(String src) {
-    final parts = src.split(':');
-    final domain = parts.length > 1 && parts[1].isNotEmpty
-        ? parts[1]
-        : 'default';
-    final seed = parts.length > 2 && parts[2].isNotEmpty ? parts[2] : 'x';
+    final (domain, seed) = _parseToken(src);
 
-    final (dark, mid, light) = _domainTint[domain] ?? _domainTint['default']!;
+    final (dark, mid, light) =
+        _domainTint[StockPhotos.poolFor(domain)] ?? _domainTint['default']!;
     final h = mediaHash(seed);
 
     return _Placeholder(
@@ -135,7 +187,7 @@ class InterioBeeMedia extends StatelessWidget {
   /// how it ends up empty.
   final String alt;
 
-  /// Drawn over a placeholder tile only, as on the web.
+  /// Drawn over a placeholder tile, and seen only where no photograph loads.
   final String? label;
 
   final bool rounded;
@@ -152,28 +204,56 @@ class InterioBeeMedia extends StatelessWidget {
       child: Semantics(
         image: true,
         label: alt,
-        child: _isPlaceholder
-            ? _Tile(placeholder: _Placeholder.fromToken(src), label: label)
-            : CachedNetworkImage(
-                imageUrl: src,
-                fit: fit,
-                width: double.infinity,
-                height: double.infinity,
-                // A flat wash of the surface tint while it arrives — not a
-                // spinner. A grid of eight spinners is noisier than the images.
-                placeholder: (context, _) =>
-                    ColoredBox(color: context.colors.surfaceContainer),
+        child: _isPlaceholder ? _placeholder() : _network(context, src),
+      ),
+    );
+  }
 
-                /// A failed fetch falls back to the designed tile.
-                ///
-                /// Never a broken-image glyph: on the connection this audience
-                /// has, a photograph failing is ordinary, and a row of broken
-                /// icons reads as an app that is itself broken.
-                errorWidget: (context, url, error) => _Tile(
-                  placeholder: _Placeholder.fromToken('ph:default:$url'),
-                  label: label,
-                ),
-              ),
+  /// The tile, with the stock photograph over it when one is configured.
+  Widget _placeholder() {
+    final (domain, seed) = _parseToken(src);
+    final photo = StockPhotos.urlFor(domain, seed);
+    final tile = _Tile(placeholder: _Placeholder.fromToken(src), label: label);
+    if (photo == null) return tile;
+
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        tile,
+        CachedNetworkImage(
+          imageUrl: photo,
+          fit: fit,
+          width: double.infinity,
+          height: double.infinity,
+          fadeInDuration: const Duration(milliseconds: 200),
+          // Nothing while it arrives or if it fails: the tile beneath is
+          // already the right answer to both.
+          placeholder: (context, _) => const SizedBox.shrink(),
+          errorWidget: (context, url, error) => const SizedBox.shrink(),
+        ),
+      ],
+    );
+  }
+
+  Widget _network(BuildContext context, String url) {
+    return CachedNetworkImage(
+      imageUrl: url,
+      fit: fit,
+      width: double.infinity,
+      height: double.infinity,
+      // A flat wash of the surface tint while it arrives — not a spinner. A
+      // grid of eight spinners is noisier than the images.
+      placeholder: (context, _) =>
+          ColoredBox(color: context.colors.surfaceContainer),
+
+      /// A failed fetch falls back to the designed tile.
+      ///
+      /// Never a broken-image glyph: on the connection this audience has, a
+      /// photograph failing is ordinary, and a row of broken icons reads as an
+      /// app that is itself broken.
+      errorWidget: (context, url, error) => _Tile(
+        placeholder: _Placeholder.fromToken('ph:default:$url'),
+        label: label,
       ),
     );
   }

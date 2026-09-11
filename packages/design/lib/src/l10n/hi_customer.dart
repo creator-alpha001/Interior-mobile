@@ -21,7 +21,36 @@ const hiCustomer = <String, String>{
   'Compare them and choose a professional. Nothing moves until you do.':
       'उन्हें मिलाकर देखिए और कारीगर चुनिए। जब तक आप नहीं चुनते, कुछ आगे नहीं बढ़ता।',
   'What do you need?': 'आपको क्या चाहिए?',
-  'Four trades': 'चार काम',
+
+  /// The promise. "आप जैसे" — like you — rather than "आपकी पसंद के": the
+  /// line is about homes that reflect a person, not homes built to an order.
+  'Homes that feel like you': 'ऐसे घर जो आप जैसे लगें',
+  'Interiors · Furniture · Fabrication · Painting':
+      'इंटीरियर · फ़र्नीचर · फ़ैब्रिकेशन · पेंटिंग',
+  'Welcome back, {name}': 'फिर से स्वागत है, {name}',
+  'Design, furniture and finishes shaped around how you live — by verified local professionals.':
+      'डिज़ाइन, फ़र्नीचर और फ़िनिश — आपके रहने के ढंग के हिसाब से, जाँचे हुए स्थानीय कारीगरों के हाथों।',
+  'Get free design quotes': 'मुफ़्त डिज़ाइन कोटेशन पाएँ',
+  'Explore designs': 'डिज़ाइन देखें',
+  'Verified professionals, per trade': 'हर काम के लिए जाँचे हुए कारीगर',
+  'Your number is never shared': 'आपका नंबर कभी साझा नहीं होता',
+  'One written agreement to handover': 'काम सौंपने तक एक लिखित एग्रीमेंट',
+  'A room, a piece or a wall': 'एक कमरा, एक चीज़ या एक दीवार',
+  'Start with what you need': 'जो चाहिए, वहीं से शुरू करें',
+  'Full catalogue': 'पूरा कैटलॉग',
+
+  // ---- the setup strip ----
+  'Add your mobile number and city': 'अपना मोबाइल नंबर और शहर जोड़ें',
+  'Add your mobile number': 'अपना मोबाइल नंबर जोड़ें',
+
+  /// Never shared with professionals — the same promise the hero makes, and
+  /// the Hindi must not soften it into "rarely" or "only when needed".
+  'So our team can call you about your quotes. It is never shared with professionals.':
+      'ताकि हमारी टीम आपके कोटेशन के बारे में आपको फ़ोन कर सके। यह कारीगरों के साथ कभी साझा नहीं होता।',
+  'So prices and professionals match where you live.':
+      'ताकि दाम और कारीगर आपके शहर के हिसाब से हों।',
+  'Add mobile number': 'मोबाइल नंबर जोड़ें',
+  'Not now': 'अभी नहीं',
   'Tell us what you need': 'बताइए आपको क्या चाहिए',
   'What you get': 'आपको क्या मिलता है',
   'Every job': 'हर काम पर',
@@ -52,8 +81,8 @@ const hiCustomer = <String, String>{
   // ---- explore ----
   'Professionals': 'कारीगर',
   'Nobody to show yet': 'अभी दिखाने के लिए कोई नहीं',
-  'Professionals appear here once they are verified.':
-      'जाँच पूरी होने के बाद कारीगर यहाँ दिखने लगते हैं।',
+  'Professionals appear here once our team approves them.':
+      'हमारी टीम की मंज़ूरी के बाद कारीगर यहाँ दिखने लगते हैं।',
   '{city} · {n} years': '{city} · {n} साल',
   'No reviews yet': 'अभी कोई रिव्यू नहीं',
   '{rating} ★ · {n} reviews': '{rating} ★ · {n} रिव्यू',
@@ -246,11 +275,28 @@ const hiCustomer = <String, String>{
   // ---- the professionals directory's filters ----
   'Trade': 'काम',
   'All cities': 'सभी शहर',
+  'Rated per trade, badged when verified':
+      'हर काम की अलग रेटिंग, जाँच के बाद बैज',
+  'Most experienced': 'सबसे अनुभवी',
+  'Most projects': 'सबसे ज़्यादा काम',
+  '{n} professional': '{n} कारीगर',
+  '{n} professionals': '{n} कारीगर',
+
+  /// Verification is a badge, not admission. Every professional listed is
+  /// approved; "only verified" narrows to the ones whose paperwork is checked.
+  'Verification': 'जाँच',
+  'All approved professionals': 'सभी मंज़ूर कारीगर',
+  'Verified only': 'सिर्फ़ जाँचे हुए',
+  'Rating': 'रेटिंग',
+  'Any rating': 'कोई भी रेटिंग',
+  '{rating} ★ and above': '{rating} ★ और उससे ऊपर',
+  'Any experience': 'कोई भी अनुभव',
+  '{n}+ years': '{n}+ साल',
 
   /// Said when a filter emptied the list, not when the pool is empty — the
   /// two need different things from the reader.
-  'Nobody matches this trade and city yet. We source and verify professionals for new areas continuously — tell us what you need anyway.':
-      'इस काम और शहर के लिए अभी कोई नहीं मिला। नए इलाक़ों के लिए हम लगातार कारीगर ढूँढ़ते और जाँचते रहते हैं — आप फिर भी बताइए कि आपको क्या चाहिए।',
+  'Nobody matches these filters yet. We source and verify professionals for new areas continuously — tell us what you need anyway.':
+      'इन फ़िल्टर से अभी कोई नहीं मिला। नए इलाक़ों के लिए हम लगातार कारीगर ढूँढ़ते और जाँचते रहते हैं — आप फिर भी बताइए कि आपको क्या चाहिए।',
   // ---- strings the unwrapped-literal scan turned up ----
   '{approved} of {total}': '{total} में से {approved}',
   '{n} line': '{n} मद',
@@ -268,10 +314,7 @@ const hiCustomer = <String, String>{
   '{n} jobs under way': '{n} काम चल रहे हैं',
   'Stage by stage, with photographs': 'चरण दर चरण, तस्वीरों के साथ',
 
-  // ---- and when there is nothing ----
-  'Nothing under way yet': 'अभी कुछ शुरू नहीं हुआ',
-  'Tell us what you need and we will bring you three written quotes for each trade. Free, and you are not committed to any of them.':
-      'हमें बताइए कि आपको क्या चाहिए, और हम हर काम के लिए तीन लिखित कोटेशन ला देंगे। मुफ़्त, और किसी को चुनना ज़रूरी नहीं।',
+  // ---- signed out, on the home screen ----
   'Get quotes': 'कोटेशन मँगाइए',
   // ---- signing in, offered where it is needed rather than at the door ----
   'Sign in': 'साइन इन',
@@ -316,7 +359,7 @@ const hiCustomer = <String, String>{
       'क़ीमत के हिसाब से क्रम में। सभी आँकड़ों में GST शामिल है।',
 
   // ---- the trade tiles ----
-  '{items} items · {packages} packages': '{items} चीज़ें · {packages} पैकेज',
+  '{items} designs · {packages} packages': '{items} डिज़ाइन · {packages} पैकेज',
   // ---- home's summary row, which replaced a copy of the Jobs list ----
   '{n} job': '{n} काम',
   '{n} jobs': '{n} काम',

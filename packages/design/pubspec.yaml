@@ -35,3 +35,23 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Inter, the one family the website uses too, bundled rather than fetched: a
+  # vendor on a site with no signal should not get a fallback-font first paint.
+  # Referenced from a text style as `fontFamily: 'Inter', package:
+  # 'interiobee_design'` — see InterioBeeFonts. Licence: fonts/Inter-LICENSE.txt.
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: fonts/Inter-Bold.ttf
+          weight: 700
+
+  # The logo, cut from the brand artwork into the house mark and the wordmark.
+  assets:
+    - assets/brand/

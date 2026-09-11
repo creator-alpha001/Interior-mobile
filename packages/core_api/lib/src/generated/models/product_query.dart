@@ -18,7 +18,9 @@ abstract class ProductQuery with _$ProductQuery {
     String? search,
     String? tags,
     String? city,
+    int? minPrice,
     int? maxPrice,
+    num? minRating,
     @Default(24) int limit,
     @Default(ProductQuerySort.featured) ProductQuerySort sort,
   }) = _ProductQuery;

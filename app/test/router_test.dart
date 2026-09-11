@@ -133,7 +133,8 @@ void main() {
     final (_, api) = await _pump(tester);
 
     expect(find.text('Send code'), findsNothing);
-    expect(find.text('Decora Shine'), findsWidgets);
+    expect(find.byType(DecoraShineLogo), findsWidgets);
+    expect(find.text('Homes that feel like you'), findsOneWidget);
     expect(
       api.seen.where((r) => r.path == '/me'),
       isEmpty,
@@ -145,6 +146,11 @@ void main() {
   testWidgets('signed out, the app offers a way in rather than demanding one', (
     tester,
   ) async {
+    // Tall enough to reach below the hero, where the offer sits.
+    tester.view.physicalSize = const Size(1200, 5000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
     await _pump(tester);
 
     // On the home screen, where the person's own work would otherwise be.

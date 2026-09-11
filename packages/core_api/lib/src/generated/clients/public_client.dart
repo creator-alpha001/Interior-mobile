@@ -38,6 +38,7 @@ import '../models/search_results.dart';
 import '../models/search_suggestion.dart';
 import '../models/session_user.dart';
 import '../models/sort.dart';
+import '../models/sort2.dart';
 import '../models/staff_login_body.dart';
 import '../models/testimonial.dart';
 import '../models/update_profile_body.dart';
@@ -173,7 +174,9 @@ abstract class PublicClient {
     @Query('search') String? search,
     @Query('tags') String? tags,
     @Query('city') String? city,
+    @Query('minPrice') int? minPrice,
     @Query('maxPrice') int? maxPrice,
+    @Query('minRating') num? minRating,
     @Query('limit') int? limit = 24,
     @Query('sort') Sort? sort = Sort.featured,
   });
@@ -237,7 +240,10 @@ abstract class PublicClient {
     @Query('city') String? city,
     @Query('search') String? search,
     @Query('verifiedOnly') bool? verifiedOnly,
+    @Query('minRating') num? minRating,
+    @Query('minExperience') int? minExperience,
     @Query('limit') int? limit = 24,
+    @Query('sort') Sort2? sort = Sort2.rating,
   });
 
   /// getProfessional.

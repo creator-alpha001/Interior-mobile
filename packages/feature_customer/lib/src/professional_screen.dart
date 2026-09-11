@@ -17,6 +17,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'async_view.dart';
+import 'filter_choices.dart';
 import 'providers.dart';
 
 final professionalProvider = FutureProvider.family<ProfessionalProfile, String>(
@@ -39,6 +40,31 @@ final portfolioProvider = FutureProvider.family<List<PortfolioItem>, String?>((
       .listPortfolio(domain: domainSlug, limit: 60)
       .orThrow();
 });
+
+/// Every professional, by id, to attribute and filter the gallery.
+///
+/// City and rating belong to the professional rather than to the piece of
+/// work, so they are applied against this. Paged, as the web pages it: the
+/// contract caps a page at 100, and the web's single over-large request once
+/// turned the whole of `/our-work` into an error page.
+final portfolioDirectoryProvider =
+    FutureProvider<Map<String, ProfessionalSummary>>((ref) async {
+      final api = ref.watch(customerApiProvider).public;
+      final byId = <String, ProfessionalSummary>{};
+      String? cursor;
+      do {
+        final page = await api
+            .listProfessionals(cursor: cursor, limit: 100)
+            .orThrow();
+        for (final pro in page.items) {
+          byId[pro.id] = pro;
+        }
+        // An empty page with a cursor would otherwise loop for ever.
+        if (page.items.isEmpty) break;
+        cursor = page.nextCursor;
+      } while (cursor != null);
+      return byId;
+    });
 
 class ProfessionalScreen extends ConsumerWidget {
   const ProfessionalScreen({super.key, required this.id, this.onRequest});
@@ -157,7 +183,16 @@ class _Profile extends StatelessWidget {
             context.t('Their work'),
             eyebrow: context.t('Approved for the public profile'),
           ),
-          for (final item in profile.portfolio) _PortfolioCard(item: item),
+          for (final item in profile.portfolio)
+            _PortfolioCard(
+              item: item,
+              domainSlug:
+                  profile.domains
+                      .where((d) => d.id == item.domainId)
+                      .firstOrNull
+                      ?.slug ??
+                  'default',
+            ),
         ],
 
         if (profile.reviews.isNotEmpty) ...[
@@ -254,9 +289,21 @@ class _TradeRow extends StatelessWidget {
 }
 
 class _PortfolioCard extends StatelessWidget {
-  const _PortfolioCard({required this.item});
+  const _PortfolioCard({
+    required this.item,
+    required this.domainSlug,
+    this.professional,
+  });
 
   final PortfolioItem item;
+
+  /// The trade's slug, which picks the stock photograph for a piece of work
+  /// that has none uploaded yet.
+  final String domainSlug;
+
+  /// Who did it, when the gallery knows. Null on their own profile, where it
+  /// would only repeat the page's heading.
+  final ProfessionalSummary? professional;
 
   @override
   Widget build(BuildContext context) {
@@ -264,17 +311,14 @@ class _PortfolioCard extends StatelessWidget {
       for (final asset in item.media)
         MediaItem(url: asset.url, caption: asset.caption ?? item.title),
     ];
+    final pro = professional;
 
     /// **The work first, full width.**
     ///
-    /// This used to be a title, a description and a `MediaStrip` — 128×96
-    /// thumbnails in a horizontal rail. That component is right where a
-    /// photograph is *evidence* attached to something else: several proof
-    /// shots inside a stage card. It is wrong here, where the photograph is
-    /// the entire point, and it left every card a wide empty rectangle with
-    /// one small tile marooned at the bottom left.
-    ///
-    /// The web's `/our-work` leads with the image at full width. So does this.
+    /// The web's `/our-work` leads with the image at full width, and so does
+    /// this. A piece with no upload still gets a photograph from its trade's
+    /// pool rather than a card with no picture — the client's rule is that
+    /// nothing goes without one.
     return Padding(
       padding: const EdgeInsets.only(bottom: Space.sm),
       child: InterioBeeCard(
@@ -285,20 +329,21 @@ class _PortfolioCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (media.isNotEmpty)
-              ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(Radii.panel),
-                ),
-                child: AspectRatio(
-                  aspectRatio: 4 / 3,
-                  child: InterioBeeMedia(
-                    src: media.first.url,
-                    alt: media.first.caption,
-                    rounded: false,
-                  ),
+            ClipRRect(
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(Radii.panel),
+              ),
+              child: AspectRatio(
+                aspectRatio: 4 / 3,
+                child: InterioBeeMedia(
+                  src: media.isEmpty
+                      ? 'ph:$domainSlug:${item.id}'
+                      : media.first.url,
+                  alt: media.isEmpty ? item.title : media.first.caption,
+                  rounded: false,
                 ),
               ),
+            ),
             Padding(
               padding: const EdgeInsets.all(Space.cardPaddingWide),
               child: Column(
@@ -316,12 +361,65 @@ class _PortfolioCard extends StatelessWidget {
                   ],
 
                   /// The rest of the set, when there is one.
-                  ///
-                  /// The strip earns its place here — these are secondary to
-                  /// the photograph above, which is exactly what it is for.
                   if (media.length > 1) ...[
                     const SizedBox(height: Space.sm),
                     MediaStrip(items: media),
+                  ],
+
+                  /// Each piece of work links back to the person who did it,
+                  /// rather than floating free — as on the web.
+                  if (pro != null) ...[
+                    const SizedBox(height: Space.sm),
+                    const InterioBeeDivider(inset: 0),
+                    InkWell(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ProfessionalScreen(id: pro.id),
+                        ),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: Space.sm),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 28,
+                              height: 28,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: context.colors.primaryContainer,
+                                shape: BoxShape.circle,
+                              ),
+                              child: ExcludeSemantics(
+                                child: Text(
+                                  pro.name.trim().isEmpty
+                                      ? ''
+                                      : pro.name.trim()[0].toUpperCase(),
+                                  style: context.text.labelMedium?.copyWith(
+                                    color: context.colors.onPrimaryContainer,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: Space.xs),
+                            Expanded(
+                              child: Text(
+                                pro.companyName,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: context.text.bodyMedium,
+                              ),
+                            ),
+                            if (pro.city != null)
+                              Text(
+                                pro.city!.name,
+                                style: context.text.bodySmall?.copyWith(
+                                  color: context.colors.onSurfaceVariant,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -373,6 +471,9 @@ class _ReviewCard extends StatelessWidget {
   }
 }
 
+/// How the gallery is ordered. The web's three, in its order.
+enum _WorkSort { recommended, rating, projects }
+
 /// The web's `/our-work`: everybody's approved portfolio, in one place.
 class OurWorkScreen extends ConsumerStatefulWidget {
   const OurWorkScreen({super.key, this.domainSlug});
@@ -385,14 +486,174 @@ class OurWorkScreen extends ConsumerStatefulWidget {
 }
 
 class _OurWorkScreenState extends ConsumerState<OurWorkScreen> {
+  static const _ratings = <double>[4.5, 4];
+
   late String? _domainSlug = widget.domainSlug;
+  String? _cityId;
+  double? _minRating;
+  _WorkSort _sort = _WorkSort.recommended;
+
+  /// What the Filter button counts: the sheet's contents, not trade or sort.
+  int get _activeCount => [_cityId, _minRating].where((v) => v != null).length;
+
+  static String _sortLabel(BuildContext context, _WorkSort sort) =>
+      switch (sort) {
+        _WorkSort.recommended => context.t('Recommended'),
+        _WorkSort.rating => context.t('Top-rated professionals'),
+        _WorkSort.projects => context.t('Most experienced teams'),
+      };
+
+  List<PortfolioItem> _apply(
+    List<PortfolioItem> all,
+    Map<String, ProfessionalSummary> directory,
+  ) {
+    final kept = [
+      for (final item in all)
+        if (_matches(directory[item.professionalId])) item,
+    ];
+    if (_sort == _WorkSort.recommended) return kept;
+
+    num score(PortfolioItem item) {
+      final pro = directory[item.professionalId];
+      return _sort == _WorkSort.rating
+          ? (pro?.avgRating ?? 0)
+          : (pro?.completedProjects ?? 0);
+    }
+
+    // Stable, so pieces by equally ranked professionals keep the API's order.
+    final ranked = kept.indexed.toList()
+      ..sort((a, b) {
+        final byScore = score(b.$2).compareTo(score(a.$2));
+        return byScore != 0 ? byScore : a.$1.compareTo(b.$1);
+      });
+    return [for (final (_, item) in ranked) item];
+  }
+
+  bool _matches(ProfessionalSummary? pro) {
+    if (_cityId != null && pro?.city?.id != _cityId) return false;
+    final floor = _minRating;
+    if (floor != null && (pro?.avgRating ?? 0) < floor) return false;
+    return true;
+  }
+
+  Future<void> _openFilters() {
+    return showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: context.colors.surface,
+      builder: (_) => StatefulBuilder(
+        builder: (sheetContext, setSheet) {
+          void change(VoidCallback update) {
+            setState(update);
+            setSheet(() {});
+          }
+
+          return SafeArea(
+            child: Consumer(
+              builder: (context, ref, _) {
+                final cities = ref
+                    .watch(citiesProvider)
+                    .maybeWhen(data: (l) => l, orElse: () => const <City>[]);
+
+                return ListView(
+                  shrinkWrap: true,
+                  padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+                  children: [
+                    const SizedBox(height: Space.md),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            context.t('Filter'),
+                            style: context.text.headlineSmall,
+                          ),
+                        ),
+                        if (_activeCount > 0)
+                          TextButton(
+                            onPressed: () {
+                              change(() {
+                                _cityId = null;
+                                _minRating = null;
+                              });
+                              Navigator.of(sheetContext).pop();
+                            },
+                            child: Text(context.t('Clear all')),
+                          ),
+                      ],
+                    ),
+                    SectionHead(context.t('City')),
+                    FilterChoices<String>(
+                      options: [
+                        (null, context.t('All cities')),
+                        for (final city in cities) (city.id, city.name),
+                      ],
+                      selected: _cityId,
+                      onSelect: (id) => change(() => _cityId = id),
+                    ),
+                    SectionHead(context.t('Professional’s rating')),
+                    FilterChoices<double>(
+                      options: [
+                        (null, context.t('Any rating')),
+                        for (final r in _ratings)
+                          (
+                            r,
+                            context.t('{rating} ★ and above', {
+                              'rating': ratingFloor(r),
+                            }),
+                          ),
+                      ],
+                      selected: _minRating,
+                      onSelect: (r) => change(() => _minRating = r),
+                    ),
+                    const SizedBox(height: Space.lg),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: () => Navigator.of(sheetContext).pop(),
+                        child: Text(context.t('Show results')),
+                      ),
+                    ),
+                    const SizedBox(height: Space.xxxl),
+                  ],
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final portfolio = ref.watch(portfolioProvider(_domainSlug));
+    final directory = ref
+        .watch(portfolioDirectoryProvider)
+        .maybeWhen(
+          data: (byId) => byId,
+          orElse: () => const <String, ProfessionalSummary>{},
+        );
+    final domains = ref
+        .watch(domainsProvider)
+        .maybeWhen(data: (list) => list, orElse: () => const <Domain>[]);
+    final slugById = {for (final d in domains) d.id: d.slug};
+    final filtered = _domainSlug != null || _activeCount > 0;
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.t('Our work'))),
+      appBar: AppBar(
+        title: Text(context.t('Our work')),
+        actions: [
+          IconButton(
+            onPressed: _openFilters,
+            icon: Badge(
+              isLabelVisible: _activeCount > 0,
+              label: Text('$_activeCount'),
+              child: const Icon(Icons.tune),
+            ),
+            tooltip: context.t('Filter'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -418,42 +679,80 @@ class _OurWorkScreenState extends ConsumerState<OurWorkScreen> {
               label: context.t('Trade'),
               allLabel: context.t('All'),
               selected: _domainSlug,
-              options: ref
-                  .watch(domainsProvider)
-                  .maybeWhen(
-                    data: (list) => [for (final d in list) (d.slug, d.name)],
-                    orElse: () => const <(String, String)>[],
-                  ),
+              options: [for (final d in domains) (d.slug, d.name)],
               onSelect: (slug) => setState(() => _domainSlug = slug),
             ),
-            const SizedBox(height: Space.sm),
+            SizedBox(
+              height: TapTarget.minimum,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+                children: [
+                  for (final sort in _WorkSort.values) ...[
+                    ChoiceChip(
+                      label: Text(_sortLabel(context, sort)),
+                      selected: _sort == sort,
+                      onSelected: (_) => setState(() => _sort = sort),
+                    ),
+                    const SizedBox(width: Space.xs),
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(height: Space.xs),
 
             AsyncView(
               value: portfolio,
               onRetry: () => ref.invalidate(portfolioProvider(_domainSlug)),
-              data: (items) => items.isEmpty
-                  ? EmptyState(
-                      title: context.t('Nothing published yet'),
-                      body: _domainSlug == null
-                          ? context.t(
-                              'Work appears here once our team has approved '
-                              'it for a public profile.',
-                            )
-                          : context.t(
-                              'No approved work in this trade yet. Try '
-                              'another, or tell us what you need.',
-                            ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: Space.gutter,
+              data: (all) {
+                final items = _apply(all, directory);
+
+                if (items.isEmpty) {
+                  return EmptyState(
+                    title: context.t('Nothing published yet'),
+                    body: !filtered
+                        ? context.t(
+                            'Work appears here once our team has approved '
+                            'it for a public profile.',
+                          )
+                        : _activeCount == 0
+                        ? context.t(
+                            'No approved work in this trade yet. Try '
+                            'another, or tell us what you need.',
+                          )
+                        : context.t(
+                            'Nothing matches these filters yet. Try clearing '
+                            'one, or tell us what you need.',
+                          ),
+                  );
+                }
+
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.l10n.plural(
+                          items.length,
+                          '{n} project',
+                          '{n} projects',
+                        ),
+                        style: context.text.bodySmall?.copyWith(
+                          color: context.colors.onSurfaceVariant,
+                        ),
                       ),
-                      child: Column(
-                        children: [
-                          for (final item in items) _PortfolioCard(item: item),
-                        ],
-                      ),
-                    ),
+                      const SizedBox(height: Space.xs),
+                      for (final item in items)
+                        _PortfolioCard(
+                          item: item,
+                          domainSlug: slugById[item.domainId] ?? 'default',
+                          professional: directory[item.professionalId],
+                        ),
+                    ],
+                  ),
+                );
+              },
             ),
             const SizedBox(height: Space.xxxl),
           ],

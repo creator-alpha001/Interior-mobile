@@ -36,24 +36,82 @@ final citiesProvider = FutureProvider<List<City>>(
 
 /// What the directory is currently showing.
 ///
-/// Trade and city, as the web's `/professionals?domain=&city=` carries them in
-/// the query string. Two fields rather than two providers, so setting both in
-/// one gesture is one fetch.
+/// Everything the web's `/professionals` carries in its query string: trade,
+/// city, verification, a rating floor, an experience floor and the sort. One
+/// object rather than six providers, so setting several in one sheet is one
+/// fetch.
 @immutable
 class ProfessionalFilters {
-  const ProfessionalFilters({this.domainSlug, this.cityId});
+  const ProfessionalFilters({
+    this.domainSlug,
+    this.cityId,
+    this.verifiedOnly = false,
+    this.minRating,
+    this.minExperience,
+    this.sort = Sort2.rating,
+  });
 
   final String? domainSlug;
   final String? cityId;
+
+  /// The customer's choice to see only badged professionals — never the
+  /// default. Approved vendors are listed whether or not their paperwork is
+  /// verified yet, and the badge says which, exactly as on the web.
+  final bool verifiedOnly;
+
+  final double? minRating;
+  final int? minExperience;
+  final Sort2 sort;
+
+  ProfessionalFilters copyWith({
+    Object? domainSlug = _keep,
+    Object? cityId = _keep,
+    bool? verifiedOnly,
+    Object? minRating = _keep,
+    Object? minExperience = _keep,
+    Sort2? sort,
+  }) {
+    return ProfessionalFilters(
+      domainSlug: domainSlug == _keep ? this.domainSlug : domainSlug as String?,
+      cityId: cityId == _keep ? this.cityId : cityId as String?,
+      verifiedOnly: verifiedOnly ?? this.verifiedOnly,
+      minRating: minRating == _keep ? this.minRating : minRating as double?,
+      minExperience: minExperience == _keep
+          ? this.minExperience
+          : minExperience as int?,
+      sort: sort ?? this.sort,
+    );
+  }
+
+  /// A sentinel, so `copyWith(cityId: null)` clears a filter rather than being
+  /// indistinguishable from not passing it.
+  static const _keep = Object();
+
+  /// What the Filter button counts: the sheet's contents. Trade has its own
+  /// row in view, and a sort is not a filter.
+  int get activeCount =>
+      [cityId, minRating, minExperience].where((v) => v != null).length +
+      (verifiedOnly ? 1 : 0);
 
   @override
   bool operator ==(Object other) =>
       other is ProfessionalFilters &&
       other.domainSlug == domainSlug &&
-      other.cityId == cityId;
+      other.cityId == cityId &&
+      other.verifiedOnly == verifiedOnly &&
+      other.minRating == minRating &&
+      other.minExperience == minExperience &&
+      other.sort == sort;
 
   @override
-  int get hashCode => Object.hash(domainSlug, cityId);
+  int get hashCode => Object.hash(
+    domainSlug,
+    cityId,
+    verifiedOnly,
+    minRating,
+    minExperience,
+    sort,
+  );
 }
 
 final professionalFiltersProvider = StateProvider<ProfessionalFilters>(
@@ -67,16 +125,20 @@ final professionalFiltersProvider = StateProvider<ProfessionalFilters>(
 /// trade selected the card can only show an average across every trade, and an
 /// average across every trade is the wrong number to rank a carpenter by.
 ///
-/// `verifiedOnly` matches the web and the empty state this screen already
-/// wrote — an unverified professional is in no pool and belongs in no list a
-/// customer reads.
+/// `verifiedOnly` is sent only when the customer asks for it. It used to be
+/// forced on, back when approval and verification were the same thing; since
+/// vendor verification became its own step the web lists every approved
+/// professional and badges the verified ones, and this matches it.
 final professionalsProvider = FutureProvider<GetProfessionalsResponse>((ref) {
   final filters = ref.watch(professionalFiltersProvider);
   return _public(ref)
       .listProfessionals(
         domain: filters.domainSlug,
         city: filters.cityId,
-        verifiedOnly: true,
+        verifiedOnly: filters.verifiedOnly ? true : null,
+        minRating: filters.minRating,
+        minExperience: filters.minExperience,
+        sort: filters.sort,
         limit: 48,
       )
       .orThrow();

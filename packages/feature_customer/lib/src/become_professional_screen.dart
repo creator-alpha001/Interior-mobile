@@ -444,10 +444,7 @@ class _ApplyFormState extends ConsumerState<_ApplyForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                StatusPill(
-                  context.t('Needs a change'),
-                  tone: StatusTone.yours,
-                ),
+                StatusPill(context.t('Needs a change'), tone: StatusTone.yours),
                 const SizedBox(height: Space.xs),
                 Text(
                   a.reviewerNote ?? context.t('Our team asked for a change.'),
@@ -569,7 +566,9 @@ class _ApplyFormState extends ConsumerState<_ApplyForm> {
                   label: Text(domain.name),
                   selected: _domainIds.contains(domain.id),
                   onSelected: (on) => setState(() {
-                    on ? _domainIds.add(domain.id) : _domainIds.remove(domain.id);
+                    on
+                        ? _domainIds.add(domain.id)
+                        : _domainIds.remove(domain.id);
                   }),
                 ),
             ],
@@ -612,7 +611,9 @@ class _ApplyFormState extends ConsumerState<_ApplyForm> {
         _Field(
           controller: _areaNote,
           label: context.t('Localities, in your own words'),
-          hint: context.t('e.g. Anywhere in south Lucknow; Kanpur for big jobs'),
+          hint: context.t(
+            'e.g. Anywhere in south Lucknow; Kanpur for big jobs',
+          ),
           maxLines: 2,
           onChanged: () => setState(() {}),
         ),

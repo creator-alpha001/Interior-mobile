@@ -60,7 +60,8 @@ const hiApply = <String, String>{
   'The jobs you take on, the size of your team, and a couple of recent projects.':
       'कैसे काम लेते हैं, टीम में कितने लोग हैं, और हाल के दो-एक प्रोजेक्ट।',
   '{n} more characters': '{n} अक्षर और',
-  'Good. Specifics get read properly.': 'ठीक है। ब्यौरा हो तो पढ़ा ठीक से जाता है।',
+  'Good. Specifics get read properly.':
+      'ठीक है। ब्यौरा हो तो पढ़ा ठीक से जाता है।',
 
   'Approval switches this account over to the professional portal, where your leads, quotes and commission live.':
       'मंज़ूरी मिलते ही यह खाता प्रोफ़ेशनल पोर्टल पर चला जाएगा, जहाँ आपकी लीड, कोटेशन और कमीशन रहते हैं।',
@@ -85,7 +86,8 @@ const hiApply = <String, String>{
   // ---- decided ----
   'You are in.': 'आप शामिल हो गए।',
   'Your application has been approved.': 'आपका आवेदन मंज़ूर हो गया है।',
-  'You have been approved for {trades}.': 'आपको {trades} के लिए मंज़ूरी मिली है।',
+  'You have been approved for {trades}.':
+      'आपको {trades} के लिए मंज़ूरी मिली है।',
   'Sign out and back in and the app opens on your leads instead of the customer view. There are a few setup steps waiting — the partner agreement, your documents and your bank details. Leads start once those are done.':
       'एक बार साइन आउट करके फिर साइन इन कीजिए — ऐप ग्राहक वाले व्यू की जगह आपकी लीड पर खुलेगा। कुछ सेटअप बाक़ी हैं: पार्टनर एग्रीमेंट, आपके काग़ज़ और बैंक ब्यौरा। ये पूरे होते ही लीड आना शुरू होंगी।',
 

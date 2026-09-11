@@ -19,6 +19,8 @@ abstract class PartnerTerms with _$PartnerTerms {
     required String summary,
     required List<PartnerTermsSection> sections,
     required List<PartnerAcknowledgement> acknowledgements,
+    required String? documentUrl,
+    required String hardcopyInstructions,
   }) = _PartnerTerms;
 
   factory PartnerTerms.fromJson(Map<String, Object?> json) =>

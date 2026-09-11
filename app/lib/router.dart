@@ -22,6 +22,7 @@ import 'package:go_router/go_router.dart';
 import 'env.dart';
 import 'gallery.dart';
 import 'screens/delete_account.dart';
+import 'screens/finish_setup.dart';
 import 'screens/sign_in.dart';
 
 abstract final class Routes {
@@ -168,6 +169,24 @@ GoRouter buildRouter({
           // that is the point of it. Verification happens here, and only then.
           verify: (context) => presentSignIn(context, auth),
           onSignOut: auth.signOut,
+
+          /// The web's setup strip, fed from the same `GET /me` it reads.
+          setupNeeds: () {
+            final me = auth.user;
+            if (auth.shell != Shell.customer || me == null) return null;
+            final first = me.name.trim().split(RegExp(r'\s+')).first;
+            return SetupNeeds(
+              city: me.cityId == null,
+              number: me.mobile == null || !me.mobileVerified,
+              firstName: first.isEmpty ? null : first,
+            );
+          },
+          onFinishSetup: (context) =>
+              Navigator.of(context, rootNavigator: true).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => FinishSetupScreen(auth: auth),
+                ),
+              ),
         ),
       ),
 
@@ -235,8 +254,7 @@ class _Splash extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Not translated, in any locale. It is the product's name.
-            Text('Decora Shine', style: context.text.displayLarge),
+            const DecoraShineLogo(height: 56),
             const SizedBox(height: Space.md),
             Text(
               context.t('Resolving your session…'),

@@ -15,17 +15,19 @@ library;
 import 'package:interiobee_core_api/interiobee_core_api.dart';
 import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'async_view.dart';
+import 'filter_choices.dart';
 import 'product_screen.dart';
 import 'providers.dart';
 
 /// What the catalogue is currently showing.
 ///
-/// One object rather than five providers, because the filters are read
+/// One object rather than eight providers, because the filters are read
 /// together on every fetch and separate providers would make the screen fetch
-/// five times while somebody sets three of them.
+/// once per filter while somebody sets three of them.
 @immutable
 class CatalogueFilters {
   const CatalogueFilters({
@@ -33,7 +35,9 @@ class CatalogueFilters {
     this.categorySlug,
     this.cityId,
     this.search,
+    this.minPrice,
     this.maxPrice,
+    this.minRating,
     this.sort = Sort.featured,
   });
 
@@ -41,7 +45,9 @@ class CatalogueFilters {
   final String? categorySlug;
   final String? cityId;
   final String? search;
+  final int? minPrice;
   final int? maxPrice;
+  final double? minRating;
   final Sort sort;
 
   CatalogueFilters copyWith({
@@ -49,7 +55,9 @@ class CatalogueFilters {
     Object? categorySlug = _keep,
     Object? cityId = _keep,
     Object? search = _keep,
+    Object? minPrice = _keep,
     Object? maxPrice = _keep,
+    Object? minRating = _keep,
     Sort? sort,
   }) {
     return CatalogueFilters(
@@ -59,7 +67,9 @@ class CatalogueFilters {
           : categorySlug as String?,
       cityId: cityId == _keep ? this.cityId : cityId as String?,
       search: search == _keep ? this.search : search as String?,
+      minPrice: minPrice == _keep ? this.minPrice : minPrice as int?,
       maxPrice: maxPrice == _keep ? this.maxPrice : maxPrice as int?,
+      minRating: minRating == _keep ? this.minRating : minRating as double?,
       sort: sort ?? this.sort,
     );
   }
@@ -69,8 +79,12 @@ class CatalogueFilters {
   /// nullable and every one of them needs clearing.
   static const _keep = Object();
 
+  bool get hasPrice => minPrice != null || maxPrice != null;
+
+  /// A price range counts once, however many of its two ends are set.
   int get activeCount =>
-      [categorySlug, cityId, maxPrice].where((v) => v != null).length;
+      [categorySlug, cityId, minRating].where((v) => v != null).length +
+      (hasPrice ? 1 : 0);
 
   @override
   bool operator ==(Object other) =>
@@ -79,12 +93,22 @@ class CatalogueFilters {
       other.categorySlug == categorySlug &&
       other.cityId == cityId &&
       other.search == search &&
+      other.minPrice == minPrice &&
       other.maxPrice == maxPrice &&
+      other.minRating == minRating &&
       other.sort == sort;
 
   @override
-  int get hashCode =>
-      Object.hash(domainSlug, categorySlug, cityId, search, maxPrice, sort);
+  int get hashCode => Object.hash(
+    domainSlug,
+    categorySlug,
+    cityId,
+    search,
+    minPrice,
+    maxPrice,
+    minRating,
+    sort,
+  );
 }
 
 final catalogueFiltersProvider = StateProvider<CatalogueFilters>(
@@ -101,10 +125,29 @@ final productsProvider = FutureProvider<GetProductsResponse>((ref) {
         category: f.categorySlug,
         city: f.cityId,
         search: f.search,
+        minPrice: f.minPrice,
         maxPrice: f.maxPrice,
+        minRating: f.minRating,
         sort: f.sort,
       )
       .orThrow();
+});
+
+/// The trade's whole price range, unfiltered, to draw the bands from.
+///
+/// Bands drawn from the filtered page would shrink every time one was picked,
+/// so this follows only the trade and the city — the two things that change
+/// what the prices actually are.
+final pricePoolProvider = FutureProvider<List<int>>((ref) async {
+  final (domain, city) = ref.watch(
+    catalogueFiltersProvider.select((f) => (f.domainSlug, f.cityId)),
+  );
+  final page = await ref
+      .watch(customerApiProvider)
+      .public
+      .listProducts(domain: domain, city: city, limit: 48)
+      .orThrow();
+  return [for (final view in page.items) view.effectivePrice];
 });
 
 /// Categories belong to a trade, so they are refetched when the trade changes.
@@ -116,6 +159,27 @@ final categoriesProvider = FutureProvider<List<ProductCategory>>((ref) {
       .listCategories(domain: domain)
       .orThrow();
 });
+
+/// Opens the catalogue on one trade, or on everything, with its filters fresh.
+///
+/// The filters live in a provider that outlasts the screen, so arriving from
+/// the "Painting" tile after browsing furniture used to show furniture under a
+/// "Painting" title. Every way in goes through here and says what it wants.
+Future<void> openCatalogue(
+  BuildContext context,
+  WidgetRef ref, {
+  Domain? domain,
+}) {
+  ref.read(catalogueFiltersProvider.notifier).state = CatalogueFilters(
+    domainSlug: domain?.slug,
+  );
+  return Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (_) =>
+          CatalogueScreen(domainSlug: domain?.slug, title: domain?.name),
+    ),
+  );
+}
 
 class CatalogueScreen extends ConsumerWidget {
   const CatalogueScreen({super.key, this.domainSlug, this.title});
@@ -267,12 +331,12 @@ class ProductCard extends StatelessWidget {
           AspectRatio(
             aspectRatio: 4 / 3,
             child: InterioBeeMedia(
+              // A photograph from the trade's own pool, keyed to the piece, so
+              // an item with no upload still looks like the thing it is.
               src: product.media.isEmpty
-                  ? 'ph:default:x'
+                  ? 'ph:${view.domain.slug}:${product.id}'
                   : product.media.first.url,
               alt: product.name,
-              // Names the piece on a placeholder tile, so an item with no
-              // photograph reads as a designed card rather than a failed image.
               label: product.name,
             ),
           ),
@@ -329,104 +393,213 @@ Future<void> showCatalogueFilters(BuildContext context, WidgetRef ref) {
   );
 }
 
-class _FilterSheet extends ConsumerWidget {
+/// The web's catalogue sidebar, section for section.
+class _FilterSheet extends ConsumerStatefulWidget {
   const _FilterSheet();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_FilterSheet> createState() => _FilterSheetState();
+}
+
+class _FilterSheetState extends ConsumerState<_FilterSheet> {
+  static const _ratings = <double>[4.5, 4, 3];
+
+  final _min = TextEditingController();
+  final _max = TextEditingController();
+
+  @override
+  void dispose() {
+    _min.dispose();
+    _max.dispose();
+    super.dispose();
+  }
+
+  /// Typed bounds win over a band, as on the web: typing is the more specific
+  /// answer. Nothing typed leaves whatever band was picked alone.
+  void _applyTyped() {
+    final min = int.tryParse(_min.text);
+    final max = int.tryParse(_max.text);
+    if (min == null && max == null) return;
+    ref
+        .read(catalogueFiltersProvider.notifier)
+        .update((f) => f.copyWith(minPrice: min, maxPrice: max));
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final filters = ref.watch(catalogueFiltersProvider);
     final categories = ref.watch(categoriesProvider);
     final cities = ref.watch(citiesProvider);
+    final bands = ref
+        .watch(pricePoolProvider)
+        .maybeWhen(data: priceBands, orElse: () => const <PriceBand>[]);
     final notifier = ref.read(catalogueFiltersProvider.notifier);
 
+    final selectedBand = filters.hasPrice
+        ? PriceBand(min: filters.minPrice, max: filters.maxPrice)
+        : null;
+
     return SafeArea(
-      child: ListView(
-        shrinkWrap: true,
-        padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
-        children: [
-          const SizedBox(height: Space.md),
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  context.t('Filter'),
-                  style: context.text.headlineSmall,
+      child: Padding(
+        // Lifts the sheet over the keyboard while a price is being typed.
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.viewInsetsOf(context).bottom,
+        ),
+        child: ListView(
+          shrinkWrap: true,
+          padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
+          children: [
+            const SizedBox(height: Space.md),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    context.t('Filter'),
+                    style: context.text.headlineSmall,
+                  ),
                 ),
+                if (filters.activeCount > 0)
+                  TextButton(
+                    onPressed: () {
+                      notifier.state = CatalogueFilters(
+                        domainSlug: filters.domainSlug,
+                        sort: filters.sort,
+                      );
+                      Navigator.of(context).pop();
+                    },
+                    child: Text(context.t('Clear all')),
+                  ),
+              ],
+            ),
+
+            SectionHead(
+              context.t('Category'),
+              eyebrow: context.t('Within this trade'),
+            ),
+            categories.maybeWhen(
+              data: (list) => Wrap(
+                spacing: Space.xxs,
+                runSpacing: Space.xxs,
+                children: [
+                  for (final category in list)
+                    ChoiceChip(
+                      label: Text(category.name),
+                      selected: filters.categorySlug == category.slug,
+                      onSelected: (on) => notifier.update(
+                        (f) =>
+                            f.copyWith(categorySlug: on ? category.slug : null),
+                      ),
+                    ),
+                ],
               ),
-              if (filters.activeCount > 0)
-                TextButton(
-                  onPressed: () {
-                    notifier.state = CatalogueFilters(
-                      domainSlug: filters.domainSlug,
-                      sort: filters.sort,
-                    );
-                    Navigator.of(context).pop();
-                  },
-                  child: Text(context.t('Clear all')),
+              orElse: () => const SizedBox.shrink(),
+            ),
+
+            /// The city is here because the *price* depends on it.
+            ///
+            /// Not a delivery filter and not a convenience — `effectivePrice`
+            /// is computed per city, so this control changes every figure on
+            /// the screen behind it, and the price bands below with it.
+            SectionHead(
+              context.t('City'),
+              eyebrow: context.t('Prices follow the city'),
+            ),
+            cities.maybeWhen(
+              data: (list) => Wrap(
+                spacing: Space.xxs,
+                runSpacing: Space.xxs,
+                children: [
+                  for (final city in list)
+                    ChoiceChip(
+                      label: Text(city.name),
+                      selected: filters.cityId == city.id,
+                      onSelected: (on) => notifier.update(
+                        (f) => f.copyWith(cityId: on ? city.id : null),
+                      ),
+                    ),
+                ],
+              ),
+              orElse: () => const SizedBox.shrink(),
+            ),
+
+            SectionHead(context.t('Price')),
+            FilterChoices<PriceBand>(
+              options: [
+                (null, context.t('Any price')),
+                for (final band in bands) (band, priceBandLabel(context, band)),
+              ],
+              // A typed range that matches no band leaves "Any" unticked and
+              // no band ticked, which is true: the fields below hold it.
+              selected: bands.contains(selectedBand) ? selectedBand : null,
+              onSelect: (band) {
+                _min.clear();
+                _max.clear();
+                notifier.update(
+                  (f) => f.copyWith(minPrice: band?.min, maxPrice: band?.max),
+                );
+              },
+            ),
+            const SizedBox(height: Space.sm),
+            Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _min,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      labelText: context.t('Minimum'),
+                      prefixText: '₹ ',
+                    ),
+                    onSubmitted: (_) => _applyTyped(),
+                  ),
                 ),
-            ],
-          ),
-
-          SectionHead(
-            context.t('Category'),
-            eyebrow: context.t('Within this trade'),
-          ),
-          categories.maybeWhen(
-            data: (list) => Wrap(
-              spacing: Space.xxs,
-              runSpacing: Space.xxs,
-              children: [
-                for (final category in list)
-                  ChoiceChip(
-                    label: Text(category.name),
-                    selected: filters.categorySlug == category.slug,
-                    onSelected: (on) => notifier.update(
-                      (f) =>
-                          f.copyWith(categorySlug: on ? category.slug : null),
+                const SizedBox(width: Space.xs),
+                Expanded(
+                  child: TextField(
+                    controller: _max,
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    decoration: InputDecoration(
+                      labelText: context.t('Maximum'),
+                      prefixText: '₹ ',
                     ),
+                    onSubmitted: (_) => _applyTyped(),
                   ),
+                ),
               ],
             ),
-            orElse: () => const SizedBox.shrink(),
-          ),
 
-          /// The city is here because the *price* depends on it.
-          ///
-          /// Not a delivery filter and not a convenience — `effectivePrice` is
-          /// computed per city, so this control changes every figure on the
-          /// screen behind it.
-          SectionHead(
-            context.t('City'),
-            eyebrow: context.t('Prices follow the city'),
-          ),
-          cities.maybeWhen(
-            data: (list) => Wrap(
-              spacing: Space.xxs,
-              runSpacing: Space.xxs,
-              children: [
-                for (final city in list)
-                  ChoiceChip(
-                    label: Text(city.name),
-                    selected: filters.cityId == city.id,
-                    onSelected: (on) => notifier.update(
-                      (f) => f.copyWith(cityId: on ? city.id : null),
-                    ),
+            SectionHead(context.t('Customer rating')),
+            FilterChoices<double>(
+              options: [
+                (null, context.t('Any rating')),
+                for (final r in _ratings)
+                  (
+                    r,
+                    context.t('{rating} ★ and above', {
+                      'rating': ratingFloor(r),
+                    }),
                   ),
               ],
+              selected: filters.minRating,
+              onSelect: (r) => notifier.update((f) => f.copyWith(minRating: r)),
             ),
-            orElse: () => const SizedBox.shrink(),
-          ),
 
-          const SizedBox(height: Space.lg),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(context.t('Show results')),
+            const SizedBox(height: Space.lg),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  _applyTyped();
+                  Navigator.of(context).pop();
+                },
+                child: Text(context.t('Show results')),
+              ),
             ),
-          ),
-          const SizedBox(height: Space.xxxl),
-        ],
+            const SizedBox(height: Space.xxxl),
+          ],
+        ),
       ),
     );
   }

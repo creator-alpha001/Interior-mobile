@@ -104,7 +104,7 @@ class _Detail extends ConsumerWidget {
           aspectRatio: 4 / 3,
           child: InterioBeeMedia(
             src: product.media.isEmpty
-                ? 'ph:default:x'
+                ? 'ph:${view.domain.slug}:${product.id}'
                 : product.media.first.url,
             alt: product.name,
             label: product.name,

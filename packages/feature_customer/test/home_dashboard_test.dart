@@ -5,14 +5,14 @@
 /// panel that did mention them ("quotes are ready for 2 of your jobs") was a
 /// statement with nothing to press.
 ///
-/// Two states, and the distinction between them is the delicate part:
+/// Three things are held here:
 ///
-///   * **Nothing under way**, which we only claim when the request came back
-///     *empty*. Telling somebody they have no jobs because a read failed would
-///     be a lie with a button on it.
-///   * **Something under way**, listed with the state that matters and a way
-///     in. Quotes to choose outrank everything else, because that is the only
-///     state where the customer is the one holding the job up.
+///   * **The promise leads.** "Homes that feel like you", with the way to get
+///     quotes directly under it, whoever is looking.
+///   * **Something under way** is listed with the state that matters and a way
+///     in — and a failed read shows nothing rather than a lie.
+///   * **The setup strip** asks for what signup skipped, says why, and goes
+///     away when told to.
 library;
 
 import 'dart:async';
@@ -43,6 +43,8 @@ Future<void> _pump(
   List<ProjectView> projects = const [],
   VoidCallback? onStart,
   VoidCallback? onOpenJobs,
+  SetupNeeds? setup,
+  VoidCallback? onFinishSetup,
 }) async {
   tester.view.physicalSize = const Size(1200, 5000);
   tester.view.devicePixelRatio = 1.0;
@@ -71,6 +73,8 @@ Future<void> _pump(
         home: HomeScreen(
           onStart: onStart ?? () {},
           onOpenJobs: onOpenJobs ?? () {},
+          setup: setup,
+          onFinishSetup: onFinishSetup,
         ),
       ),
     ),
@@ -79,22 +83,88 @@ Future<void> _pump(
 }
 
 void main() {
-  group('with nothing under way', () {
-    testWidgets('offers a way to get quotes', (tester) async {
+  group('the hero', () {
+    testWidgets('leads with the promise and a way to get quotes', (
+      tester,
+    ) async {
       await _pump(tester);
 
-      expect(find.text('Nothing under way yet'), findsOneWidget);
-      expect(find.text('Get quotes'), findsOneWidget);
+      expect(find.byType(DecoraShineLogo), findsOneWidget);
+      expect(find.text('Homes that feel like you'), findsOneWidget);
+      expect(find.text('Get free design quotes'), findsOneWidget);
     });
 
     testWidgets('the button starts a requirement', (tester) async {
       var started = false;
       await _pump(tester, onStart: () => started = true);
 
-      await tester.tap(find.text('Get quotes'));
+      await tester.tap(find.text('Get free design quotes'));
       await tester.pump();
 
       expect(started, isTrue);
+    });
+
+    testWidgets('greets a returning customer by name', (tester) async {
+      await _pump(
+        tester,
+        setup: const SetupNeeds(city: false, number: false, firstName: 'Asha'),
+      );
+
+      expect(find.text('Welcome back, Asha'), findsOneWidget);
+    });
+  });
+
+  group('the setup strip', () {
+    testWidgets('asks for what signup skipped, and says why', (tester) async {
+      var opened = false;
+      await _pump(
+        tester,
+        setup: const SetupNeeds(city: true, number: true),
+        onFinishSetup: () => opened = true,
+      );
+
+      expect(find.text('Add your mobile number and city'), findsOneWidget);
+      expect(find.textContaining('call you about your quotes'), findsOneWidget);
+
+      await tester.tap(find.text('Add mobile number'));
+      await tester.pump();
+
+      expect(opened, isTrue);
+    });
+
+    testWidgets('only the city, when only the city is missing', (tester) async {
+      await _pump(
+        tester,
+        setup: const SetupNeeds(city: true, number: false),
+        onFinishSetup: () {},
+      );
+
+      // The headline and the button both say it.
+      expect(find.text('Choose your city'), findsNWidgets(2));
+      expect(find.text('Add mobile number'), findsNothing);
+    });
+
+    testWidgets('Not now puts it away', (tester) async {
+      await _pump(
+        tester,
+        setup: const SetupNeeds(city: true, number: true),
+        onFinishSetup: () {},
+      );
+
+      await tester.tap(find.text('Not now'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Add your mobile number and city'), findsNothing);
+    });
+
+    testWidgets('says nothing when nothing is missing', (tester) async {
+      await _pump(
+        tester,
+        setup: const SetupNeeds(city: false, number: false),
+        onFinishSetup: () {},
+      );
+
+      expect(find.text('Not now'), findsNothing);
     });
   });
 
@@ -116,8 +186,6 @@ void main() {
       expect(find.text('Your work'), findsOneWidget);
       expect(find.text('1 job'), findsOneWidget);
       expect(findPill('1 needs you'), findsOneWidget);
-      // Never the empty state at the same time.
-      expect(find.text('Nothing under way yet'), findsNothing);
     });
 
     testWidgets('does not reprint the Jobs tab', (tester) async {
@@ -172,12 +240,11 @@ void main() {
     });
   });
 
-  testWidgets('a failed read shows neither the list nor the empty state', (
+  testWidgets('a failed read shows no list, and the rest still renders', (
     tester,
   ) async {
-    // The distinction the whole widget turns on. "Nothing under way yet, get
-    // quotes" under a customer who has three live jobs and a flaky connection
-    // is worse than showing nothing at all.
+    // Telling somebody they have no jobs because a read failed would be a lie
+    // with a button on it, so a failure shows nothing of theirs at all.
     await _pump(
       tester,
       requirements: AsyncValue.error(
@@ -190,9 +257,8 @@ void main() {
       ),
     );
 
-    expect(find.text('Nothing under way yet'), findsNothing);
     expect(find.text('Your work'), findsNothing);
-    // The rest of the screen still renders.
-    expect(find.text('Decora Shine'), findsOneWidget);
+    expect(find.byType(DecoraShineLogo), findsOneWidget);
+    expect(find.text('Homes that feel like you'), findsOneWidget);
   });
 }

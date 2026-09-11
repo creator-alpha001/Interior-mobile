@@ -109,7 +109,7 @@ class PackageCard extends StatelessWidget {
             aspectRatio: 16 / 9,
             child: InterioBeeMedia(
               src: package.media.isEmpty
-                  ? 'ph:default:x'
+                  ? 'ph:${view.domain.slug}:${package.id}'
                   : package.media.first.url,
               alt: package.name,
               label: package.name,
@@ -204,7 +204,7 @@ class _Detail extends StatelessWidget {
           aspectRatio: 16 / 9,
           child: InterioBeeMedia(
             src: package.media.isEmpty
-                ? 'ph:default:x'
+                ? 'ph:${view.domain.slug}:${package.id}'
                 : package.media.first.url,
             alt: package.name,
             label: package.name,
