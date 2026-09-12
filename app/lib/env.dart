@@ -71,6 +71,24 @@ abstract final class Env {
   static String get webBaseUrl =>
       _webUrlOverride.isEmpty ? 'https://www.decorashine.com' : _webUrlOverride;
 
+  /// Whether to offer SMS as a way to receive a code.
+  ///
+  /// **Off, because there is no SMS.** Sending one needs DLT registration,
+  /// which is not done, so "Send by SMS instead" was a button that produced
+  /// nothing — worse than no button, because somebody who presses it stops
+  /// waiting for the WhatsApp message that was actually coming.
+  ///
+  /// The whole path is still here and still works: the screens render whatever
+  /// channel the server says it used, so a code that arrives by SMS is
+  /// described as SMS either way. This governs the *offer* alone, and turning
+  /// it back on is `--dart-define=INTERIOBEE_SMS=true` once DLT clears.
+  static const _smsOffer = String.fromEnvironment(
+    'INTERIOBEE_SMS',
+    defaultValue: 'false',
+  );
+
+  static bool get offersSms => _smsOffer == 'true';
+
   /// The Google OAuth **web** client id, not the Android or iOS one.
   ///
   /// Counter-intuitive but correct: passed as `serverClientId`, it is what

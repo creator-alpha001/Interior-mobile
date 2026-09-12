@@ -17,6 +17,8 @@ import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../env.dart';
+
 class FinishSetupScreen extends StatefulWidget {
   const FinishSetupScreen({super.key, required this.auth});
 
@@ -233,7 +235,11 @@ class _FinishSetupScreenState extends State<FinishSetupScreen> {
                   Wrap(
                     spacing: Space.xs,
                     children: [
-                      if (_challenge!.channel == OtpChallengeChannel.whatsapp)
+                      // SMS is offered only when this build can deliver one —
+                      // see `Env.offersSms`. The reverse is always offered: a
+                      // code that came by SMS proves SMS works.
+                      if (_challenge!.channel == OtpChallengeChannel.whatsapp &&
+                          Env.offersSms)
                         TextButton(
                           onPressed: _busy
                               ? null

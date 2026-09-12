@@ -79,12 +79,10 @@ void main() {
       expect(find.byType(OtpField), findsOneWidget);
     });
 
-    testWidgets('says which app the code went to, and switches on request', (
-      tester,
-    ) async {
+    testWidgets('says which app the code went to', (tester) async {
       // A screen saying "check WhatsApp" for a code that went by SMS strands
-      // somebody as surely as no code at all. And somebody with no WhatsApp on
-      // this number must be able to ask for SMS without waiting for anything.
+      // somebody as surely as no code at all, so this is the server's answer
+      // rather than what the app asked for.
       final (_, api) = await _pump(tester);
       api.on('POST', '/auth/otp/request', {
         'challengeId': 'ch-1',
@@ -96,22 +94,68 @@ void main() {
       await _act(tester, () => tester.tap(find.text('Send code')));
 
       expect(find.textContaining('on WhatsApp'), findsOneWidget);
+    });
+
+    testWidgets('does not offer SMS, which this build cannot send', (
+      tester,
+    ) async {
+      /// **A button that delivers nothing is worse than no button.**
+      ///
+      /// SMS needs DLT registration, which is not done, so offering it made
+      /// somebody stop waiting for the WhatsApp message that was on its way.
+      /// `Env.offersSms` governs the offer alone: the path is intact, and the
+      /// screen still names SMS when the server says a code went that way.
+      final (_, api) = await _pump(tester);
+      api.on('POST', '/auth/otp/request', {
+        'challengeId': 'ch-1',
+        'expiresInSeconds': 300,
+        'channel': 'whatsapp',
+      });
+
+      await tester.enterText(find.byType(TextField), '9839012477');
+      await _act(tester, () => tester.tap(find.text('Send code')));
+
+      expect(find.text('Send by SMS instead'), findsNothing);
+      // The ways out that do work are still there.
+      expect(find.text('Send again'), findsOneWidget);
+      expect(find.text('Change number'), findsOneWidget);
+    });
+
+    testWidgets('a code that arrived by SMS can go back to WhatsApp', (
+      tester,
+    ) async {
+      // The reverse direction is always offered: a code delivered by SMS is
+      // proof SMS works, and WhatsApp is the cheaper channel to return to.
+      final (_, api) = await _pump(tester);
+      api.on('POST', '/auth/otp/request', {
+        'challengeId': 'ch-1',
+        'expiresInSeconds': 300,
+        'channel': 'sms',
+      });
+
+      await tester.enterText(find.byType(TextField), '9839012477');
+      await _act(tester, () => tester.tap(find.text('Send code')));
+
+      expect(find.textContaining('by SMS'), findsOneWidget);
+      expect(find.text('Send on WhatsApp instead'), findsOneWidget);
 
       api.on('POST', '/auth/otp/request', {
         'challengeId': 'ch-2',
         'expiresInSeconds': 300,
-        'channel': 'sms',
+        'channel': 'whatsapp',
       });
-      await _act(tester, () => tester.tap(find.text('Send by SMS instead')));
+      await _act(
+        tester,
+        () => tester.tap(find.text('Send on WhatsApp instead')),
+      );
 
       // As encoded, because the wire form is what the server reads; the body
       // Dio holds before encoding carries the enum, not its JSON value.
       expect(
         jsonDecode(jsonEncode(api.seen.last.data)),
-        containsPair('channel', 'sms'),
+        containsPair('channel', 'whatsapp'),
       );
-      expect(find.textContaining('by SMS'), findsOneWidget);
-      expect(find.text('Send on WhatsApp instead'), findsOneWidget);
+      expect(find.textContaining('on WhatsApp'), findsOneWidget);
     });
 
     testWidgets('renders the server rate limit honestly', (tester) async {

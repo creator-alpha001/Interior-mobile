@@ -16,6 +16,8 @@ import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../env.dart';
+
 /// Who says they are signing in.
 ///
 /// The credential is the same either way — a code to a mobile number, and the
@@ -521,11 +523,21 @@ class _CodeStageState extends State<_CodeStage> {
   }
 }
 
-/// The channel a switch would send on, or null when the last code's channel is
-/// unknown — there is then nothing honest to offer the other side of.
+/// The channel a switch would send on, or null when there is nothing honest
+/// to offer.
+///
+/// Nothing when the last code's channel is unknown, and nothing when the other
+/// side is SMS and this build does not offer SMS — see [Env.offersSms]. A
+/// button that sends a code nobody can deliver is worse than no button: it
+/// stops somebody waiting for the WhatsApp message that was on its way.
+///
+/// The reverse direction is always offered. A code that arrived by SMS means
+/// SMS is working after all, and WhatsApp is then the cheaper channel to go
+/// back to.
 OtpChallengeChannel? _otherChannel(OtpChallengeChannel? channel) =>
     switch (channel) {
-      OtpChallengeChannel.whatsapp => OtpChallengeChannel.sms,
+      OtpChallengeChannel.whatsapp when Env.offersSms =>
+        OtpChallengeChannel.sms,
       OtpChallengeChannel.sms => OtpChallengeChannel.whatsapp,
       _ => null,
     };
