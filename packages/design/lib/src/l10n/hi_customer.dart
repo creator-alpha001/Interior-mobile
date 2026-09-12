@@ -363,4 +363,29 @@ const hiCustomer = <String, String>{
 
   /// The opposite state, and worth naming: nothing is stuck on the reader.
   'All with us': 'सब हमारे पास',
+
+  // ---- the rows the home screen borrowed from the website ----
+  'See all': 'सब देखें',
+  'Designs to start from': 'शुरू करने के लिए डिज़ाइन',
+  'Pick a look. We make it to your size.':
+      'पसंद चुनिए। हम आपकी नाप के हिसाब से बनाते हैं।',
+  'Ready-made packages': 'बने-बनाए पैकेज',
+  'Priced scopes, nothing hidden': 'तय काम, तय दाम, कुछ छिपा नहीं',
+  'The people who do the work': 'जो लोग काम करते हैं',
+  'Verified, and rated per trade': 'जाँचे हुए, और हर काम की अलग रेटिंग',
+  'Know what you are buying': 'जो ख़रीद रहे हैं, उसे समझिए',
+
+  // ---- the five steps, named on the home screen and explained elsewhere ----
+  'From first idea to moving in': 'पहले ख़याल से गृह-प्रवेश तक',
+  'Tell us how you live': 'बताइए आप कैसे रहते हैं',
+  'Meet three professionals': 'तीन कारीगरों से मिलिए',
+  'They visit and quote': 'वे आकर देखते हैं और कोटेशन देते हैं',
+  'Compare side by side': 'आमने-सामने रखकर देखिए',
+  'Sign and move in': 'हस्ताक्षर कीजिए और रहने आइए',
+
+  /// The closing panel. "Free" is about the quotes, not the work, and the
+  /// Hindi must not promise free work.
+  'Free, and nothing owed': 'मुफ़्त, और कोई बंधन नहीं',
+  'Start with a conversation about your home':
+      'अपने घर के बारे में बातचीत से शुरू कीजिए',
 };

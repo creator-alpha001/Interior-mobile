@@ -91,14 +91,15 @@ void main() {
 
       expect(find.byType(DecoraShineLogo), findsOneWidget);
       expect(find.text('Homes that feel like you'), findsOneWidget);
-      expect(find.text('Get free design quotes'), findsOneWidget);
+      // Twice: the hero, and the panel that closes the page.
+      expect(find.text('Get free design quotes'), findsNWidgets(2));
     });
 
     testWidgets('the button starts a requirement', (tester) async {
       var started = false;
       await _pump(tester, onStart: () => started = true);
 
-      await tester.tap(find.text('Get free design quotes'));
+      await tester.tap(find.text('Get free design quotes').first);
       await tester.pump();
 
       expect(started, isTrue);

@@ -16,7 +16,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'agreements_screen.dart';
 import 'async_view.dart';
+import 'about_screens.dart';
+import 'blog_screen.dart';
 import 'catalogue.dart';
+import 'customer_shell.dart';
+import 'packages_screen.dart';
 import 'professional_screen.dart';
 import 'projects_screen.dart';
 import 'providers.dart';
@@ -44,6 +48,33 @@ class SetupNeeds {
 /// Not persisted, as the web keeps it in `sessionStorage`: both questions are
 /// still genuinely open, so a later launch may ask again.
 final _setupDismissedProvider = StateProvider<bool>((ref) => false);
+
+/// The home screen's own reads.
+///
+/// Deliberately not the catalogue's and the directory's providers: those carry
+/// the filters somebody set on those screens, so home would quietly show
+/// "4.5 stars and above in Lucknow" after a visit to Explore.
+final _featuredProductsProvider = FutureProvider<List<ProductView>>((
+  ref,
+) async {
+  final page = await ref
+      .watch(customerApiProvider)
+      .public
+      .listProducts(limit: 8)
+      .orThrow();
+  return page.items;
+});
+
+final _homeProfessionalsProvider = FutureProvider<List<ProfessionalSummary>>((
+  ref,
+) async {
+  final page = await ref
+      .watch(customerApiProvider)
+      .public
+      .listProfessionals(limit: 3)
+      .orThrow();
+  return page.items;
+});
 
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({
@@ -285,6 +316,15 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     ),
 
+                    /// Everything the web's home carries below the trades.
+                    /// Rows of real records rather than links: a phone screen
+                    /// is read by scrolling, and a list of section names is
+                    /// not a home page.
+                    _ProductsRow(),
+                    _PackagesRow(onStart: onStart),
+                    const _HowItWorks(),
+                    _ProfessionalsRow(),
+
                     _Stats(),
 
                     /// The guarantee panel, filled with what is actually true.
@@ -371,6 +411,8 @@ class HomeScreen extends ConsumerWidget {
                     /// than above the trades: somebody who opened the app to
                     /// get a wardrobe quoted should reach the trades first.
                     _Testimonials(),
+                    _GuidesRow(),
+                    _ClosingCta(onStart: onStart),
 
                     const SizedBox(height: Space.xxxl),
                   ],
@@ -429,11 +471,14 @@ class _Hero extends StatelessWidget {
           ),
         ),
         Padding(
+          // Sized for a handset, not a laptop: the first version borrowed the
+          // web's proportions and took most of a six-inch screen before
+          // anything else appeared.
           padding: const EdgeInsets.fromLTRB(
             Space.gutter,
-            150,
+            Space.xxl,
             Space.gutter,
-            Space.xl,
+            Space.lg,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -451,9 +496,9 @@ class _Hero extends StatelessWidget {
                 context.t('Homes that feel like you'),
                 style: context.text.displayLarge?.copyWith(
                   color: Colors.white,
-                  fontSize: 36,
-                  height: 40 / 36,
-                  letterSpacing: -1,
+                  fontSize: 30,
+                  height: 35 / 30,
+                  letterSpacing: -0.8,
                 ),
               ),
               const SizedBox(height: Space.sm),
@@ -462,7 +507,7 @@ class _Hero extends StatelessWidget {
                   'Design, furniture and finishes shaped around how you live '
                   '— by verified local professionals.',
                 ),
-                style: context.text.bodyLarge?.copyWith(color: soft),
+                style: context.text.bodyMedium?.copyWith(color: soft),
               ),
               const SizedBox(height: Space.lg),
               SizedBox(
@@ -1181,6 +1226,328 @@ class _Promise extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// A horizontal row of cards under a heading, with a way to the whole list.
+///
+/// Everything below the trades has this shape, so the spacing and the "see
+/// all" are written once rather than five times.
+class _Row extends StatelessWidget {
+  const _Row({
+    required this.eyebrow,
+    required this.title,
+    required this.height,
+    required this.width,
+    required this.count,
+    required this.item,
+    required this.onSeeAll,
+  });
+
+  final String eyebrow;
+  final String title;
+  final double height;
+  final double width;
+  final int count;
+  final Widget Function(BuildContext context, int index) item;
+  final VoidCallback onSeeAll;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHead(
+          title,
+          eyebrow: eyebrow,
+          trailing: TextButton(
+            onPressed: onSeeAll,
+            child: Text(context.t('See all')),
+          ),
+        ),
+        SizedBox(
+          height: height,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: count,
+            separatorBuilder: (context, i) => const SizedBox(width: Space.sm),
+            itemBuilder: (context, i) =>
+                SizedBox(width: width, child: item(context, i)),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Designs to start from. Silent until they arrive.
+class _ProductsRow extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(_featuredProductsProvider)
+        .maybeWhen(
+          data: (products) {
+            if (products.isEmpty) return const SizedBox.shrink();
+            return _Row(
+              eyebrow: context.t('Designs to start from'),
+              title: context.t('Pick a look. We make it to your size.'),
+              height: 330,
+              width: 186,
+              count: products.length,
+              item: (context, i) => ProductCard(view: products[i]),
+              onSeeAll: () => openCatalogue(context, ref),
+            );
+          },
+          orElse: () => const SizedBox.shrink(),
+        );
+  }
+}
+
+/// Fixed scopes at fixed prices, and what each one leaves out.
+class _PackagesRow extends ConsumerWidget {
+  const _PackagesRow({required this.onStart});
+
+  final VoidCallback onStart;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(packagesProvider(null))
+        .maybeWhen(
+          data: (packages) {
+            if (packages.isEmpty) return const SizedBox.shrink();
+            return _Row(
+              eyebrow: context.t('Ready-made packages'),
+              title: context.t('Priced scopes, nothing hidden'),
+              height: 350,
+              width: 270,
+              count: packages.length,
+              item: (context, i) =>
+                  PackageCard(view: packages[i], onStart: onStart),
+              onSeeAll: () => Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => PackagesScreen(onStart: onStart),
+                ),
+              ),
+            );
+          },
+          orElse: () => const SizedBox.shrink(),
+        );
+  }
+}
+
+/// Three professionals, rated in the trade they were approved for.
+class _ProfessionalsRow extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(_homeProfessionalsProvider)
+        .maybeWhen(
+          data: (professionals) {
+            if (professionals.isEmpty) return const SizedBox.shrink();
+            return _Row(
+              eyebrow: context.t('The people who do the work'),
+              title: context.t('Verified, and rated per trade'),
+              height: 340,
+              width: 290,
+              count: professionals.length,
+              item: (context, i) =>
+                  ProfessionalCard(professional: professionals[i]),
+              onSeeAll: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const OurWorkScreen())),
+            );
+          },
+          orElse: () => const SizedBox.shrink(),
+        );
+  }
+}
+
+/// What things cost, written by the people who do the work.
+class _GuidesRow extends ConsumerWidget {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref
+        .watch(blogPostsProvider)
+        .maybeWhen(
+          data: (page) {
+            final posts = page.items.take(5).toList();
+            if (posts.isEmpty) return const SizedBox.shrink();
+            return _Row(
+              eyebrow: context.t('Guides'),
+              title: context.t('Know what you are buying'),
+              height: 300,
+              width: 260,
+              count: posts.length,
+              item: (context, i) => PostCard(view: posts[i]),
+              onSeeAll: () => Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const BlogScreen())),
+            );
+          },
+          orElse: () => const SizedBox.shrink(),
+        );
+  }
+}
+
+/// The five steps, as pictures with their names.
+///
+/// Titles only, with the full explanation one tap away in "How it works": the
+/// web can afford a paragraph under each, a phone row cannot, and the screen
+/// that carries them properly already exists.
+class _HowItWorks extends StatelessWidget {
+  const _HowItWorks();
+
+  /// One seed per step, written out rather than built from the index: an
+  /// interpolated token reads as copy to `l10n_test.dart`'s scan.
+  static const _photos = <String>[
+    'ph:default:step-1',
+    'ph:default:step-2',
+    'ph:default:step-3',
+    'ph:interior:step-4',
+    'ph:default:step-5',
+  ];
+
+  /// Written as literals at the call site, because `l10n_test.dart` reads the
+  /// source for `context.t('...')` and cannot see a string passed as a value.
+  static List<String> _titles(BuildContext context) => [
+    context.t('Tell us how you live'),
+    context.t('Meet three professionals'),
+    context.t('They visit and quote'),
+    context.t('Compare side by side'),
+    context.t('Sign and move in'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final titles = _titles(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHead(
+          context.t('From first idea to moving in'),
+          eyebrow: context.t('How it works'),
+        ),
+        SizedBox(
+          height: 186,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: titles.length,
+            separatorBuilder: (context, i) => const SizedBox(width: Space.sm),
+            itemBuilder: (context, i) => SizedBox(
+              width: 150,
+              child: InterioBeeCard(
+                padding: EdgeInsets.zero,
+                onTap: () => Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => HowItWorksScreen(onStart: null),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(Radii.panel),
+                      ),
+                      child: AspectRatio(
+                        aspectRatio: 4 / 3,
+                        child: ExcludeSemantics(
+                          child: InterioBeeMedia(
+                            src: _photos[i],
+                            alt: '',
+                            rounded: false,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(Space.cardPadding),
+                        child: Text(
+                          titles[i],
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                          style: context.text.bodyMedium,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// The last word, over a photograph, as the web closes its home page.
+class _ClosingCta extends StatelessWidget {
+  const _ClosingCta({required this.onStart});
+
+  final VoidCallback onStart;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: Space.xl),
+      child: ClipRRect(
+        borderRadius: Radii.panelRadius,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ExcludeSemantics(
+                child: InterioBeeMedia(
+                  src: StockPhotos.hero(2) ?? 'ph:interior:hero-2',
+                  alt: '',
+                  rounded: false,
+                ),
+              ),
+            ),
+            Positioned.fill(
+              child: ColoredBox(color: Colors.black.withValues(alpha: 0.55)),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(Space.cardPaddingWide),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    context.t('Free, and nothing owed'),
+                    style: context.text.labelMedium?.copyWith(
+                      color: Colors.white70,
+                    ),
+                  ),
+                  const SizedBox(height: Space.xs),
+                  Text(
+                    context.t('Start with a conversation about your home'),
+                    style: context.text.headlineMedium?.copyWith(
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: Space.md),
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton(
+                      style: FilledButton.styleFrom(
+                        backgroundColor: InterioBeeColors.chalk,
+                        foregroundColor: InterioBeeColors.ink,
+                      ),
+                      onPressed: onStart,
+                      child: Text(context.t('Get free design quotes')),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
