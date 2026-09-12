@@ -28,6 +28,15 @@ dependencies:
   # between a list that moves and one that stutters on a 3G connection.
   cached_network_image: ^3.4.1
 
+  # What a vendor writes about a job, rendered.
+  #
+  # Their details are HTML — the website's editor produces it and the API
+  # sanitises it to a small allowlist before storing — so the phone has to
+  # render the same tags rather than print the markup or drop the formatting.
+  # Core only: the full package pulls in video, iframes and web view support
+  # for tags the allowlist does not permit anyway.
+  flutter_widget_from_html_core: ^0.15.2
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

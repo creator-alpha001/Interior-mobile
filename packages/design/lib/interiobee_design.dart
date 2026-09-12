@@ -18,4 +18,5 @@ export 'src/stale_banner.dart';
 export 'src/theme.dart';
 export 'src/tokens.dart';
 export 'src/typography.dart';
+export 'src/vendor_html.dart';
 export 'src/widgets.dart';

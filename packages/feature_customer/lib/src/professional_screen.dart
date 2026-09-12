@@ -360,6 +360,19 @@ class _PortfolioCard extends StatelessWidget {
                     ),
                   ],
 
+                  /// The lines a customer skims, then the vendor's own
+                  /// account of the job. Both are what they wrote on the web
+                  /// or in the app, and the API has already reduced the HTML
+                  /// to the tags this renders.
+                  if (item.highlights.isNotEmpty) ...[
+                    const SizedBox(height: Space.sm),
+                    InterioBeeHighlights(item.highlights),
+                  ],
+                  if (item.details.isNotEmpty) ...[
+                    const SizedBox(height: Space.xs),
+                    InterioBeeHtml(item.details),
+                  ],
+
                   /// The rest of the set, when there is one.
                   if (media.length > 1) ...[
                     const SizedBox(height: Space.sm),
