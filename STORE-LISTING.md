@@ -91,6 +91,13 @@ Phone:   [you]
 https://www.decorashine.com/privacy
 ```
 
+**Account deletion URL** — Play requires this of any app that lets people
+create an account, and checks that it is reachable without signing in.
+
+```
+https://www.decorashine.com/delete-account
+```
+
 **App icon** — 512×512 PNG. Say the word and I will export it from the mark
 already in the repository.
 
