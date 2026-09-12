@@ -328,10 +328,7 @@ class _DetailState extends ConsumerState<_Detail> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                whereClientIs(lead.client),
-                style: context.text.titleLarge,
-              ),
+              Text(whereClientIs(lead.client), style: context.text.titleLarge),
               const SizedBox(height: Space.xxs),
               Text(
                 lead.client.address == null

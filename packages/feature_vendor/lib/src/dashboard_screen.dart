@@ -20,9 +20,21 @@ import 'async_view.dart';
 import 'providers.dart';
 
 class DashboardScreen extends ConsumerWidget {
-  const DashboardScreen({super.key, this.onOpenLeads});
+  const DashboardScreen({
+    super.key,
+    this.onOpenLeads,
+    this.onOpenVisits,
+    this.onOpenProjects,
+    this.onPostWork,
+  });
 
   final void Function(LeadFilter filter)? onOpenLeads;
+
+  /// The shell owns the tab index, so switching tabs is its job rather than
+  /// this screen's. Posting work opens a screen and is pushed instead.
+  final VoidCallback? onOpenVisits;
+  final VoidCallback? onOpenProjects;
+  final VoidCallback? onPostWork;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -38,8 +50,24 @@ class DashboardScreen extends ConsumerWidget {
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: Space.gutter),
               children: [
-                const SizedBox(height: Space.xl),
-                Text(data.displayName, style: context.text.displayLarge),
+                const SizedBox(height: Space.md),
+
+                /// The mark, so the vendor side looks like the same product
+                /// as the customer side and the website.
+                Row(
+                  children: [
+                    const DecoraShineLogo(height: 26),
+                    const Spacer(),
+                    if (data.professional.verificationStatus ==
+                        VerificationStatus.verified)
+                      StatusPill(
+                        context.t('Verified'),
+                        tone: StatusTone.verified,
+                      ),
+                  ],
+                ),
+                const SizedBox(height: Space.lg),
+                Text(data.displayName, style: context.text.headlineLarge),
                 const SizedBox(height: Space.xxs),
                 Wrap(
                   spacing: Space.xxs,
@@ -48,6 +76,26 @@ class DashboardScreen extends ConsumerWidget {
                     for (final link in data.domains)
                       StatusPill(link.domain.name, tone: StatusTone.neutral),
                   ],
+                ),
+
+                /// **Four things, where a thumb can reach them.**
+                ///
+                /// This screen was a column of counters: true, and nothing to
+                /// do. The work a vendor opens the app for — answer a lead,
+                /// check today's visits, look at a running job, post the
+                /// photographs they just took — took two taps through a tab
+                /// bar and a list. Now it is one, above the numbers.
+                const SizedBox(height: Space.lg),
+                _QuickActions(
+                  newLeads: data.newLeads,
+                  visitsToday: data.visitsToday,
+                  liveProjects: data.liveProjects,
+                  onOpenLeads: onOpenLeads == null
+                      ? null
+                      : () => onOpenLeads!(LeadFilter.valueNew),
+                  onOpenVisits: onOpenVisits,
+                  onOpenProjects: onOpenProjects,
+                  onPostWork: onPostWork,
                 ),
 
                 if (data.newLeads > 0)
@@ -233,6 +281,136 @@ class _Figures extends StatelessWidget {
             if (index < rows.length - 1) const InterioBeeDivider(),
           ],
         ],
+      ),
+    );
+  }
+}
+
+/// The four things a vendor opens the app to do.
+///
+/// Counts on the tiles, because "3 new" is the reason to press it and a bare
+/// label makes somebody press it to find out.
+class _QuickActions extends StatelessWidget {
+  const _QuickActions({
+    required this.newLeads,
+    required this.visitsToday,
+    required this.liveProjects,
+    required this.onOpenLeads,
+    required this.onOpenVisits,
+    required this.onOpenProjects,
+    required this.onPostWork,
+  });
+
+  final int newLeads;
+  final int visitsToday;
+  final int liveProjects;
+  final VoidCallback? onOpenLeads;
+  final VoidCallback? onOpenVisits;
+  final VoidCallback? onOpenProjects;
+  final VoidCallback? onPostWork;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        _Action(
+          icon: Icons.inbox_outlined,
+          label: context.t('Leads'),
+          count: newLeads,
+          // Terracotta: a new lead is the one thing on this screen that is
+          // genuinely the vendor's turn.
+          tone: newLeads > 0 ? StatusTone.yours : StatusTone.neutral,
+          onTap: onOpenLeads,
+        ),
+        const SizedBox(width: Space.xs),
+        _Action(
+          icon: Icons.event_outlined,
+          label: context.t('Visits'),
+          count: visitsToday,
+          tone: StatusTone.neutral,
+          onTap: onOpenVisits,
+        ),
+        const SizedBox(width: Space.xs),
+        _Action(
+          icon: Icons.construction_outlined,
+          label: context.t('Jobs'),
+          count: liveProjects,
+          tone: StatusTone.neutral,
+          onTap: onOpenProjects,
+        ),
+        const SizedBox(width: Space.xs),
+        _Action(
+          icon: Icons.add_a_photo_outlined,
+          label: context.t('Post work'),
+          count: null,
+          tone: StatusTone.neutral,
+          onTap: onPostWork,
+        ),
+      ],
+    );
+  }
+}
+
+class _Action extends StatelessWidget {
+  const _Action({
+    required this.icon,
+    required this.label,
+    required this.count,
+    required this.tone,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+
+  /// Null on an action that nothing is waiting behind.
+  final int? count;
+  final StatusTone tone;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final highlight = tone == StatusTone.yours;
+
+    return Expanded(
+      child: InterioBeeCard(
+        onTap: onTap,
+        padding: const EdgeInsets.symmetric(
+          vertical: Space.sm,
+          horizontal: Space.xs,
+        ),
+        child: Column(
+          children: [
+            Icon(
+              icon,
+              size: TapTarget.glyph,
+              color: highlight
+                  ? context.colors.primary
+                  : context.colors.onSurfaceVariant,
+            ),
+            const SizedBox(height: Space.xxs),
+            Text(
+              count == null ? '' : '$count',
+              style: InterioBeeTextStyles.financialNum.copyWith(
+                fontSize: 18,
+                color: highlight
+                    ? context.colors.primary
+                    : (count ?? 0) == 0
+                    ? context.colors.onSurfaceVariant
+                    : InterioBeeColors.ink,
+              ),
+            ),
+            Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+              style: context.text.bodySmall?.copyWith(
+                color: context.colors.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

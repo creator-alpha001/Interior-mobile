@@ -277,10 +277,7 @@ class _SealedAddress extends StatelessWidget {
             ],
           ),
           const SizedBox(height: Space.xs),
-          Text(
-            whereClientIs(visit.client),
-            style: context.text.titleLarge,
-          ),
+          Text(whereClientIs(visit.client), style: context.text.titleLarge),
           const SizedBox(height: Space.xxs),
           Text(
             // Explains the mechanism, so it reads as a rule rather than a bug.

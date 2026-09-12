@@ -20,6 +20,7 @@ import 'leads_screen.dart';
 import 'more_screen.dart';
 import 'onboarding_gate.dart';
 import 'projects_screen.dart';
+import 'post_work_screen.dart';
 import 'providers.dart';
 import 'thread_screen.dart';
 import 'visits_screen.dart';
@@ -109,11 +110,26 @@ class _VendorShellState extends ConsumerState<VendorShell> {
           ref.read(leadFilterProvider.notifier).state = filter;
           setState(() => _tab = 1);
         },
+        onOpenProjects: () => setState(() => _tab = 2),
+        onOpenVisits: () => setState(() => _tab = 3),
+        onPostWork: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) =>
+                PostWorkScreen(queue: widget.queueFor('vendor-showcase')),
+          ),
+        ),
       ),
       LeadsScreen(onOpen: (lead) => _openLead(context, lead)),
       ProjectsScreen(queueFor: widget.queueFor),
       const VisitsScreen(),
-      MoreScreen(onSignOut: widget.onSignOut),
+
+      /// One queue for everything a vendor posts about themselves, keyed by a
+      /// name rather than a milestone id: portfolio photographs belong to the
+      /// vendor, not to a stage of somebody's job.
+      MoreScreen(
+        queue: widget.queueFor('vendor-showcase'),
+        onSignOut: widget.onSignOut,
+      ),
     ];
 
     return Scaffold(

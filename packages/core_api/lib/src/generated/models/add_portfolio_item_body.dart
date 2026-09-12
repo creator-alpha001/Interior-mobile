@@ -14,6 +14,8 @@ abstract class AddPortfolioItemBody with _$AddPortfolioItemBody {
     required String title,
     required List<String> media,
     @Default('') String description,
+    @Default([]) List<String> highlights,
+    @Default('') String details,
     String? cityId,
   }) = _AddPortfolioItemBody;
 

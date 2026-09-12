@@ -10,16 +10,21 @@
 library;
 
 import 'package:interiobee_core_api/interiobee_core_api.dart';
+import 'package:interiobee_core_upload/interiobee_core_upload.dart';
 import 'package:interiobee_design/interiobee_design.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'agreements_screen.dart';
 import 'async_view.dart';
+import 'post_work_screen.dart';
 import 'providers.dart';
 
 class MoreScreen extends StatelessWidget {
-  const MoreScreen({super.key, this.onSignOut});
+  const MoreScreen({super.key, required this.queue, this.onSignOut});
+
+  /// The upload queue, for posting work from the portfolio screen.
+  final UploadQueue queue;
 
   final VoidCallback? onSignOut;
 
@@ -59,8 +64,8 @@ class MoreScreen extends StatelessWidget {
             const SizedBox(height: Space.xs),
             _Link(
               title: context.t('Portfolio'),
-              subtitle: context.t('Approved work on your public profile'),
-              onTap: () => _push(context, const PortfolioScreen()),
+              subtitle: context.t('The work on your public profile'),
+              onTap: () => _push(context, PortfolioScreen(queue: queue)),
             ),
             if (onSignOut != null) ...[
               const SizedBox(height: Space.xl),
@@ -416,27 +421,80 @@ class _ReviewCard extends StatelessWidget {
   }
 }
 
+/// An empty portfolio is the most costly screen a vendor can have.
+///
+/// Customers compare three professionals on their photographs, so this says
+/// what is missing and opens the camera rather than reporting a fact.
+class _NothingPosted extends StatelessWidget {
+  const _NothingPosted({required this.queue});
+
+  final UploadQueue queue;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(Space.gutter),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.t('Nothing posted yet'),
+            style: context.text.headlineSmall,
+          ),
+          const SizedBox(height: Space.xs),
+          Text(
+            context.t(
+              'Photographs of finished jobs are the first thing a customer '
+              'looks at, and they go on your profile as soon as you post them.',
+            ),
+            style: context.text.bodyMedium?.copyWith(
+              color: context.colors.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: Space.md),
+          FilledButton.icon(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => PostWorkScreen(queue: queue)),
+            ),
+            icon: const Icon(Icons.add_a_photo_outlined),
+            label: Text(context.t('Post work')),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class PortfolioScreen extends ConsumerWidget {
-  const PortfolioScreen({super.key});
+  const PortfolioScreen({super.key, required this.queue});
+
+  /// Handed down so work can be posted from here — the photographs are on
+  /// this phone, which is the whole reason this screen needed the button.
+  final UploadQueue queue;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final portfolio = ref.watch(portfolioProvider);
 
     return Scaffold(
-      appBar: AppBar(title: Text(context.t('Portfolio'))),
+      appBar: AppBar(
+        title: Text(context.t('Portfolio')),
+        actions: [
+          IconButton(
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => PostWorkScreen(queue: queue)),
+            ),
+            icon: const Icon(Icons.add_a_photo_outlined),
+            tooltip: context.t('Post work'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: AsyncView(
           value: portfolio,
           onRetry: () => ref.invalidate(portfolioProvider),
           data: (list) => list.isEmpty
-              ? EmptyState(
-                  title: context.t('Nothing published'),
-                  body: context.t(
-                    'Portfolio work is moderated before it appears on your '
-                    'public profile.',
-                  ),
-                )
+              ? _NothingPosted(queue: queue)
               : ListView.separated(
                   padding: const EdgeInsets.all(Space.gutter),
                   itemCount: list.length,
@@ -460,12 +518,15 @@ class PortfolioScreen extends ConsumerWidget {
                               // Sage only when a person approved it. A pending
                               // item is not on the public profile.
                               StatusPill(
-                                item.moderationStatus.name,
+                                item.moderationStatus ==
+                                        DomainApprovalStatus.rejected
+                                    ? context.t('Taken down')
+                                    : context.t('Live'),
                                 tone:
                                     item.moderationStatus ==
-                                        DomainApprovalStatus.approved
-                                    ? StatusTone.verified
-                                    : StatusTone.waiting,
+                                        DomainApprovalStatus.rejected
+                                    ? StatusTone.wrong
+                                    : StatusTone.verified,
                               ),
                             ],
                           ),

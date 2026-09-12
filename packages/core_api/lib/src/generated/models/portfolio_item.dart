@@ -21,6 +21,8 @@ abstract class PortfolioItem with _$PortfolioItem {
     required String domainId,
     required String title,
     required String description,
+    required List<String> highlights,
+    required String details,
     required List<MediaAsset> media,
     required DomainApprovalStatus moderationStatus,
     required String? cityId,

@@ -226,14 +226,9 @@ const hiVendor = <String, String>{
   'Performance': 'प्रदर्शन',
   'Your rating in each trade': 'हर काम में आपकी रेटिंग',
   'Portfolio': 'पोर्टफ़ोलियो',
-  'Approved work on your public profile':
-      'आपकी सार्वजनिक प्रोफ़ाइल पर मंज़ूर किया गया काम',
   'Nothing owed': 'कुछ बकाया नहीं',
   'Commission is raised when a customer signs an agreement, at your rate for that trade.':
       'ग्राहक के एग्रीमेंट पर हस्ताक्षर करते ही कमीशन बनता है, उस काम के लिए तय आपकी दर पर।',
-  'Nothing published': 'कुछ प्रकाशित नहीं',
-  'Portfolio work is moderated before it appears on your public profile.':
-      'पोर्टफ़ोलियो का काम आपकी सार्वजनिक प्रोफ़ाइल पर आने से पहले जाँचा जाता है।',
   'By trade': 'काम के हिसाब से',
   'Rated separately': 'अलग-अलग रेटिंग',
   'Not yet rated': 'अभी रेटिंग नहीं',
@@ -340,4 +335,39 @@ const hiVendor = <String, String>{
   /// saying otherwise would describe a mobile shortfall that does not exist.
   'To change any of this, message your coordinator. Your public record is edited by our team, the same way trade approval is — never from an app.':
       'इनमें कुछ भी बदलवाने के लिए अपने को-ऑर्डिनेटर को संदेश भेजिए। आपका सार्वजनिक रिकॉर्ड हमारी टीम बदलती है, ठीक वैसे ही जैसे काम की मंज़ूरी — किसी ऐप से नहीं।',
+
+  // ---- posting work from the phone ----
+  ///
+  /// Publishing, not submitting: the Hindi must not say "भेजें" here, or a
+  /// vendor waits for an approval that no longer exists.
+  'Post work': 'काम पोस्ट करें',
+  'Publish': 'प्रकाशित करें',
+  'Save and add more': 'सहेजें और और जोड़ें',
+  '{n} job posted': '{n} काम पोस्ट हो गया',
+  '{n} jobs posted': '{n} काम पोस्ट हो गए',
+  'It is on your public profile now. Add another while the photographs are to hand.':
+      'यह अब आपकी सार्वजनिक प्रोफ़ाइल पर है। तस्वीरें सामने हैं तो एक और जोड़ लीजिए।',
+  'Posted work goes on your public profile straight away. Our team can take something down, and will say why.':
+      'पोस्ट किया काम तुरंत आपकी सार्वजनिक प्रोफ़ाइल पर चला जाता है। हमारी टीम कुछ हटा सकती है, और वजह बताएगी।',
+  'No trades yet': 'अभी कोई काम नहीं',
+  'You can post work once our team has approved you for a trade.':
+      'किसी काम के लिए हमारी टीम की मंज़ूरी मिलते ही आप काम पोस्ट कर सकेंगे।',
+  'Not specified': 'बताया नहीं',
+  'Title': 'शीर्षक',
+  'One-line summary': 'एक लाइन में बताइए',
+  'Highlights': 'ख़ास बातें',
+  'The short lines a customer skims: materials, size, how long it took.':
+      'वे छोटी बातें जो ग्राहक सरसरी नज़र से पढ़ता है: सामान, नाप, कितना समय लगा।',
+  'Details': 'ब्यौरा',
+  'What the job involved, and anything that made it hard.':
+      'काम में क्या-क्या था, और जो कुछ मुश्किल रहा।',
+  'Only photographs of work you did yourself. The first one is the cover.':
+      'सिर्फ़ उसी काम की तस्वीरें जो आपने ख़ुद किया हो। पहली तस्वीर कवर बनती है।',
+
+  // ---- the portfolio, as the vendor sees it ----
+  'The work on your public profile': 'आपकी सार्वजनिक प्रोफ़ाइल पर मौजूद काम',
+  'Taken down': 'हटा दिया गया',
+  'Nothing posted yet': 'अभी कुछ पोस्ट नहीं किया',
+  'Photographs of finished jobs are the first thing a customer looks at, and they go on your profile as soon as you post them.':
+      'ग्राहक सबसे पहले पूरे हुए कामों की तस्वीरें ही देखता है, और पोस्ट करते ही वे आपकी प्रोफ़ाइल पर आ जाती हैं।',
 };

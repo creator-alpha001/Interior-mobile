@@ -153,13 +153,17 @@ class _FilterChip extends StatelessWidget {
             borderRadius: Radii.smallRadius,
             color: selected ? InterioBeeColors.ink : Colors.transparent,
             border: Border.all(
-              color: selected ? InterioBeeColors.ink : context.palette.inputBorder,
+              color: selected
+                  ? InterioBeeColors.ink
+                  : context.palette.inputBorder,
             ),
           ),
           child: Text(
             label,
             style: context.text.titleMedium?.copyWith(
-              color: selected ? InterioBeeColors.limestone : InterioBeeColors.ink,
+              color: selected
+                  ? InterioBeeColors.limestone
+                  : InterioBeeColors.ink,
             ),
           ),
         ),
