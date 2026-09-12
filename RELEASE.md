@@ -275,7 +275,27 @@ Ordered by what unblocks the most.
 - [ ] DLT registration for MSG91
 - [ ] R2 bucket, and `STORAGE_DRIVER=r2`
 - [ ] Firebase project, then `PushTokenSource` on `firebase_messaging`
-- [ ] Bundle identifiers, signing certificates, provisioning profiles
+- [ ] **The Android release key.** `app/android/app/build.gradle.kts` reads
+      `android/key.properties` and signs with it when it is there, falling back
+      to the debug key when it is not — so this is the one step left, and it is
+      manual on purpose: the keystore is the app's identity on Play, an update
+      is accepted only if signed by the same key, and nobody should be able to
+      regenerate it from the repository. Create it outside the working copy:
+
+      ```
+      keytool -genkeypair -v -keystore D:\keys\decorashine-release.jks -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 -alias decorashine
+      ```
+
+      Then copy `android/key.properties.example` to `android/key.properties`
+      and fill it in. Back the `.jks` up somewhere that is not this machine:
+      losing it means the listing can never be updated again.
+- [ ] Apple signing certificates and provisioning profiles
+- [ ] An Android OAuth client per signing key, in the same Google Cloud project
+      as the web client id `env.dart` carries — one for the debug key (done),
+      one for the release key's SHA-1, and one for Play App Signing's own key,
+      copied from Play Console once the first bundle is uploaded. Miss the last
+      and Google sign-in works everywhere except for people who installed from
+      the store.
 - [ ] Staging API for review, with the demo accounts reachable
 - [ ] Screenshots, six per platform
 - [ ] Data Safety form and App Privacy answers, from the table above

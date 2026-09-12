@@ -129,11 +129,14 @@ how a support ticket starts.
 
 ### Flavours
 
-Nothing defaults to production. A build that forgets to say where it is going
-talks to localhost and fails loudly on a device, which is the failure you want.
+A plain build talks to production — `api.decorashine.com` — because that is
+what somebody running the app on their phone expects to see. It used to default
+to localhost while nothing was live; now local work says so explicitly.
 
 ```bash
 cd app
+flutter run                                         # production
+flutter run --dart-define=INTERIOBEE_ENV=dev        # the emulator's host, 10.0.2.2:4000
 flutter run --dart-define=INTERIOBEE_ENV=staging
 flutter run --dart-define=INTERIOBEE_API_URL=http://192.168.1.20:4000   # a laptop on the same wifi
 ```

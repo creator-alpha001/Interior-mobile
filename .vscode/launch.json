@@ -7,11 +7,16 @@
   // missing file rather than a wrong directory. `program` pins the entrypoint
   // so the run button works from whichever file happens to be open.
   //
-  // Nothing here points at production, deliberately: a build that forgets to
-  // say where it is going talks to localhost and fails loudly on a device,
-  // which is the failure you want. Production is a CI concern, not a button.
+  // A build with no defines talks to production (see `app/lib/env.dart`), so
+  // every local configuration below names its API explicitly.
   "version": "0.2.0",
   "configurations": [
+    {
+      "name": "Decora Shine (production)",
+      "request": "launch",
+      "type": "dart",
+      "program": "app/lib/main.dart"
+    },
     {
       "name": "InterioBee (dev)",
       "request": "launch",

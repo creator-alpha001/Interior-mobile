@@ -27,9 +27,17 @@ enum Flavour {
 }
 
 abstract final class Env {
+  /// **Production unless told otherwise.**
+  ///
+  /// This defaulted to `dev` while nothing was live, so a build that forgot to
+  /// say where it was going failed loudly against localhost rather than
+  /// writing to real data. With decorashine.com serving customers, a plain
+  /// `flutter run` on a phone showed an empty app with nothing to look at, so
+  /// the default is now the real platform. Local work names itself:
+  /// `--dart-define=INTERIOBEE_ENV=dev`, or `INTERIOBEE_API_URL` for a laptop.
   static const _name = String.fromEnvironment(
     'INTERIOBEE_ENV',
-    defaultValue: 'dev',
+    defaultValue: 'production',
   );
 
   /// An explicit override, for pointing a build at a laptop on the same wifi.
@@ -71,10 +79,25 @@ abstract final class Env {
   /// the plugin returns a token for the app itself, and the server rejects
   /// every sign-in with a message about the wrong audience.
   ///
-  /// Empty turns Google sign-in off, which is the default. The OTP path does
-  /// not depend on it.
+  /// **The web client id, even on Android.** The Android client id is never
+  /// named anywhere: Google matches it by package name and signing
+  /// fingerprint, and an app that passes it as `serverClientId` gets a token
+  /// addressed to itself, which the backend refuses as the wrong audience.
+  ///
+  /// **Committed, because a client id is not a secret.** It is handed to
+  /// Google by every app and every page that signs anybody in — this is the
+  /// same id the website's button already uses — and it grants nothing on its
+  /// own: the token it produces is checked against Google's public keys by our
+  /// API, which trusts only the ids in `GOOGLE_CLIENT_IDS`. Left in a define,
+  /// a build that forgot the flag shipped with no Google button and no error.
+  ///
+  /// An override remains, for a build pointed at another project. Empty turns
+  /// Google sign-in off; the OTP path does not depend on it.
   static const googleServerClientId = String.fromEnvironment(
     'INTERIOBEE_GOOGLE_SERVER_CLIENT_ID',
+    defaultValue:
+        '247345102590-v1jnsfk40aio6gihm957n2j1nljq2fgb'
+        '.apps.googleusercontent.com',
   );
 
   /// The component gallery ships only in non-production builds.

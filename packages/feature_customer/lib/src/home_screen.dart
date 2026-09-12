@@ -101,14 +101,33 @@ class HomeScreen extends ConsumerWidget {
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: Space.gutter,
-                  vertical: Space.sm,
+              /// The header: the mark, and the way in when nobody is signed in.
+              ///
+              /// Sign-in used to be a card below the hero, which put it a full
+              /// screen down on a phone. The hero already carries "Get free
+              /// design quotes", so the header carries the other action.
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  Space.gutter,
+                  Space.xs,
+                  Space.sm,
+                  Space.xs,
                 ),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: DecoraShineLogo(height: 32),
+                child: Row(
+                  children: [
+                    const DecoraShineLogo(height: 32),
+                    const Spacer(),
+                    if (onSignIn != null)
+                      FilledButton(
+                        onPressed: onSignIn,
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: Space.md,
+                          ),
+                        ),
+                        child: Text(context.t('Sign in')),
+                      ),
+                  ],
                 ),
               ),
 
@@ -200,51 +219,9 @@ class HomeScreen extends ConsumerWidget {
                       orElse: () => const SizedBox.shrink(),
                     ),
 
-                    if (onSignIn != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: Space.lg),
-                        child: InterioBeeCard(
-                          padding: const EdgeInsets.all(Space.cardPaddingWide),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                context.t('Already asked us for something?'),
-                                style: context.text.headlineSmall,
-                              ),
-                              const SizedBox(height: Space.xxs),
-                              Text(
-                                context.t(
-                                  'Sign in with the number you gave us and your '
-                                  'jobs, quotes and messages come back.',
-                                ),
-                                style: context.text.bodyMedium?.copyWith(
-                                  color: context.colors.onSurfaceVariant,
-                                ),
-                              ),
-                              const SizedBox(height: Space.md),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: FilledButton(
-                                      onPressed: onSignIn,
-                                      child: Text(context.t('Sign in')),
-                                    ),
-                                  ),
-                                  const SizedBox(width: Space.xs),
-                                  Expanded(
-                                    child: OutlinedButton(
-                                      onPressed: onStart,
-                                      child: Text(context.t('Get quotes')),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    else
+                    // Signed out there is no work of theirs to show, and the
+                    // way in is in the header.
+                    if (onSignIn == null)
                       _YourWork(
                         requirements: requirements,
                         agreements: agreements,

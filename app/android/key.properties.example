@@ -1,0 +1,8 @@
+# Copy to `key.properties` (same folder) and fill in. Never commit the copy.
+#
+# storeFile is where the keystore lives. Keep it OUTSIDE the repository — a
+# keystore inside a working copy is one `git add -f` away from being public.
+storeFile=C:/Users/you/keys/decorashine-release.jks
+storePassword=
+keyAlias=decorashine
+keyPassword=

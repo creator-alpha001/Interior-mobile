@@ -314,8 +314,6 @@ const hiCustomer = <String, String>{
   '{n} jobs under way': '{n} काम चल रहे हैं',
   'Stage by stage, with photographs': 'चरण दर चरण, तस्वीरों के साथ',
 
-  // ---- signed out, on the home screen ----
-  'Get quotes': 'कोटेशन मँगाइए',
   // ---- signing in, offered where it is needed rather than at the door ----
   'Sign in': 'साइन इन',
 
@@ -323,10 +321,6 @@ const hiCustomer = <String, String>{
   /// password to forget, which is the objection this answers.
   'Your number is your account. We send a code — there is no password to remember.':
       'आपका नंबर ही आपका खाता है। हम एक कोड भेजते हैं — याद रखने के लिए कोई पासवर्ड नहीं।',
-
-  'Already asked us for something?': 'पहले से हमें कुछ बताया हुआ है?',
-  'Sign in with the number you gave us and your jobs, quotes and messages come back.':
-      'जो नंबर आपने हमें दिया था, उसी से साइन इन कीजिए — आपके काम, कोटेशन और संदेश वापस आ जाएँगे।',
 
   'Your jobs live here': 'आपके काम यहाँ रहते हैं',
   'Sign in to see the quotes on your jobs, the visits we have arranged, and where each one has got to.':
